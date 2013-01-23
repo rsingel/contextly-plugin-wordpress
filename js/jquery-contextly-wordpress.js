@@ -1,7 +1,7 @@
 /**
  * Contextly plugin script for WordPress
  *
- * User: andrew
+ * User: Andrew Nikolaenko
  * Date: 9/20/12
  * Time: 8:58 AM
  */
@@ -58,14 +58,14 @@
                 data: data,
                 success: function ( response )
                 {
-                    if ( response.snippet && response.snippet.entry )
+                    if ( response.snippet )
                     {
-                        $.contextly.snippet = response.snippet.entry;
+                        $.contextly.snippet = response.snippet;
                     }
 
-                    if ( response.settings && response.settings.entry )
+                    if ( response.settings )
                     {
-                        $.contextly.settings = response.settings.entry;
+                        $.contextly.settings = response.settings;
                     }
 
                     if ( admin )
@@ -104,7 +104,7 @@
                     $.fn.contextly.processNormalResponse( response );
                 }
 
-                if ( response.settings && response.settings.entry )
+                if ( response.settings )
                 {
                     $.fn.contextly.appendAdminControls();
                 }
@@ -118,7 +118,7 @@
 
         loadSettingsCss: function ( settings )
         {
-            if ( settings.display_type == 'tabs' )
+            if ( settings.display_type == 'tabs' || settings.display_type == 'blocks' )
             {
                 $.fn.contextly.loadWidgetCssTemplate( 'widget', settings.tabs_style );
                 $.fn.contextly.buildWidgetCustomCss( '.contextly-widget', settings );
@@ -144,15 +144,19 @@
         {
             var html = '';
 
-            if ( response.snippet && response.snippet.entry && response.settings && response.settings.entry )
+            if ( response.snippet && response.settings )
             {
-                var snippet = response.snippet.entry;
-                var settings = response.settings.entry;
+                var snippet = response.snippet;
+                var settings = response.settings;
                 var widget;
 
                 if ( settings.display_type == 'tabs' )
                 {
                     widget = new HTMLWidget( snippet, settings );
+                }
+                else if ( settings.display_type == 'blocks' )
+                {
+                    widget = new HTMLBlocks( snippet, settings );
                 }
                 else
                 {
@@ -173,9 +177,9 @@
 
             // Now we can check last post publish date and probably we need to publish/update this post in our db
             if ( !snippet ) update = true;
-            else if ( snippet && snippet.entry )
+            else if ( snippet )
             {
-                if ( !snippet.entry.publish_date || snippet.entry.publish_date != Contextly.post.post_modified ) update = true;
+                if ( !snippet.publish_date || snippet.publish_date != Contextly.post.post_modified ) update = true;
             }
 
             if ( update )
@@ -231,7 +235,7 @@
         {
             var html;
 
-            if ( $.contextly.snippet )
+            if ( $.contextly.snippet && $.contextly.snippet.links )
             {
                 html = "<br><input type='button' class='button action' value='Edit See Also' onclick='jQuery.fn.contextly.openPopup();' />";
             } else {
@@ -243,9 +247,10 @@
 
         loadWidgetCssTemplate: function ( type, template_type )
         {
-            var css_url = "http://contextlysiteimages.contextly.com/_plugin/"  + Contextly.version +  "/css-api/template-" + template_type + ".css";
-            //var css_url = "http://contextly.com/resources/css/plugin/" + type + "/template-" + template_type + ".css";
+            //var css_url = "http://contextlysiteimages.contextly.com/_plugin/"  + Contextly.version +  "/css-api/template-" + template_type + ".css";
             //var css_url = "http://linker.site/resources/css/plugin/" + type + "/template-" + template_type + ".css";
+
+            var css_url = "http://dev.contextly.com/resources/css/plugin/" + type + "/" + $.contextly.settings.display_type + "/template-" + template_type + ".css";
 
             $.fn.contextly.loadCss( css_url );
 
@@ -568,7 +573,7 @@
                     data: data,
                     success: function ( response )
                     {
-                        if ( !response.error && response.sidebar && response.settings )
+                        if ( response && !response.error && response.sidebar && response.settings )
                         {
                             $.fn.contextly.displaySidebar( response );
                         }
@@ -579,8 +584,8 @@
 
         displaySidebar: function ( data )
         {
-            var snippet     = data.sidebar.entry;
-            var settings    = data.settings.entry;
+            var snippet     = data.sidebar;
+            var settings    = data.settings;
 
             if ( !snippet ) return;
 
@@ -766,7 +771,6 @@ var HTMLWidget = createClass({
                     + "<ul class='link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : '' ) + " '>"
                     + this.getLinksHTMLOfType( section_name )
                     + "</ul>"
-                    + this.getSponsoredLinks()
                     + "</div>";
                 active_flag = true;
             }
@@ -930,31 +934,20 @@ var HTMLWidget = createClass({
     },
     isMobileRequest: function()
     {
-        return false; // TODO: implement me
-    },
-    getSponsoredLinks: function ()
-    {
-        var sponsored_html = '';
-        var type = 'sponsored';
-
-        if ( this.snippet.links && this.snippet.links[ type ] )
-        {
-            for ( var link_idx in this.snippet.links[ type ] )
-            {
-                var link = this.snippet.links[ type ][ link_idx ];
-                sponsored_html +=
-                    "<p class='sponsoredlink'>" +
-                    "<a href=\"" + link.native_url + "\" title=\"" + link.title + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">" +
-                    link.title + "</a>" +
-                    " <sup>sponsored</sup></p>"
-            }
-        }
-
-        return sponsored_html;
+        return false; // TODO: implement this method
     }
 
 });
 
+var HTMLBlocks = createClass({
+    extend: BaseWidget,
+    buildHTML: function ()
+    {
+        return "Lubomir implement me...";
+
+
+    }
+});
 
 var CssCustomBuilder = createClass({
 

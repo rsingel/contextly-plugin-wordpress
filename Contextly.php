@@ -229,7 +229,8 @@ class Contextly
             'server-url'    => CONTEXTLY_API_SERVER_URL,
             'auth-api'      => 'auth/auth',
             'appID'         => '',
-            'appSecret'     => ''
+            'appSecret'     => '',
+            'fastAPI'       => true
         );
 
         $api_options = get_option( 'contextly_options_api' );
@@ -386,41 +387,45 @@ class Contextly
         }
     }
 
-    function getSnippetSettings()
+    function getSnippetData( $page_id, $admin = 0 )
     {
-        return Contextly_Api::getInstance()
-            ->api( 'widgetsettings', 'get' )
-            ->get();
-    }
-
-    function getSnippet( $page_id, $settings_id, $admin = 0 )
-    {
-        $snippet = Contextly_Api::getInstance()
+        $snippet_data = Contextly_Api::getInstance()
             ->api( 'snippets', 'get' )
             ->param( 'page_id', $page_id )
-            ->param( 'settings_id', $settings_id )
             ->param( 'admin', $admin )
             ->get();
 
-        return $snippet;
+        if ( isset( $snippet_data->entry ) && isset( $snippet_data->entry->settings ) )
+        {
+            $snippet_settings = $snippet_data->entry->settings;
+            $snippet = $snippet_data->entry;
+
+            unset( $snippet->settings );
+
+            return array( $snippet, $snippet_settings );
+        }
+
+        return $snippet_data;
     }
 
-    function getSidebarSettings()
+    function getSidebarData( $sidebar_id )
     {
-        return Contextly_Api::getInstance()
-            ->api( 'sidebarsettings', 'get' )
-            ->get();
-    }
-
-    function getSidebar( $sidebar_id, $settings_id )
-    {
-        $snippet = Contextly_Api::getInstance()
+        $sidebar_data = Contextly_Api::getInstance()
             ->api( 'sidebars', 'get' )
             ->param( 'id', $sidebar_id )
-            ->param( 'settings_id', $settings_id )
             ->get();
 
-        return $snippet;
+        if ( isset( $sidebar_data->entry ) && isset( $sidebar_data->entry->settings ) )
+        {
+            $sidebar_settings = $sidebar_data->entry->settings;
+            $sidebar = $sidebar_data->entry;
+
+            unset( $sidebar->settings );
+
+            return array( $sidebar, $sidebar_settings );
+        }
+
+        return $sidebar_data;
     }
 
     // In this method we will display hidden div. After page loading we will load it's content with javascript.

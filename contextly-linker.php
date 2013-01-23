@@ -5,11 +5,11 @@ Plugin Name: Contextly
 Plugin URI: http://contextly.com
 Description: Adds the Contextly related links tool to your blog. Contextly lets you create related links that helps your readers find more to read, increases your page views and shows off your best content.
 Author: Contextly
-Version: 1.0.72
+Version: 1.0.73
 */
 
-define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.72' );
-define ( "CONTEXTLY_MODE", 'production' );
+define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.73' );
+define ( "CONTEXTLY_MODE", 'local' );
 
 if ( CONTEXTLY_MODE == 'production' )
 {
@@ -36,8 +36,8 @@ require_once ( "Contextly.php" );
 $ctxActivate = new Contextly();
 
 function contextly_get_plugin_url() {
-    return "http://contextlysiteimages.contextly.com/_plugin/" . CONTEXTLY_PLUGIN_VERSION . "/js/jquery-contextly-wordpress.js";
-    //return plugins_url( 'js/jquery-contextly-wordpress.js' , __FILE__ );
+    //return "http://contextlysiteimages.contextly.com/_plugin/" . CONTEXTLY_PLUGIN_VERSION . "/js/jquery-contextly-wordpress.js";
+    return plugins_url( 'js/jquery-contextly-wordpress.js' , __FILE__ );
 }
 
 function contextly_linker_widget_html( $admin = false ) {
@@ -173,30 +173,33 @@ function contextly_load_page_data_callback ()
 
     $data = array();
     $site = null;
-    $snippet = null;
+    $snippet = $snippet_settings = null;
 
     $contextly = new Contextly();
 
     try
     {
-        $settings = $contextly->getSnippetSettings();
+        $snippet_data = $contextly->getSnippetData( $page_id, $admin );
+
+        if ( is_array( $snippet_data ) )
+        {
+            list( $snippet, $snippet_settings ) = $snippet_data;
+        }
 
         if ( $admin )
         {
             $data[ 'popup_server_url' ] = CONTEXTLY_POPUP_SERVER_URL;
-
-            if ( isset( $settings->error_code ) )
+            if ( is_object( $snippet_data ) && isset( $snippet_data->error_code ) )
             {
-                throw new Exception( $settings->error, $settings->error_code );
+                throw new Exception( $snippet_data->error, $snippet_data->error_code );
             }
         }
 
-        $data[ 'settings' ] = $settings;
-
-        if ( $settings->entry )
+        if ( $snippet && $snippet_settings )
         {
-            $settings_id = $settings->entry->id;
-            $data[ 'snippet' ] = $contextly->getSnippet( $page_id, $settings_id, $admin );
+            // Don't loose popup server url
+            $data[ 'snippet' ] = $snippet;
+            $data[ 'settings' ] = $snippet_settings;
         }
     }
     catch ( Exception $e )
@@ -301,16 +304,19 @@ function contextly_load_sidebar_callback()
 
     try
     {
-        $sidebar_settings = $contextly->getSidebarSettings();
-        if ( $sidebar_settings )
-        {
-            $settings_id = $sidebar_settings->entry->id;
-            $sidebar = $contextly->getSidebar( $sidebar_id, $settings_id );
+        $sidebar_data = $contextly->getSidebarData( $sidebar_id );
 
-            $data = array(
-                'sidebar' => $sidebar,
-                'settings' => $sidebar_settings
-            );
+        if ( is_array( $sidebar_data ) )
+        {
+            list( $sidebar, $sidebar_settings ) = $sidebar_data;
+
+            if ( $sidebar && $sidebar_settings )
+            {
+                $data = array(
+                    'sidebar' => $sidebar,
+                    'settings' => $sidebar_settings
+                );
+            }
         }
     }
     catch ( Exception $e )
