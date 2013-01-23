@@ -940,13 +940,7 @@ var HTMLWidget = createClass({
 });
 
 var HTMLBlocks = createClass({
-    extend: BaseWidget,
-    buildHTML: function ()
-    {
-        return "Lubomir implement me...";
-
-
-    }
+    extend: HTMLWidget
 });
 
 var CssCustomBuilder = createClass({
