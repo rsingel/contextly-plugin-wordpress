@@ -11,9 +11,7 @@ class Contextly
 
     function __construct()
     {
-        $client_options = $this->getAPIClientOptions();
-
-        Contextly_Api::getInstance()->setOptions( $client_options );
+        Contextly_Api::getInstance()->setOptions( $this->getAPIClientOptions() );
     }
 
     function addSettngsMenu() {
@@ -169,13 +167,14 @@ class Contextly
         if ( $pagenow == "post.php" || $pagenow == "post-new.php" )
         {
             $admin_mode = true;
-            wp_enqueue_script( 'easy_xdm', 'https://c714015.ssl.cf2.rackcdn.com/js/easyXDM.min.js' );
+            //wp_enqueue_script( 'easy_xdm', 'http://contextlysitescripts.contextly.com/js/easyXDM.min.js' );
         }
 
         if ( is_single() || $admin_mode )
         {
             wp_enqueue_script( 'jquery' );
             wp_enqueue_script( 'contextly-create-class', plugins_url('js/contextly-create-class.js' , __FILE__ ), 'jquery' );
+            wp_enqueue_script( 'easy_xdm', plugins_url('js/easyXDM.min.js', __FILE__ ) );
             wp_enqueue_script( 'contextly', contextly_get_plugin_url(), 'jquery', CONTEXTLY_PLUGIN_VERSION, false );
 
             $ajax_url = plugins_url( 'ajax.php' , __FILE__ );
@@ -194,21 +193,27 @@ class Contextly
             }
 
             $data = array(
-                'ajax_url'  => $ajax_url,
-                'settings'  => $this->getSettingsOptions(),
-                'post'      => $this->getPostData(),
-                'version'   => CONTEXTLY_PLUGIN_VERSION,
-                'admin'     => (int)$admin_mode
+                'ajax_url'   => $ajax_url,
+                'api_server' => CONTEXTLY_API_SERVER_URL,
+                'popup_server' => CONTEXTLY_POPUP_SERVER_URL,
+                'settings'   => $this->getSettingsOptions(),
+                'post'       => $this->getPostData(),
+                'admin'      => (int)$admin_mode,
+                'mode'       => CONTEXTLY_MODE,
+                'version'    => CONTEXTLY_PLUGIN_VERSION
             );
 
-            $reshuffled_data = array(
-                'l10n_print_after' => 'Contextly = ' . json_encode( $data ) . ';'
-            );
+            $api_options = get_option( $this->api_settings_key );
+
+            if ( is_array( $api_options ) && isset( $api_options[ 'api_key' ] ) )
+            {
+                $data[ 'api_key' ] = trim( $api_options[ 'api_key' ] );
+            }
 
             wp_localize_script(
                 'contextly',
                 'Contextly',
-                $reshuffled_data
+                array( 'l10n_print_after' => 'Contextly = ' . json_encode( $data ) . ';' )
             );
         }
     }
@@ -387,47 +392,6 @@ class Contextly
         }
     }
 
-    function getSnippetData( $page_id, $admin = 0 )
-    {
-        $snippet_data = Contextly_Api::getInstance()
-            ->api( 'snippets', 'get' )
-            ->param( 'page_id', $page_id )
-            ->param( 'admin', $admin )
-            ->get();
-
-        if ( isset( $snippet_data->entry ) && isset( $snippet_data->entry->settings ) )
-        {
-            $snippet_settings = $snippet_data->entry->settings;
-            $snippet = $snippet_data->entry;
-
-            unset( $snippet->settings );
-
-            return array( $snippet, $snippet_settings );
-        }
-
-        return $snippet_data;
-    }
-
-    function getSidebarData( $sidebar_id )
-    {
-        $sidebar_data = Contextly_Api::getInstance()
-            ->api( 'sidebars', 'get' )
-            ->param( 'id', $sidebar_id )
-            ->get();
-
-        if ( isset( $sidebar_data->entry ) && isset( $sidebar_data->entry->settings ) )
-        {
-            $sidebar_settings = $sidebar_data->entry->settings;
-            $sidebar = $sidebar_data->entry;
-
-            unset( $sidebar->settings );
-
-            return array( $sidebar, $sidebar_settings );
-        }
-
-        return $sidebar_data;
-    }
-
     // In this method we will display hidden div. After page loading we will load it's content with javascript.
     // This will help to load page about loosing performance.
     function displaySidebar( $attrs, $content = null )
@@ -442,5 +406,6 @@ class Contextly
             return "";
         }
     }
+
 
 }

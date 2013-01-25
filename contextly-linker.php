@@ -5,10 +5,10 @@ Plugin Name: Contextly
 Plugin URI: http://contextly.com
 Description: Adds the Contextly related links tool to your blog. Contextly lets you create related links that helps your readers find more to read, increases your page views and shows off your best content.
 Author: Contextly
-Version: 1.0.73
+Version: 1.0.74
 */
 
-define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.73' );
+define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.74' );
 define ( "CONTEXTLY_MODE", 'local' );
 
 if ( CONTEXTLY_MODE == 'production' )
@@ -144,6 +144,9 @@ add_action('init', 'contextly_addbuttons');
 //////////////////////////////////////////////////////////////////////////////////
 add_shortcode('contextly_sidebar', array( &$ctxActivate, 'displaySidebar' ) );
 
+//////////////////////////////////////////////////////////////////////////////////
+//                            Main Functions                                 //
+//////////////////////////////////////////////////////////////////////////////////
 
 add_action( 'admin_menu', array(&$ctxActivate,'addSettngsMenu') );
 add_action( 'publish_post', array(&$ctxActivate, 'publishPostAction'), 10, 2 );
@@ -155,128 +158,8 @@ add_action( 'admin_enqueue_scripts', array( &$ctxActivate, 'loadScripts' ) );
 //                                  AJAX Actions                                //
 //////////////////////////////////////////////////////////////////////////////////
 
-add_action('contextly_linker_ajax_contextly_load_page_data', 'contextly_load_page_data_callback');
-add_action('contextly_linker_ajax_nopriv_contextly_load_page_data', 'contextly_load_page_data_callback');
-add_action('contextly_linker_ajax_contextly_send_page_events', 'contextly_send_page_events_callback');
-add_action('contextly_linker_ajax_nopriv_contextly_send_page_events', 'contextly_send_page_events_callback');
 add_action('contextly_linker_ajax_contextly_publish_post', 'contextly_publish_post_callback');
 add_action('contextly_linker_ajax_nopriv_contextly_publish_post', 'contextly_publish_post_callback');
-add_action('contextly_linker_ajax_contextly_load_sidebar', 'contextly_load_sidebar_callback');
-add_action('contextly_linker_ajax_nopriv_contextly_load_sidebar', 'contextly_load_sidebar_callback');
-add_action('contextly_linker_ajax_contextly_remove_sidebar', 'contextly_remove_sidebar_callback');
-
-
-function contextly_load_page_data_callback ()
-{
-    $page_id    = $_REQUEST[ 'page_id' ];
-    $admin      = $_REQUEST[ 'admin' ];
-
-    $data = array();
-    $site = null;
-    $snippet = $snippet_settings = null;
-
-    $contextly = new Contextly();
-
-    try
-    {
-        $snippet_data = $contextly->getSnippetData( $page_id, $admin );
-
-        if ( is_array( $snippet_data ) )
-        {
-            list( $snippet, $snippet_settings ) = $snippet_data;
-        }
-
-        if ( $admin )
-        {
-            $data[ 'popup_server_url' ] = CONTEXTLY_POPUP_SERVER_URL;
-            if ( is_object( $snippet_data ) && isset( $snippet_data->error_code ) )
-            {
-                throw new Exception( $snippet_data->error, $snippet_data->error_code );
-            }
-        }
-
-        if ( $snippet && $snippet_settings )
-        {
-            // Don't loose popup server url
-            $data[ 'snippet' ] = $snippet;
-            $data[ 'settings' ] = $snippet_settings;
-        }
-    }
-    catch ( Exception $e )
-    {
-	    $error = $e->getCode();
-        $data = array();
-
-        if ( isDebug() )
-        {
-            echo "Page Data Error: " . print_r( $e, true ) . "\r\n";
-        }
-
-        switch ( $error )
-        {
-            case 403:
-                $help_url = "http://contextly.com/contact-us/";
-                $message =  ( $e->getMessage() ? $e->getMessage() . '. ' : '' ) . "If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
-                break;
-            case 407:
-                $help_url = CONTEXTLY_MAIN_SERVER_URL . "redirect/?type=home&blog_url=" . site_url() . "&blog_title=" . get_bloginfo("name");
-                $message = "Your site isn't currently registered. Use this <a target='_blank' href='{$help_url}'>link</a> to register.";
-                break;
-            case 408:
-                $help_url = "http://contextly.com/contact-us/";
-                $message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
-                break;
-            default:
-                $help_url = "admin.php?page=contextly_options&tab=contextly_options_api";
-                $message = "Please check your API setting on Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
-        }
-
-        $data[ 'error' ] = $error;
-        $data[ 'message' ] = $message;
-        $data[ 'help_url' ] = $help_url;
-    }
-
-    if ( isDebug() )
-    {
-        echo "Page Data Response: " . print_r( $data, true ) . "\r\n";
-    }
-
-    echo json_encode( $data );
-    exit;
-}
-
-function contextly_send_page_events_callback()
-{
-    $page_id = $_REQUEST[ 'page_id' ];
-    $setting_id = $_REQUEST[ 'setting_id' ];
-    $events = $_REQUEST[ 'events' ];
-
-    $contextly = new Contextly();
-    $client_options = $contextly->getAPIClientOptions();
-
-    Contextly_Api::getInstance()->setOptions( $client_options );
-
-    if ( is_array( $events ) )
-    {
-        foreach ( $events as $event )
-        {
-            $event_data = array(
-                'post_id'       => $page_id,
-                'setting_id'    => $setting_id,
-                'event_name'    => $event[ 'name' ],
-                'event_key'     => $event[ 'key' ],
-                'event_date'    => date( "Y-m-d H:i:s", $event[ 'time' ] )
-            );
-
-            Contextly_Api::getInstance()
-                ->api( 'siteevents', 'put' )
-                ->extraParams( $event_data )
-                ->get();
-        }
-    }
-
-    exit;
-}
 
 function contextly_publish_post_callback()
 {
@@ -293,57 +176,4 @@ function contextly_publish_post_callback()
     }
 
     exit;
-}
-
-function contextly_load_sidebar_callback()
-{
-    $sidebar_id = $_REQUEST[ 'sidebar_id' ];
-
-    $data = null;
-    $contextly = new Contextly();
-
-    try
-    {
-        $sidebar_data = $contextly->getSidebarData( $sidebar_id );
-
-        if ( is_array( $sidebar_data ) )
-        {
-            list( $sidebar, $sidebar_settings ) = $sidebar_data;
-
-            if ( $sidebar && $sidebar_settings )
-            {
-                $data = array(
-                    'sidebar' => $sidebar,
-                    'settings' => $sidebar_settings
-                );
-            }
-        }
-    }
-    catch ( Exception $e )
-    {
-        $data = array(
-            'error'     => $e->getCode(),
-            'message'   => $e->getMessage()
-        );
-    }
-
-    if ( isDebug() )
-    {
-        echo "Sidebar Response: " . print_r( $data, true ) . "\r\n";
-    }
-
-    echo json_encode( $data );
-    exit;
-}
-
-function contextly_remove_sidebar_callback()
-{
-    $sidebar_id = $_REQUEST[ 'sidebar_id' ];
-    delete_transient( 'sidebar-' . $sidebar_id );
-    exit;
-}
-
-function isDebug()
-{
-    return isset( $_REQUEST[ 'debug' ] ) && $_REQUEST[ 'debug' ] == 1;
 }

@@ -18,11 +18,7 @@ $action = esc_attr( $_REQUEST['action'] );
 
 //A bit of security
 $allowed_actions = array(
-    'contextly_load_page_data',
-    'contextly_send_page_events',
     'contextly_publish_post',
-    'contextly_load_sidebar',
-    'contextly_remove_sidebar'
 );
 
 if( in_array($action, $allowed_actions) )

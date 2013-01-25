@@ -11,7 +11,7 @@
 
     $.contextly = {};
 
-    $.contextly.popup_server_address    = null;
+    $.contextly.popup_server_address    = Contextly.popup_server;
     $.contextly.help_url                = null;
 
     $.contextly.window_name             = 'contextly-app';
@@ -21,93 +21,142 @@
     $.contextly.tinymce_editor          = null;
     $.contextly.tinymce_text            = null;
 
-    $.contextly.page_events             = new Array();
     $.contextly.settings                = null;
     $.contextly.snippet                 = null;
     $.contextly.proxy                   = null;
     $.contextly.widget_css_loaded       = null;
     $.contextly.sidebar_css_loaded      = null;
 
+    $.contextly.WIDGET_TYPE_TABS = 'tabs';
+    $.contextly.WIDGET_TYPE_BLOCKS = 'blocks';
+
+    $.contextly.ERROR_FORBIDDEN = 403;
+    $.contextly.ERROR_SUSPENDED = 408;
+
     $.fn.contextly = {
 
         init: function ()
         {
-            $.fn.contextly.loadPageData();
+           $.fn.contextly.loadPageSnippet();
         },
 
-        getPageId: function ()
+        restCall: function ( api_name, api_method, params, callback )
         {
-            return Contextly.post.post_id;
+            var remote_url = Contextly.api_server + '/easy_xdm/cors/';
+            var api_url = Contextly.api_server + api_name + '/' + api_method + '/';
+
+            var rpc = new easyXDM.Rpc({
+                    remote: remote_url
+                },
+                {
+                    remote: {
+                        request: {}
+                    }
+                });
+
+            rpc.request({
+                url: api_url,
+                method: "POST",
+                data: params,
+                headers: {
+                    'Contextly-Fast-Call': $.fn.contextly.getApiKey()
+                }
+            }, callback );
         },
 
-        loadPageData: function ()
+        loadPageSnippet: function ()
         {
             var admin = $.fn.contextly.isAdminRequest();
             var page_id = $.fn.contextly.getPageId();
 
-            var data = {
-                action:     'contextly_load_page_data',
-                page_id:    page_id,
-                admin:      admin
-            };
-
-            $.ajax({
-                url: Contextly.ajax_url,
-                type: 'post',
-                dataType: 'json',
-                data: data,
-                success: function ( response )
+            $.fn.contextly.restCall(
+                'snippets',
+                'get',
                 {
-                    if ( response.snippet )
+                    page_id: page_id,
+                    admin: admin
+                },
+                function ( response )
+                {
+                    if ( response.data )
                     {
-                        $.contextly.snippet = response.snippet;
+                        var json_data = easyXDM.getJSONObject().parse( response.data );
+                        $.fn.contextly.displaySnippet( json_data );
                     }
-
-                    if ( response.settings )
-                    {
-                        $.contextly.settings = response.settings;
-                    }
-
-                    if ( admin )
-                    {
-                        $.fn.contextly.processAdminResponse( response );
-                    }
-                    else if ( !response.error )
-                    {
-                        $.fn.contextly.processNormalResponse( response );
-                        $.fn.contextly.registerUnloadEvent();
-                    }
-
-                    // Load page sidebars
-                    jQuery(document).ready(
-                        function() {
-                            $.fn.contextly.loadPageSidebars();
-                        }
-                    );
                 }
-            });
+            );
         },
 
-        processAdminResponse: function processAdminResponse ( response )
+        displaySnippet: function ( data )
         {
-            if ( response.error && response.message )
-            {
-                $.fn.contextly.displayHtml( response.message );
-                $.contextly.help_url = response.help_url;
+            if ( data.entry && data.entry.settings ) {
+                $.contextly.snippet = data.entry;
+                $.contextly.settings = data.entry.settings;
             }
-            else
+
+            if ( !data.error ) {
+                $.fn.contextly.processSnippetResponse( data );
+            } else if ( $.fn.contextly.isAdminRequest() ) {
+                var message = '';
+                var help_url = 'http://contextly.com/contact-us/';
+
+                if ( data.error ) {
+                    if ( data.error_code == $.contextly.ERROR_FORBIDDEN ) {
+                        message = data.error + " Please check your API setting on Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+                    } else if ( data.error_code == $.contextly.ERROR_SUSPENDED ) {
+                        message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+                    } else {
+                        help_url = "admin.php?page=contextly_options&tab=contextly_options_api";
+                        message = "Please check your API setting on Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+                    }
+                } else {
+                    message = "Something wrong, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+                }
+
+                $.fn.contextly.displayHtml( message );
+                $.contextly.help_url = help_url;
+            }
+
+            // Try to load page sidebars
+            jQuery( document ).ready(
+                function() {
+                    $.fn.contextly.loadPageSidebars();
+                }
+            );
+        },
+
+        processSnippetResponse: function processNormalResponse ()
+        {
+            var html = '';
+
+            if ( $.contextly.snippet && $.contextly.settings )
             {
-                $.contextly.popup_server_address = response.popup_server_url;
+                var snippet = $.contextly.snippet;
+                var settings = $.contextly.settings;
+                var widget;
 
-                if ( !response.error )
+                if ( settings.display_type == $.contextly.WIDGET_TYPE_TABS )
                 {
-                    $.fn.contextly.processNormalResponse( response );
+                    widget = new HTMLWidget( snippet, settings );
+                }
+                else if ( settings.display_type == $.contextly.WIDGET_TYPE_BLOCKS )
+                {
+                    widget = new HTMLBlocks( snippet, settings );
+                }
+                else
+                {
+                    widget = new TextWidget( snippet, settings );
                 }
 
-                if ( response.settings )
-                {
-                    $.fn.contextly.appendAdminControls();
-                }
+                html = widget.getHTML();
+            }
+
+            $.fn.contextly.updatePost();
+            $.fn.contextly.displayHtml( html );
+
+            // If this is admin response, we need to add some controls
+            if ( $.fn.contextly.isAdminRequest() ) {
+                $.fn.contextly.appendAdminControls();
             }
         },
 
@@ -118,7 +167,7 @@
 
         loadSettingsCss: function ( settings )
         {
-            if ( settings.display_type == 'tabs' || settings.display_type == 'blocks' )
+            if ( settings.display_type == $.contextly.WIDGET_TYPE_TABS || settings.display_type == $.contextly.WIDGET_TYPE_BLOCKS )
             {
                 $.fn.contextly.loadWidgetCssTemplate( 'widget', settings.tabs_style );
                 $.fn.contextly.buildWidgetCustomCss( '.contextly-widget', settings );
@@ -134,46 +183,16 @@
 
         loadSidebarSettingsCss: function ( settings )
         {
-            $.fn.contextly.loadWidgetCssTemplate( 'sidebar', settings.tabs_style || settings.theme );
+            $.fn.contextly.loadSidebarCssTemplate( 'sidebar', settings.tabs_style || settings.theme );
             $.fn.contextly.buildWidgetCustomCss( '.contextly-sidebar', settings );
 
             $.contextly.sidebar_css_loaded = true;
         },
 
-        processNormalResponse: function processNormalResponse ( response )
-        {
-            var html = '';
-
-            if ( response.snippet && response.settings )
-            {
-                var snippet = response.snippet;
-                var settings = response.settings;
-                var widget;
-
-                if ( settings.display_type == 'tabs' )
-                {
-                    widget = new HTMLWidget( snippet, settings );
-                }
-                else if ( settings.display_type == 'blocks' )
-                {
-                    widget = new HTMLBlocks( snippet, settings );
-                }
-                else
-                {
-                    widget = new TextWidget( snippet, settings );
-                }
-
-                html = widget.getHTML();
-            }
-
-            $.fn.contextly.updatePost( response.snippet );
-
-            $.fn.contextly.displayHtml( html );
-        },
-
-        updatePost: function ( snippet )
+        updatePost: function ()
         {
             var update = false;
+            var snippet = $.contextly.snippet;
 
             // Now we can check last post publish date and probably we need to publish/update this post in our db
             if ( !snippet ) update = true;
@@ -247,10 +266,32 @@
 
         loadWidgetCssTemplate: function ( type, template_type )
         {
-            //var css_url = "http://contextlysiteimages.contextly.com/_plugin/"  + Contextly.version +  "/css-api/template-" + template_type + ".css";
-            //var css_url = "http://linker.site/resources/css/plugin/" + type + "/template-" + template_type + ".css";
+            if ( Contextly.mode == 'local' ) {
+                var css_url = "http://linker.site/resources/css/plugin/" + type + "/" + $.contextly.settings.display_type + "/template-" + template_type + ".css";
+            } else if ( Contextly.mode == 'dev' ) {
+                var css_url = "http://dev.contextly.com/resources/css/plugin/" + type + "/" + $.contextly.settings.display_type + "/template-" + template_type + ".css";
+            } else {
+                var css_url = "http://contextlysiteimages.contextly.com/_plugin/"  + Contextly.version +  "/css-api/" + type + "/" + $.contextly.settings.display_type + "/template-" + template_type + ".css";
+            }
 
-            var css_url = "http://dev.contextly.com/resources/css/plugin/" + type + "/" + $.contextly.settings.display_type + "/template-" + template_type + ".css";
+            $.fn.contextly.loadCss( css_url );
+
+            // If this is IE7 we need to load IE7 css fix
+            if( $.browser.msie && parseFloat( $.browser.version ) < 8 )
+            {
+                $.fn.contextly.loadWidgetCssIE7Fix();
+            }
+        },
+
+        loadSidebarCssTemplate: function ( type, template_type )
+        {
+            if ( Contextly.mode == 'local' ) {
+                var css_url = "http://linker.site/resources/css/plugin/" + type + "/template-" + template_type + ".css";
+            } else if ( Contextly.mode == 'dev' ) {
+                var css_url = "http://dev.contextly.com/resources/css/plugin/" + type + "/template-" + template_type + ".css";
+            } else {
+                var css_url = "http://contextlysiteimages.contextly.com/_plugin/"  + Contextly.version +  "/css-api/" + type + "/template-" + template_type + ".css";
+            }
 
             $.fn.contextly.loadCss( css_url );
 
@@ -315,55 +356,40 @@
             $.fn.contextly.addPageEvent( "show_more", tab );
         },
 
-        addPageEvent: function (event_name, event_key)
+        addPageEvent: function ( event_name, event_key )
         {
-            var event = new Object();
-            event.name = event_name;
-            event.key = event_key;
-            event.time = ( new Date().getTime() / 1000 );
-
-            $.contextly.page_events.push( event );
-        },
-
-        registerUnloadEvent: function ()
-        {
-            $.fn.contextly.addPageEvent( "load_links" );
-
-            jQuery(window).unload(
-                function() {
-                    jQuery.fn.contextly.addPageEvent( "exit" );
-                    jQuery.fn.contextly.sendPageEvents();
-                }
-            );
-        },
-
-        sendPageEvents: function ()
-        {
-            if ( $.contextly.page_events.length < 3 ) return;
-
             var page_id     = $.fn.contextly.getPageId();
             var setting_id  = $.contextly.settings.id;
 
-            var data = {
-                action: 'contextly_send_page_events',
-                page_id: page_id,
-                setting_id: setting_id,
-                events: $.contextly.page_events
+            var event_data = {
+                'post_id': page_id,
+                'setting_id': setting_id,
+                'event_name': event_name,
+                'event_key': event_key,
+                'event_date': new Date()
             };
 
-            $.ajax({
-                url: Contextly.ajax_url,
-                type: 'post',
-                dataType: 'json',
-                data: data,
-                success: function() {
-                }
-            });
+            $.fn.contextly.restCall(
+                'siteevents',
+                'put',
+                event_data,
+                function ( response ) {}
+            );
         },
 
         isAdminRequest: function ()
         {
             return parseInt( Contextly.admin );
+        },
+
+        getPageId: function ()
+        {
+            return Contextly.post.post_id;
+        },
+
+        getApiKey: function ()
+        {
+            return Contextly.api_key;
         },
 
         openPopup: function ()
@@ -391,7 +417,7 @@
                 $.contextly.proxy = new easyXDM.Socket(
                     {
                         onMessage: function( data, origin ) {
-                            jQuery.fn.contextly.loadPageData();
+                            jQuery.fn.contextly.loadPageSnippet();
                         },
                         channel: "linker_channel",
                         remote: $.contextly.popup_server_address + "resources/html/remote.html"
@@ -428,7 +454,7 @@
                 $.contextly.proxy = new easyXDM.Socket(
                     {
                         onMessage: function( data, origin ) {
-                            jQuery.fn.contextly.loadPageData();
+                            jQuery.fn.contextly.loadPageSnippet();
                             jQuery.fn.contextly.createTinymceLink( data );
                         },
                         channel: "linker_channel",
@@ -518,18 +544,6 @@
                                     {
                                         jQuery.fn.contextly.insertSidebarShortcode( json.snippet_id );
                                     }
-
-                                    // Clear cache for sidebar
-                                    var data = {
-                                        action:     'contextly_remove_sidebar',
-                                        sidebar_id: sidebar_id
-                                    };
-
-                                    $.ajax({
-                                        url: Contextly.ajax_url,
-                                        type: 'post',
-                                        data: data
-                                    });
                                 }
 
                                 $.contextly.proxy.destroy();
@@ -559,33 +573,30 @@
 
             if ( settings && page_id )
             {
-                var data = {
-                    action:     'contextly_load_sidebar',
-                    page_id:    page_id,
-                    sidebar_id: sidebar_id,
-                    admin:      admin
-                };
-
-                $.ajax({
-                    url: Contextly.ajax_url,
-                    type: 'post',
-                    dataType: 'json',
-                    data: data,
-                    success: function ( response )
+                $.fn.contextly.restCall(
+                    'sidebars',
+                    'get',
                     {
-                        if ( response && !response.error && response.sidebar && response.settings )
+                        id: sidebar_id
+                    },
+                    function ( response )
+                    {
+                        if ( response.data )
                         {
-                            $.fn.contextly.displaySidebar( response );
+                            var json_data = easyXDM.getJSONObject().parse( response.data );
+                            $.fn.contextly.displaySidebar( json_data );
                         }
                     }
-                });
+                );
             }
         },
 
         displaySidebar: function ( data )
         {
-            var snippet     = data.sidebar;
-            var settings    = data.settings;
+            if ( !data.entry || !data.entry.settings ) return;
+
+            var snippet     = data.entry;
+            var settings    = data.entry.settings;
 
             if ( !snippet ) return;
 
