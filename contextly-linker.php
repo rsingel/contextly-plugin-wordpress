@@ -36,8 +36,8 @@ require_once ( "Contextly.php" );
 $ctxActivate = new Contextly();
 
 function contextly_get_plugin_url() {
-    //return "http://contextlysiteimages.contextly.com/_plugin/" . CONTEXTLY_PLUGIN_VERSION . "/js/jquery-contextly-wordpress.js";
-    return plugins_url( 'js/jquery-contextly-wordpress.js' , __FILE__ );
+    return "http://contextlysiteimages.contextly.com/_plugin/" . CONTEXTLY_PLUGIN_VERSION . "/js/jquery-contextly-wordpress.js";
+    //return plugins_url( 'js/jquery-contextly-wordpress.js' , __FILE__ );
 }
 
 function contextly_linker_widget_html( $admin = false ) {
@@ -174,6 +174,5 @@ function contextly_publish_post_callback()
 
         echo json_encode( $result );
     }
-
     exit;
 }

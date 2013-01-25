@@ -164,8 +164,7 @@ class Contextly
 
         $admin_mode = false;
 
-        if ( $pagenow == "post.php" || $pagenow == "post-new.php" )
-        {
+        if ( $pagenow == "post.php" || $pagenow == "post-new.php" ) {
             $admin_mode = true;
             //wp_enqueue_script( 'easy_xdm', 'http://contextlysitescripts.contextly.com/js/easyXDM.min.js' );
         }
@@ -173,8 +172,8 @@ class Contextly
         if ( is_single() || $admin_mode )
         {
             wp_enqueue_script( 'jquery' );
-            wp_enqueue_script( 'contextly-create-class', plugins_url('js/contextly-create-class.js' , __FILE__ ), 'jquery' );
-            wp_enqueue_script( 'easy_xdm', plugins_url('js/easyXDM.min.js', __FILE__ ) );
+            wp_enqueue_script( 'contextly-create-class', 'http://contextlysitescripts.contextly.com/js/contextly-create-class.js', 'jquery' );
+            wp_enqueue_script( 'easy_xdm', 'http://contextlysitescripts.contextly.com/js/easyXDM.min.js' );
             wp_enqueue_script( 'contextly', contextly_get_plugin_url(), 'jquery', CONTEXTLY_PLUGIN_VERSION, false );
 
             $ajax_url = plugins_url( 'ajax.php' , __FILE__ );

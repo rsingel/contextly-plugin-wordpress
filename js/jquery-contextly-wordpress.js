@@ -42,7 +42,7 @@
 
         restCall: function ( api_name, api_method, params, callback )
         {
-            var remote_url = Contextly.api_server + '/easy_xdm/cors/';
+            var remote_url = Contextly.api_server + '/easy_xdm/cors/index.html';
             var api_url = Contextly.api_server + api_name + '/' + api_method + '/';
 
             var rpc = new easyXDM.Rpc({
@@ -102,15 +102,15 @@
 
                 if ( data.error ) {
                     if ( data.error_code == $.contextly.ERROR_FORBIDDEN ) {
-                        message = data.error + " Please check your API setting on Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+                        message = data.error + " Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
                     } else if ( data.error_code == $.contextly.ERROR_SUSPENDED ) {
                         message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
                     } else {
                         help_url = "admin.php?page=contextly_options&tab=contextly_options_api";
-                        message = "Please check your API setting on Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+                        message = "Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
                     }
                 } else {
-                    message = "Something wrong, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+                    message = "Sorry, something seems to be broken. Please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
                 }
 
                 $.fn.contextly.displayHtml( message );
