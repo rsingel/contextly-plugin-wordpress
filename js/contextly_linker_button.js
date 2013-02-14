@@ -7,7 +7,7 @@ tinymce.create('tinymce.plugins.ContextlyPlugin', {
             title : 'Show Contextly Window',
             image : url + '/img/contextly.gif',
 			onclick : function() {
-                jQuery.fn.contextly.openPopup();
+                Contextly.PopupHelper.getInstance().snippetPopup();
             }
         });
     }

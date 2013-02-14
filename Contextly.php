@@ -166,14 +166,14 @@ class Contextly
 
         if ( $pagenow == "post.php" || $pagenow == "post-new.php" ) {
             $admin_mode = true;
-            //wp_enqueue_script( 'easy_xdm', 'http://contextlysitescripts.contextly.com/js/easyXDM.min.js' );
         }
 
         if ( is_single() || $admin_mode )
         {
             wp_enqueue_script( 'jquery' );
-            wp_enqueue_script( 'contextly-create-class', 'http://contextlysitescripts.contextly.com/js/contextly-create-class.js', 'jquery' );
+            wp_enqueue_script( 'json2' );
             wp_enqueue_script( 'easy_xdm', 'http://contextlysitescripts.contextly.com/js/easyXDM.min.js' );
+            wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'jquery' );
             wp_enqueue_script( 'contextly', contextly_get_plugin_url(), 'jquery', CONTEXTLY_PLUGIN_VERSION, false );
 
             $ajax_url = plugins_url( 'ajax.php' , __FILE__ );
@@ -183,34 +183,28 @@ class Contextly
             $home_url_parts = parse_url( $home_url );
 
             // Fix in case if we have different url for site address
-            if ( !$admin_mode )
-            {
-                if ( $ajax_url_parts[ 'host' ] != $home_url_parts[ 'host' ] )
-                {
+            if ( !$admin_mode ) {
+                if ( $ajax_url_parts[ 'host' ] != $home_url_parts[ 'host' ] ) {
                     $ajax_url = rtrim( $home_url, '/' ) . $ajax_url_parts[ 'path' ];
                 }
             }
 
+            $api_options = $this->getAPIClientOptions();
+
             $data = array(
-                'ajax_url'   => $ajax_url,
-                'api_server' => CONTEXTLY_API_SERVER_URL,
-                'popup_server' => CONTEXTLY_POPUP_SERVER_URL,
-                'settings'   => $this->getSettingsOptions(),
-                'post'       => $this->getPostData(),
-                'admin'      => (int)$admin_mode,
-                'mode'       => CONTEXTLY_MODE,
-                'version'    => CONTEXTLY_PLUGIN_VERSION
+                'ajax_url'      => $ajax_url,
+                'api_server'    => CONTEXTLY_API_SERVER_URL,
+                'app_id'        => $api_options[ 'appID' ],
+                'popup_server'  => CONTEXTLY_POPUP_SERVER_URL,
+                'settings'      => $this->getSettingsOptions(),
+                'post'          => $this->getPostData(),
+                'admin'         => (boolean)$admin_mode,
+                'mode'          => CONTEXTLY_MODE,
+                'version'       => CONTEXTLY_PLUGIN_VERSION
             );
 
-            $api_options = get_option( $this->api_settings_key );
-
-            if ( is_array( $api_options ) && isset( $api_options[ 'api_key' ] ) )
-            {
-                $data[ 'api_key' ] = trim( $api_options[ 'api_key' ] );
-            }
-
             wp_localize_script(
-                'contextly',
+                'jquery',
                 'Contextly',
                 array( 'l10n_print_after' => 'Contextly = ' . json_encode( $data ) . ';' )
             );
@@ -233,11 +227,10 @@ class Contextly
             'server-url'    => CONTEXTLY_API_SERVER_URL,
             'auth-api'      => 'auth/auth',
             'appID'         => '',
-            'appSecret'     => '',
-            'fastAPI'       => true
+            'appSecret'     => ''
         );
 
-        $api_options = get_option( 'contextly_options_api' );
+        $api_options = get_option( $this->api_settings_key );
 
         if ( is_array( $api_options ) && isset( $api_options[ 'api_key' ] ) )
         {
@@ -294,16 +287,17 @@ class Contextly
                     ->api( 'posts', 'put' )
                     ->extraParams( $post_data );
 
-                if ( isset( $contextly_post->entry ) )
-                {
+                if ( isset( $contextly_post->entry ) ) {
                     $publish_post->param( 'id', $contextly_post->entry->id );
                 }
-
                 $response = $publish_post->get();
 
-                // Lets try to update some post related stuff
-                $this->updatePostImages( $post );
-                $this->updatePostTags( $post );
+                // Check if all fine and post was really updated
+                if ( !isset( $response->error ) && $response->affected ) {
+                    // Lets try to update some post related stuff
+                    $this->updatePostImages( $post );
+                    $this->updatePostTags( $post );
+                }
 
                 return $response;
             }
@@ -373,6 +367,7 @@ class Contextly
                 'post_mime_type' => 'image'
             )
         );
+
         if ($attachment_images && is_array($attachment_images)) {
             foreach($attachment_images as $image) {
                 list($src, $width, $height) = wp_get_attachment_image_src($image->ID, 'full');
@@ -396,15 +391,12 @@ class Contextly
     function displaySidebar( $attrs, $content = null )
     {
         // We will display sidebar only if we have id for this sidebar
-        if ( isset( $attrs[ 'id' ] ) )
-        {
-            return "<div class='contextly-sidebar-hidden' id='" . $attrs[ 'id' ] ."'></div>";
+        if ( isset( $attrs[ 'id' ] ) ) {
+            return "<div class='contextly-sidebar-hidden' id='contextly-" . $attrs[ 'id' ] ."'></div>";
         }
-        else
-        {
+        else {
             return "";
         }
     }
-
 
 }

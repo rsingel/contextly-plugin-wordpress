@@ -5,10 +5,10 @@ Plugin Name: Contextly
 Plugin URI: http://contextly.com
 Description: Adds the Contextly related links tool to your blog. Contextly lets you create related links that helps your readers find more to read, increases your page views and shows off your best content.
 Author: Contextly
-Version: 1.0.74
+Version: 1.0.75
 */
 
-define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.74' );
+define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.75' );
 define ( "CONTEXTLY_MODE", 'local' );
 
 if ( CONTEXTLY_MODE == 'production' )
@@ -36,8 +36,8 @@ require_once ( "Contextly.php" );
 $ctxActivate = new Contextly();
 
 function contextly_get_plugin_url() {
-    return "http://contextlysiteimages.contextly.com/_plugin/" . CONTEXTLY_PLUGIN_VERSION . "/js/jquery-contextly-wordpress.js";
-    //return plugins_url( 'js/jquery-contextly-wordpress.js' , __FILE__ );
+    //return "http://contextlysiteimages.contextly.com/_plugin/" . CONTEXTLY_PLUGIN_VERSION . "/js/contextly-wordpress.js";
+    return plugins_url( 'js/contextly-wordpress.js' , __FILE__ );
 }
 
 function contextly_linker_widget_html( $admin = false ) {
@@ -54,7 +54,7 @@ function contextly_linker_widget_html( $admin = false ) {
         }
     }
 
-    return "<div id='linker_widget'>" . $default_html_code . "</div>";
+    return "<div id='linker_widget' class='contextly-widget'>" . $default_html_code . "</div>";
 }
 
 function contextly_linker_widget_html_print() {

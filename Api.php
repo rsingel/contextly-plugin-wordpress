@@ -9,7 +9,6 @@ class Contextly_Api {
 
     const ACCESS_TOKEN_NAME        = 'Contextly-Access-Token';
     const ACCESS_TOKEN_APP_ID_NAME = 'Contextly-App-ID';
-    const ACCESS_FAST_CALL_NAME    = 'Contextly-Fast-Call';
 
     const SEARCH_TYPE_NOT_EQUAL         = '!=';
     const SEARCH_TYPE_EQUAL             = '=';
@@ -91,11 +90,7 @@ class Contextly_Api {
      * @return mixed
      */
     public function get() {
-
-        // Check if fast API is enabled
-        if ( isset( $this->options['fastAPI'] ) && $this->options['fastAPI'] != true ) {
-            $this->authorize();
-        }
+        $this->authorize();
 
         $url = rtrim($this->options['server-url'], "/");
         $url .= "/" . $this->api_name . "/" . $this->method_name . "/";
@@ -111,12 +106,8 @@ class Contextly_Api {
         // setting Auth headers with token
         $access_token = Contextly_Session::getInstance()->getAccessToken();
 
-        if ( $this->options['fastAPI'] != true ) {
-            $headers[ self::ACCESS_TOKEN_NAME ] =  $access_token;
-            $headers[ self::ACCESS_TOKEN_APP_ID_NAME ] =  $this->options['appID'];
-        } else {
-            $headers[ self::ACCESS_FAST_CALL_NAME ] = $this->options['appID'] . '-' . $this->options['appSecret'];//$this->options['fastToken'];
-        }
+        $headers[ self::ACCESS_TOKEN_NAME ] =  $access_token;
+        $headers[ self::ACCESS_TOKEN_APP_ID_NAME ] =  $this->options['appID'];
 
         if ( $this->isDebug() )
         {
