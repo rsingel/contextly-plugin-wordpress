@@ -16,7 +16,7 @@ class Contextly
 
     const WIDGET_SNIPPET_ID = 'linker_widget';
     const WIDGET_SNIPPET_CLASS = 'contextly-widget';
-    const WIDGET_SNIPPET_META_BOX_TITLE = 'Create See Also';
+    const WIDGET_SNIPPET_META_BOX_TITLE = 'Contextly Related Links';
 
     const WIDGET_SIDEBAR_CLASS = 'contextly-sidebar-hidden';
     const WIDGET_SIDEBAR_PREFIX = 'contextly-';
@@ -117,23 +117,12 @@ class Contextly
         $this->addAdminMetaboxForPage( self::PAGE_TYPE_POST );
 
         if ( $this->checkWidgetDisplayType() ) {
-            $this->addEditorButtons();
-        }
-
-        add_action( 'post_submitbox_misc_actions', array( $this, 'publishBoxControl' ) );
-    }
-
-    public function publishBoxControl() {
-        global $post;
-
-        if ( isset( $post ) && $post->ID ) {
             $contextly_settings = new ContextlySettings();
-            $flag = $contextly_settings->isPageDisplayDisabled( $post->ID );
 
-            echo '<div class="misc-pub-section misc-contextly misc-pub-section-last"><span id="timestamp">';
-            echo '<label>Do not display Contextly widgets: ';
-            echo "<input type='checkbox' name='contextly_display_widgets' " . ( $flag == 'on' ? "checked='checked'" : "" ) . "/></label>";
-            echo '</span></div>';
+            global $post;
+            if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
+                $this->addEditorButtons();
+            }
         }
     }
 
@@ -226,31 +215,54 @@ class Contextly
         return $plugin_array;
     }
 
+    public function getAdditionalShowHideControl() {
+        global $post;
+
+        $html = '';
+        if ( isset( $post ) && $post->ID ) {
+            $contextly_settings = new ContextlySettings();
+            $flag = $contextly_settings->isPageDisplayDisabled( $post->ID );
+
+            $html .= '<div style="border-top: 1px solid #DFDFDF; margin-top: 8px; padding-top: 8px;"><span id="timestamp">';
+            $html .= '<label>Do not display Contextly widgets: ';
+            $html .= "<input type='checkbox' name='contextly_display_widgets' " . ( $flag == 'on' ? "checked='checked'" : "" ) . " onchange=\"jQuery('#post').submit();\" /></label>";
+            $html .= '</span></div>';
+        }
+
+        return $html;
+    }
+
     public function getSnippetWidget() {
         global $post;
 
         $default_html_code = '';
+        $additional_admin_controls = '';
 
         if ( is_admin() ) {
             $contextly_settings = new ContextlySettings();
-            $custom_flag = $contextly_settings->isPageDisplayDisabled( $post->ID );
-            $type_flag = $this->checkWidgetDisplayType();
+            $display_post_settings = $contextly_settings->isPageDisplayDisabled( $post->ID );
+            $display_global_settings = $this->checkWidgetDisplayType();
 
-            if ( $type_flag && !$custom_flag ) {
+            if ( $display_global_settings && !$display_post_settings ) {
                 $default_html_code = "Loading data from <a target='_blank' href='http://contextly.com'>contextly.com</a>, please wait...";
                 if ( !isset( $post ) || !$post->ID ) {
                     $default_html_code = "Please save a Draft first.";
                 }
             } else {
-                if ( $custom_flag && $type_flag ) {
-                    $default_html_code = 'This page is not allowed for display contextly widgets. You can change this in Publish box above.';
+                if ( $display_post_settings && $display_global_settings ) {
+                    $default_html_code = 'Change this to: This post/page is set to not show Contextly widgets. You can change this in the checkbox below.';
                 } else {
-                    $default_html_code = 'This page is not allowed for display contextly widgets. You can change this on plugin Settings page.';
+                    $default_html_code = 'This page will not show the Contextly widgets. You can change this on the plugin settings page in Wordpress.';
                 }
             }
+
+            if ( $display_global_settings ) {
+                $additional_admin_controls = $this->getAdditionalShowHideControl();
+            }
+
         }
 
-        return "<div id='" . self::WIDGET_SNIPPET_ID . "' class='" . self::WIDGET_SNIPPET_CLASS . "'>" . $default_html_code . "</div>";
+        return "<div id='" . self::WIDGET_SNIPPET_ID . "' class='" . self::WIDGET_SNIPPET_CLASS . "'>" . $default_html_code . "</div>" . $additional_admin_controls;
     }
 
     function loadScripts() {
@@ -323,7 +335,7 @@ class Contextly
                     'post_title'    => $post->post_title,
                     'post_date'     => $post->post_modified,
                     'post_status'   => $post->post_status,
-                    'post_type'     => 'post',
+                    'post_type'     => self::PAGE_TYPE_POST,
                     'post_content'  => $post->post_content,
                     'url'           => get_permalink( $post->ID ),
                     'author_id'     => $post->post_author,

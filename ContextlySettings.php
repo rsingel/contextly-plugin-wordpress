@@ -62,9 +62,9 @@ class ContextlySettings {
         add_settings_field( 'linker_block_position', 'Position', array( $this, 'settingsBlockPosition' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
 
         add_settings_section( 'display_section', 'Display Contextly Widgets For', array(), self::ADVANCED_SETTINGS_KEY );
-        add_settings_field( 'display_all', 'Pages and Posts:', array( $this, 'settingsDisplayAll' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
         add_settings_field( 'display_posts', 'Only Posts:', array( $this, 'settingsDisplayPosts' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
         add_settings_field( 'display_pages', 'Only Pages:', array( $this, 'settingsDisplayPages' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
+        add_settings_field( 'display_all', 'Pages and Posts:', array( $this, 'settingsDisplayAll' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 
         $this->tabs[ self::ADVANCED_SETTINGS_KEY ] = __( 'Advanced' );
     }
@@ -169,7 +169,7 @@ class ContextlySettings {
     public function settingsDisplayAll() {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
         echo "<label>";
-        echo "<input id='display_all' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type]' type='radio' value='all' " . ($options['display_type'] == 'all' || !isset( $options[ 'display_type' ] ) ? "checked='checked'" : "") . "/>";
+        echo "<input id='display_all' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type]' type='radio' value='all' " . ($options['display_type'] == 'all' ? "checked='checked'" : "") . "/>";
         echo " ";
         echo "</label>";
     }
@@ -177,7 +177,7 @@ class ContextlySettings {
     public function settingsDisplayPosts() {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
         echo "<label>";
-        echo "<input id='display_posts' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type]' type='radio' value='post' " . ($options['display_type'] == 'post' ? "checked='checked'" : "") . "/>";
+        echo "<input id='display_posts' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type]' type='radio' value='post' " . ($options['display_type'] == 'post' || !isset( $options[ 'display_type' ] ) ? "checked='checked'" : "") . "/>";
         echo " ";
         echo "</label>";
     }
@@ -204,7 +204,7 @@ class ContextlySettings {
             return $options['display_type'];
         }
 
-        return 'all';
+        return 'post';
     }
 
     public function isPageDisplayDisabled( $page_id ) {

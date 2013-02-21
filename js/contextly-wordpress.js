@@ -626,7 +626,14 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
-        return "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p><span>" + link.title + "</span></p><img src='" + link.thumbnail_url + "' /></a><!--[if lte ie 7]><b></b><![endif]--></li>";
+        var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p><span>" + link.title + "</span></p>";
+
+        if ( link.thumbnail_url ) {
+            html += "<img src='" + link.thumbnail_url + "' />";
+        }
+        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
+
+        return html;
     },
 
     loadCss: function () {
