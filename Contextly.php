@@ -250,9 +250,9 @@ class Contextly
                 }
             } else {
                 if ( $display_post_settings && $display_global_settings ) {
-                    $default_html_code = 'Change this to: This post/page is set to not show Contextly widgets. You can change this in the checkbox below.';
+                    $default_html_code = 'Contextly content is turned off for this post/page. You can change this via the checkbox below.';
                 } else {
-                    $default_html_code = 'This page will not show the Contextly widgets. You can change this on the plugin settings page in Wordpress.';
+                    $default_html_code = 'Contextly content is turned off for this page. You can change this in <a href="admin.php?page=contextly_options&tab=contextly_options_advanced">Contextly settings page</a> in Wordpress, under advanced.';
                 }
             }
 
