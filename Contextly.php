@@ -276,7 +276,7 @@ class Contextly
         {
             wp_enqueue_script( 'jquery' );
             wp_enqueue_script( 'json2' );
-            wp_enqueue_script( 'easy_xdm', 'http://contextlysitescripts.contextly.com/js/easyXDM.min.js', null, CONTEXTLY_PLUGIN_VERSION );
+            wp_enqueue_script( 'easy_xdm', 'https://c714015.ssl.cf2.rackcdn.com/js/easyXDM.min.js', null, CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly', contextly_get_plugin_url(), 'jquery', CONTEXTLY_PLUGIN_VERSION, false );
 
