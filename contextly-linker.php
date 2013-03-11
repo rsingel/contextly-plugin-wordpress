@@ -7,7 +7,7 @@ Author: Contextly
 Version: 1.0.76
 */
 
-define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.76' );
+define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.77' );
 define ( "CONTEXTLY_MODE", 'local' );
 
 require_once ( "Api.php" );
@@ -30,7 +30,7 @@ if ( CONTEXTLY_MODE == 'production' ) {
 
 function contextly_get_plugin_url() {
     if ( CONTEXTLY_MODE == 'production' ) {
-        return "http://contextlysiteimages.contextly.com/_plugin/" . CONTEXTLY_PLUGIN_VERSION . "/js/contextly-wordpress.js";
+        return "https://c713421.ssl.cf2.rackcdn.com/_plugin/" . CONTEXTLY_PLUGIN_VERSION . "/js/contextly-wordpress.js";
     }
 
     return plugins_url( 'js/contextly-wordpress.js' , __FILE__ );

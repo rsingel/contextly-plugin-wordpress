@@ -141,11 +141,11 @@ class Contextly
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
 
         // After rendered shortcodes, we can run wp formatting filter again
-        remove_filter( 'the_content', 'wpautop' );
-        remove_filter( 'the_excerpt', 'wpautop' );
+        //remove_filter( 'the_content', 'wpautop' );
+        //remove_filter( 'the_excerpt', 'wpautop' );
 
-        add_filter( 'the_content', array( $this, 'wpautop' ), 12 );
-        add_filter( 'the_excerpt', array( $this, 'wpautop' ), 12 );
+        //add_filter( 'the_content', array( $this, 'wpautop' ), 12 );
+        //add_filter( 'the_excerpt', array( $this, 'wpautop' ), 12 );
     }
 
     public function wpautop( $content ) {
@@ -208,9 +208,9 @@ class Contextly
     }
 
     public function addMceButtons( $plugin_array ) {
-        $plugin_array['contextlylink'] = plugins_url('js/contextly_linker_wplink.js' , __FILE__ );
-        $plugin_array['contextlysidebar'] = plugins_url('js/contextly_linker_sidebar.js' , __FILE__ );
-        $plugin_array['contextly'] = plugins_url('js/contextly_linker_button.js' , __FILE__ );
+        $plugin_array['contextlylink'] = plugins_url('js/contextly_linker_wplink.js?v=' . CONTEXTLY_PLUGIN_VERSION , __FILE__ );
+        $plugin_array['contextlysidebar'] = plugins_url('js/contextly_linker_sidebar.js?v=' . CONTEXTLY_PLUGIN_VERSION , __FILE__ );
+        $plugin_array['contextly'] = plugins_url('js/contextly_linker_button.js?v=' . CONTEXTLY_PLUGIN_VERSION , __FILE__ );
 
         return $plugin_array;
     }
@@ -276,8 +276,8 @@ class Contextly
         {
             wp_enqueue_script( 'jquery' );
             wp_enqueue_script( 'json2' );
-            wp_enqueue_script( 'easy_xdm', 'http://contextlysitescripts.contextly.com/js/easyXDM.min.js' );
-            wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'jquery' );
+            wp_enqueue_script( 'easy_xdm', 'http://contextlysitescripts.contextly.com/js/easyXDM.min.js', null, CONTEXTLY_PLUGIN_VERSION );
+            wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly', contextly_get_plugin_url(), 'jquery', CONTEXTLY_PLUGIN_VERSION, false );
 
             $ajax_url = plugins_url( 'ajax.php' , __FILE__ );
