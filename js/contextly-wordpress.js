@@ -949,8 +949,7 @@ Contextly.RESTClient = Contextly.createClass({
                 version:    contextly_settings.getPluginVersion(),
                 site_path:  contextly_settings.getAppId(),
                 admin:      contextly_settings.isAdmin(),
-                page_id:    contextly_settings.getPageId(),
-                https:      contextly_settings.isHttps()
+                page_id:    contextly_settings.getPageId()
             }
         );
 
