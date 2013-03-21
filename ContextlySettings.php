@@ -78,7 +78,7 @@ class ContextlySettings {
         ?>
         <script type="text/javascript">
             function open_contextly_settings() {
-                window.open("<?php echo CONTEXTLY_MAIN_SERVER_URL ?>redirect/?type=settings&blog_url=<?php echo site_url(); ?>&blog_title=<?php echo get_bloginfo("name"); ?>");
+                window.open("<?php echo Urls::getInstance()->getMainServerUrl() ?>redirect/?type=settings&blog_url=<?php echo site_url(); ?>&blog_title=<?php echo get_bloginfo("name"); ?>");
             }
         </script>
         <div class="wrap">
@@ -115,7 +115,7 @@ class ContextlySettings {
     }
 
     public function apiLayoutSection() {
-        $home_url = CONTEXTLY_MAIN_SERVER_URL ."redirect/?type=tour&blog_url=" . site_url() . "&blog_title=" . get_bloginfo("name");
+        $home_url = Urls::getInstance()->getMainServerUrl() ."redirect/?type=tour&blog_url=" . site_url() . "&blog_title=" . get_bloginfo("name");
         echo "<p>In order to communicate securely, we use a shared secret key. You can find your secret API key on <a target='_blank' href='".$home_url."'>{$home_url}</a>. Copy and paste it below.</p>";
     }
 

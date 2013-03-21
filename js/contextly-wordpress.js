@@ -560,6 +560,8 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         return false;
     },
 
+    // TODO: load css from https for https mode
+
     loadCss: function () {
         var css_url = '';
 

@@ -51,6 +51,10 @@ class Contextly
         return false;
     }
 
+	private function isHttpsRequest() {
+		return CONTEXTLY_ACCESS_HTTPS;
+	}
+
     public function checkWidgetDisplayType() {
         global $post;
 
@@ -68,7 +72,7 @@ class Contextly
 
     public function getAPIClientOptions() {
         $client_options = array(
-            'server-url'    => CONTEXTLY_API_SERVER_URL,
+            'server-url'    => Urls::getApiServerUrl(),
             'auth-api'      => 'auth/auth',
             'appID'         => '',
             'appSecret'     => ''
@@ -265,6 +269,14 @@ class Contextly
         return "<div id='" . self::WIDGET_SNIPPET_ID . "' class='" . self::WIDGET_SNIPPET_CLASS . "'>" . $default_html_code . "</div>" . $additional_admin_controls;
     }
 
+	function getPluginJs() {
+		if ( CONTEXTLY_MODE == 'production' ) {
+			return Urls::getPluginJsCdnUrl( 'contextly-wordpress.js' );
+		}
+
+		return plugins_url( 'js/contextly-wordpress.js' , __FILE__ );
+	}
+
     function loadScripts() {
         global $post;
 
@@ -276,9 +288,9 @@ class Contextly
         {
             wp_enqueue_script( 'jquery' );
             wp_enqueue_script( 'json2' );
-            wp_enqueue_script( 'easy_xdm', 'https://c714015.ssl.cf2.rackcdn.com/js/easyXDM.min.js', null, CONTEXTLY_PLUGIN_VERSION );
-            wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
-            wp_enqueue_script( 'contextly', contextly_get_plugin_url(), 'jquery', CONTEXTLY_PLUGIN_VERSION, false );
+            wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
+            wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'easy_xdm', CONTEXTLY_PLUGIN_VERSION );
+            wp_enqueue_script( 'contextly', $this->getPluginJs(), 'contextly-create-class', CONTEXTLY_PLUGIN_VERSION, false );
 
             $ajax_url = plugins_url( 'ajax.php' , __FILE__ );
             $home_url = home_url( '/' );
@@ -297,13 +309,14 @@ class Contextly
 
             $data = array(
                 'ajax_url'      => $ajax_url,
-                'api_server'    => CONTEXTLY_API_SERVER_URL,
+                'api_server'    => Urls::getApiServerUrl(),
+                'popup_server'  => Urls::getPopupServerUrl(),
                 'app_id'        => $api_options[ 'appID' ],
-                'popup_server'  => CONTEXTLY_POPUP_SERVER_URL,
                 'settings'      => $this->getSettingsOptions(),
                 'post'          => $this->getPostData(),
                 'admin'         => (boolean)is_admin(),
                 'mode'          => CONTEXTLY_MODE,
+	            'https'         => CONTEXTLY_HTTPS,
                 'version'       => CONTEXTLY_PLUGIN_VERSION
             );
 
