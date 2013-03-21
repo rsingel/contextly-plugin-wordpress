@@ -13,6 +13,10 @@ class Urls {
 	const MODE_DEV = 'dev';
 	const MODE_LIVE = 'production';
 
+    static private function getScheme() {
+        return 'http' . ( CONTEXTLY_HTTPS ? 's' : '' );
+    }
+
 	static public function getMainServerUrl() {
 		if ( CONTEXTLY_MODE == self::MODE_LIVE ) {
 			return 'http://contextly.com/';
@@ -34,10 +38,8 @@ class Urls {
 	}
 
 	static public function getApiServerUrl() {
-		// TODO: use https for API calls
-
 		if ( CONTEXTLY_MODE == self::MODE_LIVE ) {
-			return 'http://rest.contextly.com/';
+			return self::getScheme() . '://rest.contextly.com/';
 		} elseif ( CONTEXTLY_MODE == self::MODE_DEV ) {
 			return 'http://devrest.contextly.com/';
 		} else {

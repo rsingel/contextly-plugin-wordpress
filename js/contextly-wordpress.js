@@ -386,8 +386,6 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
     },
 
     loadCss: function () {
-        var css_url = '';
-
         // Make needed css rules and load custom widget css
         var custom_css = Contextly.CssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
         if ( custom_css ) {
@@ -560,23 +558,21 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         return false;
     },
 
-    // TODO: load css from https for https mode
-
     loadCss: function () {
-        var css_url = '';
+        var css_url;
 
         if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
             css_url = "http://linker.site/resources/css/plugin/widget/tabs/template-" + this.widget.settings.tabs_style + ".css";
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
             css_url = "http://dev.contextly.com/resources/css/plugin/widget/tabs/template-" + this.widget.settings.tabs_style + ".css";
         } else {
-            css_url = "https://c713421.ssl.cf2.rackcdn.com/_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/tabs/template-" + this.widget.settings.tabs_style + ".css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/tabs/template-" + this.widget.settings.tabs_style + ".css";
         }
 
         Contextly.Utils.getInstance().loadCssFile( css_url );
 
         if ( Contextly.Utils.getInstance().isIE7() ) {
-            var css_ie7fix = "https://c713421.ssl.cf2.rackcdn.com/_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css/template-ie-fix.css";
+            var css_ie7fix = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css/template-ie-fix.css";
             Contextly.Utils.getInstance().loadCssFile( css_ie7fix );
         }
 
@@ -647,7 +643,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
             css_url = "http://dev.contextly.com/resources/css/plugin/widget/blocks/template-default.css";
         } else {
-            css_url = "https://c713421.ssl.cf2.rackcdn.com/_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/blocks/template-default.css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/blocks/template-default.css";
         }
 
         Contextly.Utils.getInstance().loadCssFile( css_url );
@@ -732,13 +728,13 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
             css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + this.widget.settings.theme + ".css";
         } else {
-            css_url = "https://c713421.ssl.cf2.rackcdn.com/_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/sidebar/template-" + this.widget.settings.theme + ".css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/sidebar/template-" + this.widget.settings.theme + ".css";
         }
 
         Contextly.Utils.getInstance().loadCssFile( css_url );
 
         if ( Contextly.Utils.getInstance().isIE7() ) {
-            var css_ie7fix = "https://c713421.ssl.cf2.rackcdn.com/_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css/template-ie-fix.css";
+            var css_ie7fix = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css/template-ie-fix.css";
             Contextly.Utils.getInstance().loadCssFile( css_ie7fix );
         }
 
@@ -912,6 +908,16 @@ Contextly.Settings = Contextly.createClass({
     },
     getWPSettings: function () {
         return Contextly.settings;
+    },
+    isHttps: function () {
+        return Contextly.https;
+    },
+    getCdnCssUrl: function () {
+        if ( self.isHttps() ) {
+            return 'https://c713421.ssl.cf2.rackcdn.com/';
+        } else {
+            return 'http://contextlysiteimages.contextly.com/';
+        }
     }
 });
 
@@ -943,7 +949,8 @@ Contextly.RESTClient = Contextly.createClass({
                 version:    contextly_settings.getPluginVersion(),
                 site_path:  contextly_settings.getAppId(),
                 admin:      contextly_settings.isAdmin(),
-                page_id:    contextly_settings.getPageId()
+                page_id:    contextly_settings.getPageId(),
+                https:      contextly_settings.isHttps()
             }
         );
 

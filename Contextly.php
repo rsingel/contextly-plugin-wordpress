@@ -272,9 +272,9 @@ class Contextly
 	function getPluginJs() {
 		if ( CONTEXTLY_MODE == 'production' ) {
 			return Urls::getPluginJsCdnUrl( 'contextly-wordpress.js' );
-		}
-
-		return plugins_url( 'js/contextly-wordpress.js' , __FILE__ );
+		} else {
+		    return plugins_url( 'js/contextly-wordpress.js' , __FILE__ );
+        }
 	}
 
     function loadScripts() {
@@ -316,7 +316,7 @@ class Contextly
                 'post'          => $this->getPostData(),
                 'admin'         => (boolean)is_admin(),
                 'mode'          => CONTEXTLY_MODE,
-	            'https'         => CONTEXTLY_HTTPS,
+                'https'         => CONTEXTLY_HTTPS,
                 'version'       => CONTEXTLY_PLUGIN_VERSION
             );
 
