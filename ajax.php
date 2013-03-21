@@ -21,13 +21,13 @@ $allowed_actions = array(
     'contextly_publish_post',
 );
 
-if( in_array($action, $allowed_actions) )
-{
-    if(is_user_logged_in())
-        do_action('contextly_linker_ajax_'.$action);
-    else
-        do_action('contextly_linker_ajax_nopriv_'.$action);
-}
-else{
+if( in_array($action, $allowed_actions) ) {
+    if ( is_user_logged_in() ) {
+        do_action( 'contextly_linker_ajax_' . $action );
+    }
+    else {
+        do_action( 'contextly_linker_ajax_nopriv_' . $action );
+    }
+} else {
     die('-1');
 }
