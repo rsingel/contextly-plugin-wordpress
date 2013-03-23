@@ -321,7 +321,7 @@ class Contextly
             );
 
             wp_localize_script(
-                'jquery',
+                'easy_xdm',
                 'Contextly',
                 array( 'l10n_print_after' => 'Contextly = ' . json_encode( $data ) . ';' )
             );

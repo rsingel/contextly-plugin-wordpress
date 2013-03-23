@@ -913,7 +913,7 @@ Contextly.Settings = Contextly.createClass({
         return Contextly.https;
     },
     getCdnCssUrl: function () {
-        if ( self.isHttps() ) {
+        if ( this.isHttps() ) {
             return 'https://c713421.ssl.cf2.rackcdn.com/';
         } else {
             return 'http://contextlysiteimages.contextly.com/';
