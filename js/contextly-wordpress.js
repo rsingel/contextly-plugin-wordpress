@@ -622,7 +622,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
-        var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p><span>" + link.title + "</span></p>";
+        var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p class='link'><span>" + link.title + "</span></p>";
 
         if ( link.thumbnail_url ) {
             html += "<img src='" + link.thumbnail_url + "' />";
@@ -754,8 +754,8 @@ Contextly.CssCustomBuilder = Contextly.createClass({
 
         if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
 
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link a" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link a" , "font-size", settings.font_size );
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link" , "font-size", settings.font_size );
 
         if ( settings.color_background ) {
             css_code += this.buildCSSRule( entry, ".linker_content" , "background-color", settings.color_background );
