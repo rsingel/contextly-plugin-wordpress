@@ -97,6 +97,7 @@ class Contextly
 
         return array(
             'post_id'       => $post->ID,
+            'post_date'     => $post->post_date,
             'post_modified' => $post->post_modified,
             'author'        => $post->post_author,
             'type'          => $post->post_type,
@@ -346,7 +347,8 @@ class Contextly
                 $post_data = array(
                     'post_id'       => $post->ID,
                     'post_title'    => $post->post_title,
-                    'post_date'     => $post->post_modified,
+                    'post_date'     => $post->post_date,
+                    'post_modified' => $post->post_modified,
                     'post_status'   => $post->post_status,
                     'post_type'     => self::PAGE_TYPE_POST,
                     'post_content'  => $post->post_content,

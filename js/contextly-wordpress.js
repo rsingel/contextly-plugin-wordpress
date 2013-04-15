@@ -5,7 +5,7 @@ Contextly = Contextly || {};
 
 Contextly.Errors = {
     ERROR_FORBIDDEN: 403,
-    ERROR_FORBIDDEN: 408
+    ERROR_SUSPENDED: 408
 };
 
 Contextly.Singleton = Contextly.createClass({
@@ -116,16 +116,13 @@ Contextly.PageView = Contextly.createClass({
         var update = false;
 
         // Now we can check last post publish date and probably we need to publish/update this post in our db
-        if ( !this.entry.publish_date ) update = true;
-        else if ( this.entry.publish_date != Contextly.Settings.getInstance().getPostPublishDate() ) {
-            var post_date = Contextly.Utils.getInstance().stringToDate( Contextly.Settings.getInstance().getPostPublishDate() );
-            var cur_date = new Date().getTime();
+        if ( !this.entry.created_date ) {
+            update = true;
+        } else {
+            var created_date_cmp = Contextly.Utils.getInstance().isPostNeedsToBeUpdated( this.entry.created_date, Contextly.Settings.getInstance().getPostCreatedDate() );
+            var modified_date_cmp = Contextly.Utils.getInstance().isPostNeedsToBeUpdated( this.entry.modified_date, Contextly.Settings.getInstance().getPostModifiedDate() );
 
-            var diff = Math.abs( ( cur_date - post_date ) / 1000 );
-            var allowed_diff = 60 * 60 * 24 * 365; // 1 year
-
-            // Don't allow to update very old posts
-            if ( diff <= allowed_diff ) {
+            if ( created_date_cmp || modified_date_cmp ) {
                 update = true;
             }
         }
@@ -429,7 +426,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 
         div += "</ul>";
 
-        var active_flag = false;
+        active_flag = false;
         for (var section in sections) {
             var section_name = sections[section];
             if ( this.isDisplaySection( section_name ) ) {
@@ -625,7 +622,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
-        var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p><span>" + link.title + "</span></p>";
+        var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p class='link'><span>" + link.title + "</span></p>";
 
         if ( link.thumbnail_url ) {
             html += "<img src='" + link.thumbnail_url + "' />";
@@ -757,8 +754,8 @@ Contextly.CssCustomBuilder = Contextly.createClass({
 
         if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
 
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link a" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link a" , "font-size", settings.font_size );
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link" , "font-size", settings.font_size );
 
         if ( settings.color_background ) {
             css_code += this.buildCSSRule( entry, ".linker_content" , "background-color", settings.color_background );
@@ -827,6 +824,23 @@ Contextly.Utils = Contextly.createClass({
         date.setHours(timeParts[0], timeParts[1], timeParts[2])
 
         return date;
+    },
+
+    isPostNeedsToBeUpdated: function ( db_date, cms_post_date ) {
+        if ( db_date != cms_post_date ) {
+            var post_date = Contextly.Utils.getInstance().stringToDate( cms_post_date );
+            var cur_date = new Date().getTime();
+
+            var diff = Math.abs( ( cur_date - post_date ) / 1000 );
+            var allowed_diff = 60 * 60 * 24 * 365; // 1 year
+
+            // Don't allow to update very old posts
+            if ( diff <= allowed_diff ) {
+                return true;
+            }
+        }
+
+        return false;
     },
 
     isIE7: function () {
@@ -900,8 +914,11 @@ Contextly.Settings = Contextly.createClass({
     getMode: function () {
         return Contextly.mode;
     },
-    getPostPublishDate: function () {
+    getPostModifiedDate: function () {
         return Contextly.post.post_modified;
+    },
+    getPostCreatedDate: function () {
+        return Contextly.post.post_date;
     },
     getAuthorId: function () {
         return Contextly.post.author;
