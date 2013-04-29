@@ -1098,9 +1098,6 @@ Contextly.PopupHelper = Contextly.createClass({
         );
 
         if ( callback ) {
-            if ( this.popup_socket != null ) this.popup_socket.destroy();
-
-            var self = this;
             this.popup_socket = new easyXDM.Socket({
                 channel: 'linker_channel',
                 remote: Contextly.Settings.getInstance().getPopupServerUrl() + '/resources/html/remote.html',
@@ -1109,7 +1106,6 @@ Contextly.PopupHelper = Contextly.createClass({
                         var json_data = easyXDM.getJSONObject().parse( data );
                         callback( json_data );
                     }
-                    self.popup_socket.destroy();
                 }
             });
         }

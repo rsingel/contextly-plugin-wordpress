@@ -130,7 +130,7 @@ class Contextly_Api {
         {
             echo "API Response: " . print_r( $response, true ) . "\r\n";
         }
-
+	    
         $response = json_decode($response);
 
         $this->method_name = null;
