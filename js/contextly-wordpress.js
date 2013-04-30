@@ -1098,6 +1098,8 @@ Contextly.PopupHelper = Contextly.createClass({
         );
 
         if ( callback ) {
+            if ( this.popup_socket != null ) this.popup_socket.destroy();
+
             this.popup_socket = new easyXDM.Socket({
                 channel: 'linker_channel',
                 remote: Contextly.Settings.getInstance().getPopupServerUrl() + '/resources/html/remote.html',
