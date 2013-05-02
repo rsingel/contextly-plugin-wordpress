@@ -217,13 +217,17 @@ Contextly.SnippetWidgetFormatterFactory = Contextly.createClass({
      */
     getFormatter: function( widget ) {
         var type = widget.settings.display_type;
-
+        var style = widget.settings.tabs_style;
         if ( type == 'default' ) {
             return new Contextly.SnippetWidgetTextFormatter( widget );
         } else if ( type == 'tabs' ) {
             return new Contextly.SnippetWidgetTabsFormatter( widget );
         } else if ( type == 'blocks' ) {
-            return new Contextly.SnippetWidgetBlocksFormatter( widget );
+            if ( style == 'the-next-web' ) {
+                return new Contextly.SnippetWidgetTheNextWebBlocksFormatter( widget );
+            } else {
+                return new Contextly.SnippetWidgetDefaultBlocksFormatter( widget );
+            }
         }
     }
 });
@@ -636,11 +640,11 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         var css_url = '';
 
         if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
-            css_url = "http://linker.site/resources/css/plugin/widget/blocks/template-default.css";
+            css_url = "http://linker.site/resources/css/plugin/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
-            css_url = "http://dev.contextly.com/resources/css/plugin/widget/blocks/template-default.css";
+            css_url = "http://dev.contextly.com/resources/css/plugin/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
         } else {
-            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/blocks/template-default.css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
         }
 
         Contextly.Utils.getInstance().loadCssFile( css_url );
@@ -651,6 +655,27 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         if ( custom_css ) {
             Contextly.Utils.getInstance().loadCustomCssCode( custom_css );
         }
+    }
+
+});
+
+Contextly.SnippetWidgetDefaultBlocksFormatter = Contextly.createClass({
+    extend: Contextly.SnippetWidgetBlocksFormatter
+});
+
+Contextly.SnippetWidgetTheNextWebBlocksFormatter = Contextly.createClass({
+    extend: Contextly.SnippetWidgetBlocksFormatter,
+
+    getLinkHTML: function ( link ) {
+        var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">";
+
+        if ( link.thumbnail_url ) {
+            html += "<img src='" + link.thumbnail_url + "' />";
+        }
+        html += "<p><span>" + link.title + "</span></p>";
+        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
+
+        return html;
     }
 
 });
