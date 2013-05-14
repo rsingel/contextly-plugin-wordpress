@@ -1015,7 +1015,11 @@ Contextly.PopupHelper = Contextly.createClass({
         this.popup_socket   = null;
 
         if ( widget && widget.snippets && widget.snippets.length ) {
-            this.snippet = widget.snippets[0];
+            var snippet = widget.snippets[0];
+
+            if ( snippet.links ) {
+                this.snippet = snippet;
+            }
         }
     },
 
