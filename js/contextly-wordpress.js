@@ -648,7 +648,9 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         Contextly.Utils.getInstance().loadCssFile( css_url );
 
         // Make needed css rules and load custom widget css
-        var custom_css = Contextly.CssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
+        var custom_css = Contextly.BlocksWidgetCssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
+
+        console.log(custom_css);
 
         if ( custom_css ) {
             Contextly.Utils.getInstance().loadCustomCssCode( custom_css );
@@ -689,7 +691,7 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
         Contextly.Utils.getInstance().loadCssFile( css_url, 'snippet' );
 
         // Make needed css rules and load custom widget css
-        var custom_css = Contextly.CssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
+        var custom_css = Contextly.FloatWidgetCssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
 
         if ( custom_css ) {
             Contextly.Utils.getInstance().loadCustomCssCode( custom_css, 'snippet-custom' );
@@ -826,7 +828,92 @@ Contextly.CssCustomBuilder = Contextly.createClass({
     buildCSSRule: function( entry, prefix, property, value ) {
         if ( !value ) return "";
         return entry + " " + prefix + " {" + property + ": " + value + "}";
+    },
+
+    hex2Vals: function( hex ) {
+        if(hex.charAt(0) == "#") hex = hex.slice(1);
+        hex = hex.toUpperCase();
+        var hex_alphabets = "0123456789ABCDEF";
+        var value = new Array(3);
+        var k = 0;
+        var int1,int2;
+
+        for( var i=0;i<6;i+=2 ) {
+            int1 = hex_alphabets.indexOf(hex.charAt(i));
+            int2 = hex_alphabets.indexOf(hex.charAt(i+1));
+            value[k] = (int1 * 16) + int2;
+            k++;
+        }
+
+        return(value);
     }
+});
+
+Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
+
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link" , "font-size", settings.font_size );
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, ".link span" , "color", settings.color_links );
+        }
+
+        if ( settings.color_background ) {
+            css_code += this.buildCSSRule( entry, ".contextly_subhead" , "background-color", settings.color_background );
+        }
+
+        if ( settings.color_border ) {
+            var color_border = settings.color_border;
+            var rgb = this.hex2Vals( color_border );
+
+            console.log(rgb.length);
+
+            if ( rgb.length == 3 ) {
+                var r = rgb[0];
+                var g = rgb[1];
+                var b = rgb[2];
+
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", color_border );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "rgba("+r+","+g+","+b+",0.7)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-moz-linear-gradient(top,  rgba(255,255,255,0) 0%, rgba("+r+","+g+","+b+",0.19) 10%, rgba("+r+","+g+","+b+",0.5) 27%, rgba("+r+","+g+","+b+",0.9) 100%)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-o-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-ms-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+            }
+        }
+
+        return css_code;
+    }
+
+});
+
+Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
+
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link" , "font-size", settings.font_size );
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, ".link span" , "color", settings.color_links );
+        }
+
+        return css_code;
+    }
+
 });
 
 Contextly.Utils = Contextly.createClass({
