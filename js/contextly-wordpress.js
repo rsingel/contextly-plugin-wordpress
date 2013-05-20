@@ -222,12 +222,8 @@ Contextly.SnippetWidgetFormatterFactory = Contextly.createClass({
             return new Contextly.SnippetWidgetTextFormatter( widget );
         } else if ( type == 'tabs' ) {
             return new Contextly.SnippetWidgetTabsFormatter( widget );
-        } else if ( type == 'blocks' ) {
-            if ( style == 'the-next-web' ) {
-                return new Contextly.SnippetWidgetTheNextWebBlocksFormatter( widget );
-            } else {
-                return new Contextly.SnippetWidgetDefaultBlocksFormatter( widget );
-            }
+        } else if ( type == 'float' ) {
+            return new Contextly.SnippetWidgetFloatFormatter( widget );
         }
     }
 });
@@ -322,6 +318,51 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             } else if (wp_settings.target_id) {
                 this.getDisplayElement().insertAfter(jQuery("#" + wp_settings.target_id));
             }
+        }
+    },
+
+    getImagesHeight: function () {
+        switch ( this.widget.settings.images_type ) {
+            case 'square32x32':
+            case 'letter82x32':
+                return 32;
+            case 'square45x45':
+            case 'letter82x45':
+                return 45;
+            case 'square90x90':
+            case 'letter110x90':
+                return 90;
+            case 'square70x70':
+                return 70;
+            case 'square110x110':
+                return 110;
+            case 'square150x150':
+                return 150;
+            default:
+                return 0;
+        }
+    },
+
+    getImagesWidth: function () {
+        switch ( this.widget.settings.images_type ) {
+            case 'letter82x32':
+            case 'letter82x45':
+                return 82;
+            case 'square110x110':
+            case 'letter110x90':
+                return 110;
+            case 'square32x32':
+                return 32;
+            case 'square45x45':
+                return 45;
+            case 'square70x70':
+                return 70;
+            case 'square90x90':
+                return 90;
+            case 'square150x150':
+                return 150;
+            default:
+                return 0;
         }
     }
 });
@@ -506,51 +547,6 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         if ( this.widget.links[ type ].length == img_count ) return true;
     },
 
-    getImagesHeight: function () {
-        switch ( this.widget.settings.images_type ) {
-            case 'square32x32':
-            case 'letter82x32':
-                return 32;
-            case 'square45x45':
-            case 'letter82x45':
-                return 45;
-            case 'square90x90':
-            case 'letter110x90':
-                return 90;
-            case 'square70x70':
-                return 70;
-            case 'square110x110':
-                return 110;
-            case 'square150x150':
-                return 150;
-            default:
-                return 0;
-        }
-    },
-
-    getImagesWidth: function () {
-        switch ( this.widget.settings.images_type ) {
-            case 'letter82x32':
-            case 'letter82x45':
-                return 82;
-            case 'square110x110':
-            case 'letter110x90':
-                return 110;
-            case 'square32x32':
-                return 32;
-            case 'square45x45':
-                return 45;
-            case 'square70x70':
-                return 70;
-            case 'square90x90':
-                return 90;
-            case 'square150x150':
-                return 150;
-            default:
-                return 0;
-        }
-    },
-
     isDisplayContextlyLogo: function() {
         return !Contextly.Settings.getInstance().isAdmin() && !this.isMobileRequest();
     },
@@ -659,11 +655,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 
 });
 
-Contextly.SnippetWidgetDefaultBlocksFormatter = Contextly.createClass({
-    extend: Contextly.SnippetWidgetBlocksFormatter
-});
-
-Contextly.SnippetWidgetTheNextWebBlocksFormatter = Contextly.createClass({
+Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetBlocksFormatter,
 
     getLinkHTML: function ( link ) {
@@ -672,10 +664,34 @@ Contextly.SnippetWidgetTheNextWebBlocksFormatter = Contextly.createClass({
         if ( link.thumbnail_url ) {
             html += "<img src='" + link.thumbnail_url + "' />";
         }
-        html += "<p><span>" + link.title + "</span></p>";
+
+        var text_width = this.getImagesWidth() + 20;
+
+        html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
         html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
 
         return html;
+    },
+
+    loadCss: function () {
+        var css_url = '';
+
+        if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
+            css_url = "http://linker.site/resources/css/plugin/widget/float/template-default.css";
+        } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
+            css_url = "http://dev.contextly.com/resources/css/plugin/widget/float/template-default.css";
+        } else {
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/float/template-defaults.css";
+        }
+
+        Contextly.Utils.getInstance().loadCssFile( css_url, 'snippet' );
+
+        // Make needed css rules and load custom widget css
+        var custom_css = Contextly.CssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
+
+        if ( custom_css ) {
+            Contextly.Utils.getInstance().loadCustomCssCode( custom_css, 'snippet-custom' );
+        }
     }
 
 });
