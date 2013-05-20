@@ -222,6 +222,8 @@ Contextly.SnippetWidgetFormatterFactory = Contextly.createClass({
             return new Contextly.SnippetWidgetTextFormatter( widget );
         } else if ( type == 'tabs' ) {
             return new Contextly.SnippetWidgetTabsFormatter( widget );
+        } else if ( type == 'blocks' ) {
+            return new Contextly.SnippetWidgetBlocksFormatter( widget );
         } else if ( type == 'float' ) {
             return new Contextly.SnippetWidgetFloatFormatter( widget );
         }
