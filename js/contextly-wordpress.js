@@ -650,8 +650,6 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         // Make needed css rules and load custom widget css
         var custom_css = Contextly.BlocksWidgetCssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
 
-        console.log(custom_css);
-
         if ( custom_css ) {
             Contextly.Utils.getInstance().loadCustomCssCode( custom_css );
         }
@@ -872,8 +870,6 @@ Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
         if ( settings.color_border ) {
             var color_border = settings.color_border;
             var rgb = this.hex2Vals( color_border );
-
-            console.log(rgb.length);
 
             if ( rgb.length == 3 ) {
                 var r = rgb[0];
