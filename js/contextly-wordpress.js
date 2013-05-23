@@ -323,49 +323,30 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         }
     },
 
-    getImagesHeight: function () {
-        switch ( this.widget.settings.images_type ) {
-            case 'square32x32':
-            case 'letter82x32':
-                return 32;
-            case 'square45x45':
-            case 'letter82x45':
-                return 45;
-            case 'square90x90':
-            case 'letter110x90':
-                return 90;
-            case 'square70x70':
-                return 70;
-            case 'square110x110':
-                return 110;
-            case 'square150x150':
-                return 150;
-            default:
-                return 0;
+    getImageDimension: function () {
+        var image_type = this.widget.settings.images_type;
+        image_type = image_type.replace( 'square', '').replace( 'letter', '' );
+
+        var dimensions = image_type.split( 'x' );
+        var w = 0;
+        var h = 0;
+
+        if ( dimensions.length == 2 ) {
+            w = parseInt( dimensions[0] );
+            h = parseInt( dimensions[1] );
         }
+
+        return {width: w, height: h};
+    },
+
+    getImagesHeight: function () {
+        var image_dimension = this.getImageDimension();
+        return image_dimension.height;
     },
 
     getImagesWidth: function () {
-        switch ( this.widget.settings.images_type ) {
-            case 'letter82x32':
-            case 'letter82x45':
-                return 82;
-            case 'square110x110':
-            case 'letter110x90':
-                return 110;
-            case 'square32x32':
-                return 32;
-            case 'square45x45':
-                return 45;
-            case 'square70x70':
-                return 70;
-            case 'square90x90':
-                return 90;
-            case 'square150x150':
-                return 150;
-            default:
-                return 0;
-        }
+        var image_dimension = this.getImageDimension();
+        return image_dimension.width;
     }
 });
 
@@ -667,7 +648,7 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
             html += "<img src='" + link.thumbnail_url + "' />";
         }
 
-        var text_width = this.getImagesWidth() + 20;
+        var text_width = this.getImagesWidth() + 10;
 
         html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
         html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
