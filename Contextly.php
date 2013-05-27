@@ -35,6 +35,7 @@ class Contextly
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
+	    add_action( 'wp_enqueue_scripts', array( $this, 'loadStyles' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'loadScripts' ) );
 
         add_action( 'publish_post', array( $this, 'publishPost'), 10, 2 );
@@ -50,10 +51,6 @@ class Contextly
         }
         return false;
     }
-
-	private function isHttpsRequest() {
-		return CONTEXTLY_ACCESS_HTTPS;
-	}
 
     public function checkWidgetDisplayType() {
         global $post;
@@ -144,13 +141,6 @@ class Contextly
 
     public function initDefault() {
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
-
-        // After rendered shortcodes, we can run wp formatting filter again
-        //remove_filter( 'the_content', 'wpautop' );
-        //remove_filter( 'the_excerpt', 'wpautop' );
-
-        //add_filter( 'the_content', array( $this, 'wpautop' ), 12 );
-        //add_filter( 'the_excerpt', array( $this, 'wpautop' ), 12 );
     }
 
     public function wpautop( $content ) {
@@ -290,6 +280,7 @@ class Contextly
             wp_enqueue_script( 'jquery' );
             wp_enqueue_script( 'json2' );
             wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
+            wp_enqueue_script( 'pretty_photo', plugins_url( 'js/jquery.prettyPhoto.js' , __FILE__ ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'easy_xdm', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly', $this->getPluginJs(), 'contextly-create-class', CONTEXTLY_PLUGIN_VERSION, false );
 
@@ -328,6 +319,11 @@ class Contextly
             );
         }
     }
+
+	function loadStyles() {
+		wp_register_style( 'pretty-photo-style', plugins_url( 'css/prettyPhoto/style.css', __FILE__ ), '', CONTEXTLY_PLUGIN_VERSION );
+		wp_enqueue_style( 'pretty-photo-style' );
+	}
 
     // Publish post action
     function publishPost($post_ID, $post) {

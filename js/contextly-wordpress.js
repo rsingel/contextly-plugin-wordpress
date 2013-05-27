@@ -605,6 +605,28 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
+        if ( link.video ) {
+            return this.getLinkHTMLVideo( link );
+        } else {
+            return this.getLinkHTMLNormal( link );
+        }
+    },
+
+    getLinkHTMLVideo: function ( link ) {
+        var html = "<li>";
+
+        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + link.title + "\">";
+        html += "<span class=\"vidpop-playbutton-big\"></span>";
+        html += "<p class='link'><span>" + link.title + "<span></p>";
+        if ( link.thumbnail_url ) {
+            html += "<img src='" + link.thumbnail_url + "' />";
+        }
+        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
+
+        return html;
+    },
+
+    getLinkHTMLNormal: function ( link ) {
         var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p class='link'><span>" + link.title + "</span></p>";
 
         if ( link.thumbnail_url ) {
@@ -634,6 +656,20 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         if ( custom_css ) {
             Contextly.Utils.getInstance().loadCustomCssCode( custom_css );
         }
+    },
+
+    display: function () {
+        if ( this.hasWidgetData() ) {
+            Contextly.SnippetWidgetTextFormatter.fn.display.call( this );
+
+            this.attachVideoPopups();
+        }
+    },
+
+    attachVideoPopups: function () {
+        jQuery("a[rel='contextly-video-link']").prettyPhoto({animation_speed:'fast',slideshow:10000, hideflash: true});
+        //jQuery("a[rel='contextly-video-link']").prettyPhoto({animation_speed:'normal',theme:'default',slideshow:3000, autoplay_slideshow: true});
+        //$(".gallery:gt(0) a[rel^='prettyPhoto']").prettyPhoto({animation_speed:'fast',slideshow:10000, hideflash: true});
     }
 
 });
