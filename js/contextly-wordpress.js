@@ -615,7 +615,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     getLinkHTMLVideo: function ( link ) {
         var html = "<li>";
 
-        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + link.title + "\">";
+        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + link.title + "\" contextly-url=\"" + link.url + "\" >";
         html += "<span class=\"vidpop-playbutton-big\"></span>";
         html += "<p class='link'><span>" + link.title + "<span></p>";
         if ( link.thumbnail_url ) {
@@ -667,9 +667,17 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     attachVideoPopups: function () {
-        jQuery("a[rel='contextly-video-link']").prettyPhoto({animation_speed:'fast',slideshow:10000, hideflash: true});
-        //jQuery("a[rel='contextly-video-link']").prettyPhoto({animation_speed:'normal',theme:'default',slideshow:3000, autoplay_slideshow: true});
-        //$(".gallery:gt(0) a[rel^='prettyPhoto']").prettyPhoto({animation_speed:'fast',slideshow:10000, hideflash: true});
+        jQuery("a[rel='contextly-video-link']").each(
+            function () {
+                jQuery( this ).prettyPhoto({animation_speed:'fast',slideshow:10000, hideflash: true});
+                jQuery( this ).click(
+                    function () {
+                        var contextly_url = jQuery( this).attr( 'contextly-url' );
+                        Contextly.MainServerAjaxClient.getInstance().call( contextly_url );
+                    }
+                );
+            }
+        );
     }
 
 });
@@ -1031,6 +1039,7 @@ Contextly.PageEvents = Contextly.createClass({
 
         Contextly.Loader.getInstance().trackPageEvent( setting_id, "show_more", tab );
     }
+
 });
 
 Contextly.Settings = Contextly.createClass({
@@ -1038,6 +1047,9 @@ Contextly.Settings = Contextly.createClass({
 
     getAPIServerUrl: function () {
         return Contextly.api_server;
+    },
+    getMainServerUrl: function () {
+        return Contextly.main_server;
     },
     getPopupServerUrl: function () {
         return Contextly.popup_server;
@@ -1147,6 +1159,40 @@ Contextly.RESTClient = Contextly.createClass({
             }
         }
     }
+});
+
+Contextly.MainServerAjaxClient = Contextly.createClass({
+    extend: Contextly.Singleton,
+
+    getXhr: function () {
+        if ( !this.xhr ) {
+            var remote_url = Contextly.Settings.getInstance().getMainServerUrl() + '/easy_xdm/cors/index.html';
+            this.xhr = new easyXDM.Rpc({
+                    remote: remote_url
+                },
+                {
+                    remote: {
+                        request: {}
+                    }
+                });
+        }
+        return this.xhr;
+    },
+
+    call: function ( url, callback ) {
+        this.getXhr().request(
+            {
+                url: url,
+                method: "POST"
+            },
+            function ( response ) {
+                if ( callback ) {
+                    callback( response );
+                }
+            }
+        );
+    }
+
 });
 
 Contextly.PopupHelper = Contextly.createClass({

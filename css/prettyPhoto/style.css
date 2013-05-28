@@ -109,7 +109,7 @@ div.pp_default .pp_close:hover, div.pp_default .pp_nav .pp_play:hover, div.pp_de
     opacity: 0.7
 }
 div.pp_default .pp_description {
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 700;
     line-height: 14px;
     margin: 5px 50px 5px 0
