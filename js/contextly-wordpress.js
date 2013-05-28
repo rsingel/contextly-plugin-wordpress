@@ -569,6 +569,26 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetTextFormatter,
 
+    getLinksHTMLOfType: function( type ) {
+        var html = "";
+        var widget = this.widget;
+        var links_limit = 4;
+
+        if ( widget.links && widget.links[ type ] ) {
+            for ( var link_idx in widget.links[ type ] ) {
+                if ( link_idx >= links_limit ) break;
+
+                var link = widget.links[ type ][ link_idx ];
+
+                if ( link.id && link.title ) {
+                    html += this.getLinkHTML( link );
+                }
+            }
+        }
+
+        return html;
+    },
+
     getWidgetHTML: function () {
         var div = "";
         var value;
