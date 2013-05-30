@@ -5,9 +5,34 @@
 	Version: 3.1.5
 ------------------------------------------------------------------------- */
 (function($) {
-	$.prettyPhoto = {version: '3.1.5'};
+	var screenWidth = window.innerWidth;
+	var screenHeight = window.innerHeight;
+	
+	if(screenWidth <= 550 && screenWidth >= 520 ) { var video_width_mob = 470; }
 
+	else if(screenWidth < 520 && screenWidth >= 490) { var video_width_mob = 450; } 
+	else if(screenWidth < 490 && screenWidth >= 460) { var video_width_mob = 420; }
+	else if(screenWidth < 460 && screenWidth >= 430) { var video_width_mob = 390; } 
+	else if(screenWidth < 430 && screenWidth >= 400) { var video_width_mob = 360; }
+	else if(screenWidth < 400 && screenWidth >= 370) { var video_width_mob = 330; }
+	else if(screenWidth < 370 && screenWidth >= 340) { var video_width_mob = 300; }
+	else if(screenWidth < 340 && screenWidth >= 310) { var video_width_mob = 270; } 
+	else if(screenWidth < 310 && screenWidth >= 280) { var video_width_mob = 240; } 
+	else if(screenWidth < 280 && screenWidth >= 250) { var video_width_mob = 210; }
+	else if(screenWidth < 250 && screenWidth >= 220) { var video_width_mob = 180; }
+	else if(screenWidth < 220 && screenWidth >= 190) { var video_width_mob = 150; }
+	else if(screenWidth < 190 && screenWidth >= 160) { var video_width_mob = 120; }
+	else if(screenWidth < 160 && screenWidth >= 0) { var video_width_mob = 80; }
+
+	else { var video_width_mob = 500;}	 
+	
+	if(screenWidth > 400 ) { var video_height_mob = 344; }
+	else { var video_height_mob = 270; } 
+	
+	
+	$.prettyPhoto = {version: '3.1.5'};
 	$.fn.prettyPhoto = function(pp_settings) {
+		
 		pp_settings = jQuery.extend({
 			hook: 'rel', /* the attribute tag to use for prettyPhoto hooks. default: 'rel'. For HTML5, use "data-rel" or similar. */
 			animation_speed: 'fast', /* fast/slow/normal */
@@ -15,11 +40,11 @@
 			slideshow: 5000, /* false OR interval time in ms */
 			autoplay_slideshow: false, /* true/false */
 			opacity: 0.80, /* Value between 0 and 1 */
-			show_title: true, /* true/false */
-			allow_resize: true, /* Resize the photos bigger than viewport. true/false */
-			allow_expand: true, /* Allow the user to expand a resized image. true/false */
-			default_width: 500,
-			default_height: 344,
+			show_title: true, /* true/false */			
+			allow_resize: false, /* Resize the photos bigger than viewport. true/false */
+			allow_expand: true, /* Allow the user to expand a resized image. true/false */			
+			default_width: video_width_mob,
+			default_height: video_height_mob,
 			counter_separator_label: '/', /* The separator for the gallery counter 1 "of" 2 */
 			theme: 'pp_default', /* light_rounded / dark_rounded / light_square / dark_square / facebook */
 			horizontal_padding: 20, /* The padding on each side of the picture */
@@ -47,12 +72,7 @@
 								<div class="pp_content"> \
 									<div class="pp_loaderIcon"></div> \
 									<div class="pp_fade"> \
-										<a href="#" class="pp_expand" title="Expand the image">Expand</a> \
-										<div class="pp_hoverContainer"> \
-											<a class="pp_next" href="#">next</a> \
-											<a class="pp_previous" href="#">previous</a> \
-										</div> \
-										<div id="pp_full_res"></div> \
+									  <div id="pp_full_res"></div> \
 										<div class="pp_details"> \
 											<div class="pp_nav"> \
 												<a href="#" class="pp_arrow_previous">Previous</a> \
@@ -218,6 +238,8 @@
 			if(typeof pp_descriptions[set_position] != 'undefined' && pp_descriptions[set_position] != ""){
 				$pp_pic_holder.find('.pp_description').show().html(unescape(pp_descriptions[set_position]));
 			}else{
+
+
 				$pp_pic_holder.find('.pp_description').hide();
 			}
 
