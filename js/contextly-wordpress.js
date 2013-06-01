@@ -1218,10 +1218,13 @@ Contextly.MainServerAjaxClient = Contextly.createClass({
 Contextly.PopupHelper = Contextly.createClass({
     extend: Contextly.Singleton,
 
+    construct: function() {
+        this.popup_socket   = null;
+    },
+
     initWithWidget: function ( widget ) {
         this.widget         = widget;
         this.snippet        = null;
-        this.popup_socket   = null;
 
         if ( widget && widget.snippets && widget.snippets.length ) {
             this.snippet = widget.snippets[0];
@@ -1307,7 +1310,9 @@ Contextly.PopupHelper = Contextly.createClass({
         );
 
         if ( callback ) {
-            if ( this.popup_socket != null ) this.popup_socket.destroy();
+            if ( this.popup_socket != null ) {
+                this.popup_socket.destroy();
+            }
 
             this.popup_socket = new easyXDM.Socket({
                 channel: 'linker_channel',
