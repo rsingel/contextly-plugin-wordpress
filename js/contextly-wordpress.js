@@ -1271,7 +1271,7 @@ Contextly.PopupHelper = Contextly.createClass({
         this.openPopupWithCallback(
             popup_url,
             function ( response ) {
-                if ( response.status == 'ok' && response.snippet_id != snippet_id ) {
+                if ( response.status == 'ok' && response.snippet_id ) {
                     send_to_editor( '[contextly_sidebar id="' + response.snippet_id + '"]' );
                 }
             }
