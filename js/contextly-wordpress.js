@@ -679,9 +679,9 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     display: function () {
-        if ( this.hasWidgetData() ) {
-            Contextly.SnippetWidgetTextFormatter.fn.display.call( this );
+        Contextly.SnippetWidgetTextFormatter.fn.display.call( this );
 
+        if ( this.hasWidgetData() ) {
             this.attachVideoPopups();
         }
     },
@@ -1227,7 +1227,11 @@ Contextly.PopupHelper = Contextly.createClass({
         this.snippet        = null;
 
         if ( widget && widget.snippets && widget.snippets.length ) {
-            this.snippet = widget.snippets[0];
+            var snippet = widget.snippets[0];
+
+            if ( snippet.links ) {
+                this.snippet = snippet;
+            }
         }
     },
 
