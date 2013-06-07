@@ -217,13 +217,15 @@ Contextly.SnippetWidgetFormatterFactory = Contextly.createClass({
      */
     getFormatter: function( widget ) {
         var type = widget.settings.display_type;
-
+        var style = widget.settings.tabs_style;
         if ( type == 'default' ) {
             return new Contextly.SnippetWidgetTextFormatter( widget );
         } else if ( type == 'tabs' ) {
             return new Contextly.SnippetWidgetTabsFormatter( widget );
         } else if ( type == 'blocks' ) {
             return new Contextly.SnippetWidgetBlocksFormatter( widget );
+        } else if ( type == 'float' ) {
+            return new Contextly.SnippetWidgetFloatFormatter( widget );
         }
     }
 });
@@ -319,6 +321,32 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
                 this.getDisplayElement().insertAfter(jQuery("#" + wp_settings.target_id));
             }
         }
+    },
+
+    getImageDimension: function () {
+        var image_type = this.widget.settings.images_type;
+        image_type = image_type.replace( 'square', '').replace( 'letter', '' );
+
+        var dimensions = image_type.split( 'x' );
+        var w = 0;
+        var h = 0;
+
+        if ( dimensions.length == 2 ) {
+            w = parseInt( dimensions[0] );
+            h = parseInt( dimensions[1] );
+        }
+
+        return {width: w, height: h};
+    },
+
+    getImagesHeight: function () {
+        var image_dimension = this.getImageDimension();
+        return image_dimension.height;
+    },
+
+    getImagesWidth: function () {
+        var image_dimension = this.getImageDimension();
+        return image_dimension.width;
     }
 });
 
@@ -502,51 +530,6 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         if ( this.widget.links[ type ].length == img_count ) return true;
     },
 
-    getImagesHeight: function () {
-        switch ( this.widget.settings.images_type ) {
-            case 'square32x32':
-            case 'letter82x32':
-                return 32;
-            case 'square45x45':
-            case 'letter82x45':
-                return 45;
-            case 'square90x90':
-            case 'letter110x90':
-                return 90;
-            case 'square70x70':
-                return 70;
-            case 'square110x110':
-                return 110;
-            case 'square150x150':
-                return 150;
-            default:
-                return 0;
-        }
-    },
-
-    getImagesWidth: function () {
-        switch ( this.widget.settings.images_type ) {
-            case 'letter82x32':
-            case 'letter82x45':
-                return 82;
-            case 'square110x110':
-            case 'letter110x90':
-                return 110;
-            case 'square32x32':
-                return 32;
-            case 'square45x45':
-                return 45;
-            case 'square70x70':
-                return 70;
-            case 'square90x90':
-                return 90;
-            case 'square150x150':
-                return 150;
-            default:
-                return 0;
-        }
-    },
-
     isDisplayContextlyLogo: function() {
         return !Contextly.Settings.getInstance().isAdmin() && !this.isMobileRequest();
     },
@@ -586,6 +569,26 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetTextFormatter,
 
+    getLinksHTMLOfType: function( type ) {
+        var html = "";
+        var widget = this.widget;
+        var links_limit = 4;
+
+        if ( widget.links && widget.links[ type ] ) {
+            for ( var link_idx in widget.links[ type ] ) {
+                if ( link_idx >= links_limit ) break;
+
+                var link = widget.links[ type ][ link_idx ];
+
+                if ( link.id && link.title ) {
+                    html += this.getLinkHTML( link );
+                }
+            }
+        }
+
+        return html;
+    },
+
     getWidgetHTML: function () {
         var div = "";
         var value;
@@ -622,6 +625,28 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
+        if ( link.video ) {
+            return this.getLinkHTMLVideo( link );
+        } else {
+            return this.getLinkHTMLNormal( link );
+        }
+    },
+
+    getLinkHTMLVideo: function ( link ) {
+        var html = "<li>";
+
+        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + link.title + "\" contextly-url=\"" + link.url + "\" >";
+        html += "<span class=\"vidpop-playbutton-big\"></span>";
+        html += "<p class='link'><span>" + link.title + "<span></p>";
+        if ( link.thumbnail_url ) {
+            html += "<img src='" + link.thumbnail_url + "' />";
+        }
+        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
+
+        return html;
+    },
+
+    getLinkHTMLNormal: function ( link ) {
         var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p class='link'><span>" + link.title + "</span></p>";
 
         if ( link.thumbnail_url ) {
@@ -636,20 +661,83 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         var css_url = '';
 
         if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
-            css_url = "http://linker.site/resources/css/plugin/widget/blocks/template-default.css";
+            css_url = "http://linker.site/resources/css/plugin/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
-            css_url = "http://dev.contextly.com/resources/css/plugin/widget/blocks/template-default.css";
+            css_url = "http://dev.contextly.com/resources/css/plugin/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
         } else {
-            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/blocks/template-default.css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
         }
 
         Contextly.Utils.getInstance().loadCssFile( css_url );
 
         // Make needed css rules and load custom widget css
-        var custom_css = Contextly.CssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
+        var custom_css = Contextly.BlocksWidgetCssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
 
         if ( custom_css ) {
             Contextly.Utils.getInstance().loadCustomCssCode( custom_css );
+        }
+    },
+
+    display: function () {
+        Contextly.SnippetWidgetTextFormatter.fn.display.call( this );
+
+        if ( this.hasWidgetData() ) {
+            this.attachVideoPopups();
+        }
+    },
+
+    attachVideoPopups: function () {
+        jQuery("a[rel='contextly-video-link']").each(
+            function () {
+                jQuery( this ).prettyPhoto({animation_speed:'fast',slideshow:10000, hideflash: true});
+                jQuery( this ).click(
+                    function () {
+                        var contextly_url = jQuery( this).attr( 'contextly-url' );
+                        Contextly.MainServerAjaxClient.getInstance().call( contextly_url );
+                    }
+                );
+            }
+        );
+    }
+
+});
+
+Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
+    extend: Contextly.SnippetWidgetBlocksFormatter,
+
+    getLinkHTML: function ( link ) {
+        var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">";
+
+        if ( link.thumbnail_url ) {
+            html += "<img src='" + link.thumbnail_url + "' />";
+        }
+
+        var text_width = this.getImagesWidth() + 10;
+
+        html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
+        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
+
+        return html;
+    },
+
+    loadCss: function () {
+        var css_url = '';
+
+        if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
+            css_url = "http://linker.site/resources/css/plugin/widget/float/template-default.css";
+        } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
+            css_url = "http://dev.contextly.com/resources/css/plugin/widget/float/template-default.css";
+        } else {
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/float/template-defaults.css";
+        }
+
+        Contextly.Utils.getInstance().loadCssFile( css_url, 'snippet' );
+
+        // Make needed css rules and load custom widget css
+        var custom_css = Contextly.FloatWidgetCssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.widget.settings );
+
+        if ( custom_css ) {
+            Contextly.Utils.getInstance().loadCustomCssCode( custom_css, 'snippet-custom' );
         }
     }
 
@@ -783,7 +871,90 @@ Contextly.CssCustomBuilder = Contextly.createClass({
     buildCSSRule: function( entry, prefix, property, value ) {
         if ( !value ) return "";
         return entry + " " + prefix + " {" + property + ": " + value + "}";
+    },
+
+    hex2Vals: function( hex ) {
+        if(hex.charAt(0) == "#") hex = hex.slice(1);
+        hex = hex.toUpperCase();
+        var hex_alphabets = "0123456789ABCDEF";
+        var value = new Array(3);
+        var k = 0;
+        var int1,int2;
+
+        for( var i=0;i<6;i+=2 ) {
+            int1 = hex_alphabets.indexOf(hex.charAt(i));
+            int2 = hex_alphabets.indexOf(hex.charAt(i+1));
+            value[k] = (int1 * 16) + int2;
+            k++;
+        }
+
+        return(value);
     }
+});
+
+Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
+
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link" , "font-size", settings.font_size );
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, ".link span" , "color", settings.color_links );
+        }
+
+        if ( settings.color_background ) {
+            css_code += this.buildCSSRule( entry, ".contextly_subhead" , "background-color", settings.color_background );
+        }
+
+        if ( settings.color_border ) {
+            var color_border = settings.color_border;
+            var rgb = this.hex2Vals( color_border );
+
+            if ( rgb.length == 3 ) {
+                var r = rgb[0];
+                var g = rgb[1];
+                var b = rgb[2];
+
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", color_border );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "rgba("+r+","+g+","+b+",0.7)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-moz-linear-gradient(top,  rgba(255,255,255,0) 0%, rgba("+r+","+g+","+b+",0.19) 10%, rgba("+r+","+g+","+b+",0.5) 27%, rgba("+r+","+g+","+b+",0.9) 100%)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-o-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-ms-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+            }
+        }
+
+        return css_code;
+    }
+
+});
+
+Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
+
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link" , "font-size", settings.font_size );
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, ".link span" , "color", settings.color_links );
+        }
+
+        return css_code;
+    }
+
 });
 
 Contextly.Utils = Contextly.createClass({
@@ -888,6 +1059,7 @@ Contextly.PageEvents = Contextly.createClass({
 
         Contextly.Loader.getInstance().trackPageEvent( setting_id, "show_more", tab );
     }
+
 });
 
 Contextly.Settings = Contextly.createClass({
@@ -895,6 +1067,9 @@ Contextly.Settings = Contextly.createClass({
 
     getAPIServerUrl: function () {
         return Contextly.api_server;
+    },
+    getMainServerUrl: function () {
+        return Contextly.main_server;
     },
     getPopupServerUrl: function () {
         return Contextly.popup_server;
@@ -1006,13 +1181,50 @@ Contextly.RESTClient = Contextly.createClass({
     }
 });
 
+Contextly.MainServerAjaxClient = Contextly.createClass({
+    extend: Contextly.Singleton,
+
+    getXhr: function () {
+        if ( !this.xhr ) {
+            var remote_url = Contextly.Settings.getInstance().getMainServerUrl() + '/easy_xdm/cors/index.html';
+            this.xhr = new easyXDM.Rpc({
+                    remote: remote_url
+                },
+                {
+                    remote: {
+                        request: {}
+                    }
+                });
+        }
+        return this.xhr;
+    },
+
+    call: function ( url, callback ) {
+        this.getXhr().request(
+            {
+                url: url,
+                method: "POST"
+            },
+            function ( response ) {
+                if ( callback ) {
+                    callback( response );
+                }
+            }
+        );
+    }
+
+});
+
 Contextly.PopupHelper = Contextly.createClass({
     extend: Contextly.Singleton,
+
+    construct: function() {
+        this.popup_socket   = null;
+    },
 
     initWithWidget: function ( widget ) {
         this.widget         = widget;
         this.snippet        = null;
-        this.popup_socket   = null;
 
         if ( widget && widget.snippets && widget.snippets.length ) {
             var snippet = widget.snippets[0];
@@ -1063,7 +1275,7 @@ Contextly.PopupHelper = Contextly.createClass({
         this.openPopupWithCallback(
             popup_url,
             function ( response ) {
-                if ( response.status == 'ok' && response.snippet_id != snippet_id ) {
+                if ( response.status == 'ok' && response.snippet_id ) {
                     send_to_editor( '[contextly_sidebar id="' + response.snippet_id + '"]' );
                 }
             }
@@ -1102,7 +1314,9 @@ Contextly.PopupHelper = Contextly.createClass({
         );
 
         if ( callback ) {
-            if ( this.popup_socket != null ) this.popup_socket.destroy();
+            if ( this.popup_socket != null ) {
+                this.popup_socket.destroy();
+            }
 
             this.popup_socket = new easyXDM.Socket({
                 channel: 'linker_channel',
