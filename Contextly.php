@@ -302,7 +302,7 @@ class Contextly
             $data = array(
                 'ajax_url'      => $ajax_url,
                 'api_server'    => Urls::getApiServerUrl(),
-                'main_server'   => Urls::getmainServerUrl(),
+                'main_server'   => Urls::getMainServerUrl(),
                 'popup_server'  => Urls::getPopupServerUrl(),
                 'app_id'        => $api_options[ 'appID' ],
                 'settings'      => $this->getSettingsOptions(),
