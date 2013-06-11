@@ -661,11 +661,11 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         var css_url = '';
 
         if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
-            css_url = "http://linker.site/resources/css/plugin/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
+            css_url = "http://linker.site/resources/css/plugin/widget/blocks/template-default.css";
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
-            css_url = "http://dev.contextly.com/resources/css/plugin/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
+            css_url = "http://dev.contextly.com/resources/css/plugin/widget/blocks/template-default.css";
         } else {
-            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/blocks/template-" + this.widget.settings.tabs_style + ".css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/blocks/template-default.css";
         }
 
         Contextly.Utils.getInstance().loadCssFile( css_url );
