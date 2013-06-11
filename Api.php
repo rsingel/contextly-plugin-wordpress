@@ -50,11 +50,6 @@ class Contextly_Api {
     /**
      * @var string
      */
-    protected $cookie_file = null;
-
-    /**
-     * @var string
-     */
     protected $method_name = null;
 
     /**
@@ -90,9 +85,9 @@ class Contextly_Api {
      * @return mixed
      */
     public function get() {
-        $this->authorize();
+        $authorize_token = $this->getAuthorizeToken();
 
-        $url = rtrim($this->options['server-url'], "/");
+	    $url = rtrim($this->options['server-url'], "/");
         $url .= "/" . $this->api_name . "/" . $this->method_name . "/";
 
         $params_string = implode("/", $this->_params);
@@ -103,14 +98,11 @@ class Contextly_Api {
         $headers = $this->headers;
         $headers[ 'Referer' ] = site_url();
 
-        // setting Auth headers with token
-        $access_token = Contextly_Session::getInstance()->getAccessToken();
-
-        $headers[ self::ACCESS_TOKEN_NAME ] =  $access_token;
+        // Setting Auth headers with token
+        $headers[ self::ACCESS_TOKEN_NAME ] =  $authorize_token;
         $headers[ self::ACCESS_TOKEN_APP_ID_NAME ] =  $this->options['appID'];
 
-        if ( $this->isDebug() )
-        {
+        if ( $this->isDebug() ) {
             echo "API Call: {$url}\r\n";
         }
 
@@ -126,11 +118,10 @@ class Contextly_Api {
             )
         );
 
-        if ( $this->isDebug() )
-        {
+        if ( $this->isDebug() ) {
             echo "API Response: " . print_r( $response, true ) . "\r\n";
         }
-	    
+
         $response = json_decode($response);
 
         $this->method_name = null;
@@ -150,13 +141,6 @@ class Contextly_Api {
         $this->method_name = $method_name;
         $this->api_name = $api_name;
         return $this;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getCookieFilename() {
-        return $this->cookie_file;
     }
 
     /**
@@ -241,7 +225,7 @@ class Contextly_Api {
             $this->_extraParams['filters'] = '';
         }
 
-        $this->_extraParams['filters'] .= $column . ';' . $type . ';' . urlencode($value) . ';;';
+        $this->_extraParams['filters'] .= $column . ';' . $type . ';' . urlencode($value) . ';*';
 
         return $this;
     }
@@ -249,8 +233,7 @@ class Contextly_Api {
     public function __construct() {
     }
 
-    public function isDebug()
-    {
+    public function isDebug() {
         return isset( $_REQUEST[ 'debug' ] ) && $_REQUEST[ 'debug' ] == 1;
     }
 
@@ -266,154 +249,90 @@ class Contextly_Api {
     /**
      * @throws Exception
      */
-    protected function authorize() {
+    protected function getAuthorizeToken() {
         $token_raw = null;
         $response = null;
 
-        // getting access token first from session. and check expiration
-        if ( !Contextly_Session::getInstance()->isAuthorized() ) {
-            // request token
-            $url = rtrim($this->options['server-url'], "/");
-            $url .= "/" . $this->options['auth-api'] . "/";
+        // request token
+        $url = rtrim($this->options['server-url'], "/");
+        $url .= "/" . $this->options['auth-api'] . "/";
 
-            $auth_info = array(
-                'appID'         => $this->options['appID'],
-                'appSecret'     => $this->options['appSecret']
-            );
+        $auth_info = array(
+            'appID'         => $this->options['appID'],
+            'appSecret'     => $this->options['appSecret']
+        );
 
-            $headers = $this->headers;
-            $headers[ 'Referer' ] = site_url();
+        $headers = $this->headers;
+        $headers[ 'Referer' ] = site_url();
 
-            if ( $this->isDebug() )
-            {
-                echo "AUTH Call: {$url}\r\n";
-                print_r( $auth_info );
-            }
-
-            $response = wp_remote_retrieve_body(
-                wp_remote_request(
-                    $url,
-                    array(
-                        'method' => 'POST',
-                        'body'  => $auth_info,
-                        'headers' => $headers,
-                        'sslverify' => $this->options['SSL_ONLY']
-                    )
-                )
-            );
-
-            if ( $this->isDebug() )
-            {
-                echo "AUTH Response: " . print_r( $response, true ) . "\r\n";
-            }
-
-            $response = json_decode($response);
-
-            if ( isset( $response->success ) && isset( $response->access_token ) ) {
-                $token_raw  = $response->access_token;
-                Contextly_Session::getInstance()->saveAccessToken( $token_raw );
-            }
-        } else {
-            $token_raw = Contextly_Session::getInstance()->getAccessToken();
+        if ( $this->isDebug() ) {
+            echo "AUTH Call: {$url}\r\n";
+            print_r( $auth_info );
         }
 
-        if ( null == $token_raw || !Contextly_Session::getInstance()->isAuthorized() ) {
+        $response = wp_remote_retrieve_body(
+            wp_remote_request(
+                $url,
+                array(
+                    'method' => 'POST',
+                    'body'  => $auth_info,
+                    'headers' => $headers,
+                    'sslverify' => $this->options['SSL_ONLY']
+                )
+            )
+        );
+
+        if ( $this->isDebug() ) {
+            echo "AUTH Response: " . print_r( $response, true ) . "\r\n";
+        }
+
+        $response = json_decode($response);
+
+        if ( isset( $response->success ) && isset( $response->access_token ) ) {
+	        $token_raw = $response->access_token;
+        }
+
+        if ( null == $token_raw || !$this->isTokenValid( $token_raw ) ) {
             $exception_message = 'Can not authorize with provided API key';
-            if ( isset($response->error) )
-            {
+            if ( isset($response->error) ) {
                 $exception_message .= ". " . $response->error;
             }
 
             $exception_code = 400;
-            if ( isset( $response->error_code ) )
-            {
+            if ( isset( $response->error_code ) ) {
                 $exception_code = $response->error_code;
             }
 
             throw new Exception( $exception_message, $exception_code );
         }
-    }
-}
 
-
-class Contextly_Session {
-
-    /**
-     * @static
-     * @return Contextly_Session
-     */
-    public static  function getInstance() {
-        session_start();
-
-        static $i = null;
-
-        if ( null === $i ) {
-            $i = new self;
-        }
-
-        return $i;
+	    return $token_raw;
     }
 
-    /**
-     * Checking if authorization success
-     * @return bool
-     */
-    public function isAuthorized() {
-        $access_token_exists = isset( $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN' ] );
-        $access_token_expires_exists = isset( $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN_EXPIRES' ] );
+	/**
+	 * @param $token
+	 * @return bool
+	 */
+	private function isTokenValid( $token ) {
+		$token_parts = $token_parts = explode( '-', $token );
 
-        if ( !$access_token_exists || !$access_token_expires_exists ) {
-            $this->clearTokenData();
-            return false;
-        }
+		$access_token_expires_exists = isset( $token_parts[1] );
 
-        $access_token_expires = (int)$_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN_EXPIRES' ];
-        $current_timestamp = time();
+		if ( !$token || !$access_token_expires_exists ) {
+			return false;
+		}
 
-        $is_authorized = ($access_token_exists && ( $access_token_expires > $current_timestamp ) );
+		$access_token_expires = (int)$token_parts[1];
+		$current_timestamp = time();
 
-        if ( !$is_authorized ) {
-            $this->clearTokenData();
-            return false;
-        }
+		$is_authorized = ( $token && ( $access_token_expires > $current_timestamp ) );
 
-        return true;
-    }
+		if ( !$is_authorized ) {
+			return false;
+		}
 
-    public function clearTokenData() {
-        unset( $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN' ] );
-        unset( $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN_EXPIRES' ] );
-        unset( $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN_RAW' ] );
-    }
+		return true;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getAccessToken() {
-        return $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN_RAW' ];
-    }
-
-    /**
-     * @param $token string
-     * @return bool
-     */
-    public function saveAccessToken( $token ) {
-        if ( !$token ) {
-            return false;
-        }
-
-        $token_parts = explode("-", $token);
-
-        // token is like: asdfasdf;123123 - where first part is signature and the second is expiration timestamp
-        if ( count($token_parts) < 2 ) {
-            return false;
-        }
-
-        $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN' ] = $token;
-        $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN_EXPIRES' ] = $token_parts[1];
-        $_SESSION[ 'AUTH' ][ 'ACCESS_TOKEN_RAW' ] = $token;
-
-        return true;
-    }
 
 }
