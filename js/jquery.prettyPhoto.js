@@ -5,6 +5,29 @@
 	Version: 3.1.5
 ------------------------------------------------------------------------- */
 (function($) {
+	
+	var mobileSite=self.setInterval(function(){		
+		var getWidgetWidth = $('#linker_widget').width();
+		if(getWidgetWidth<350) {
+			$(".blocks-widget li").css("width", "100%");
+			$(".blocks-widget li").css("max-width", "100%");
+			$(".blocks-widget li img").css("width", "30%");
+			$(".blocks-widget li p").css({"width":"60%", "margin-top":0});
+			$(".vidpop-playbutton-big").css("width", "30%");
+		} else { 
+			$(".blocks-widget li").css("width", "23%");
+			$(".blocks-widget li").css("max-width", 160);
+			$(".blocks-widget li img").css("width", "94%");
+			$(".blocks-widget li p").css({ "width":"94%", "margin-top":5});
+			$(".vidpop-playbutton-big").css("width", "94%");			
+		}		
+	},1);	
+	
+	var videoPopupPlayButton=self.setInterval(function(){		
+		var getImageHeight = $('.blocks-widget li img').height();
+		$(".vidpop-playbutton-big").css("height", getImageHeight);	
+	},1);
+	
 	var screenWidth = window.innerWidth;
 	var screenHeight = window.innerHeight;
 	
