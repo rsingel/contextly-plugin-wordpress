@@ -253,7 +253,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     getDisplayElement: function() {
-        return jQuery( '#' + this.widget_html_id);
+        return jQuery( '#' + this.widget_html_id );
     },
 
     hasWidgetData: function () {
@@ -296,6 +296,11 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             // Check if we need to change snippet position on page
             if ( !Contextly.Settings.getInstance().isAdmin() ) {
                 this.fixSnippetPagePosition();
+            }
+
+            var settings = this.getSettings();
+            if ( settings && settings.display_type ) {
+                this.getDisplayElement().attr( 'widget-type', settings.display_type );
             }
         }
 
