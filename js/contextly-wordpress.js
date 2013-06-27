@@ -395,9 +395,11 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         }
 
         return null;
+    },
+
+    getWidgetCssName: function () {
+        return 'default-widget';
     }
-
-
 });
 
 Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
@@ -466,6 +468,10 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
         if ( custom_css ) {
             Contextly.Utils.getInstance().loadCustomCssCode( custom_css );
         }
+    },
+
+    getWidgetCssName: function () {
+        return 'contextly-text';
     }
 
 });
@@ -639,11 +645,15 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         return html;
     },
 
+    getWidgetCssName: function () {
+        return 'blocks-widget';
+    },
+
     getWidgetHTML: function () {
         var div = "";
         var value;
 
-        div += "<div class='contextly_see_also blocks-widget'>";
+        div += "<div class='contextly_see_also " + this.getWidgetCssName() +"'>";
         // Check for top links html
         if ( value = this.widget.settings.html_above ) {
             div += "<div class='contextly_html_above'>" + value + "</div>";
@@ -754,6 +764,10 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 
 Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetBlocksFormatter,
+
+    getWidgetCssName: function () {
+        return 'blocks-widget2';
+    },
 
     getLinkHTMLVideo: function ( link ) {
         var html = "<li>";
