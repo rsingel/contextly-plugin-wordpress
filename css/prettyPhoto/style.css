@@ -561,7 +561,6 @@ div.dark_rounded #pp_full_res .pp_inline, div.dark_square #pp_full_res .pp_inlin
 }
 #main {
     margin: auto;
-    width: 1000px;
 }
 #vidpopwrapper {
     margin: auto;
@@ -634,21 +633,6 @@ div.dark_rounded #pp_full_res .pp_inline, div.dark_square #pp_full_res .pp_inlin
     zoom: 1;
     filter: alpha(opacity=50);
     opacity: 1;
-}
-.vidpop-playbutton-big {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: block;
-    background-image: url(images/playbut1.png);
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    -moz-opacity: 0.90;
-    -khtml-opacity: 0.90;
-    opacity: 0.90;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha"(Opacity=90);
-    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=90);
-    filter: alpha(opacity=90);
 }
 
 /*big popup end*/
@@ -858,9 +842,25 @@ div.dark_rounded #pp_full_res .pp_inline, div.dark_square #pp_full_res .pp_inlin
     width: 90px;
     height: 90px;
     display: block;
-    background-image: url(../images/playbut2.png);
+    background-image: url(images/playbut2.png);
     background-repeat: no-repeat;
     background-position: 50% 50%;
+}
+
+.vidpop-playbutton-big {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-image: url(images/playbut1.png);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    -moz-opacity: 0.90;
+    -khtml-opacity: 0.90;
+    opacity: 0.90;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha"(Opacity=90);
+    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=90);
+    filter: alpha(opacity=90);
 }
 
 /*tiny popup end*/
