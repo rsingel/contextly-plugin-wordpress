@@ -13,23 +13,23 @@
 
         if ( widgetType == 'blocks2' ) {
             if(getWidgetWidth<350) {
-                $(".blocks-widget li").css("width", "100%");
-                $(".blocks-widget li").css("max-width", "100%");
-                $(".blocks-widget li img").css("width", "30%");
-                $(".blocks-widget li p").css({"width":"60%", "margin-top":0});
+                $(".blocks-widget2 li").css("width", "100%");
+                $(".blocks-widget2 li").css("max-width", "100%");
+                $(".blocks-widget2 li img").css("width", "30%");
+                $(".blocks-widget2 li p").css({"width":"60%", "margin-top":0});
                 $(".vidpop-playbutton-big").css("width", "30%");
             } else {
-                $(".blocks-widget li").css("width", "23%");
-                $(".blocks-widget li").css("max-width", 160);
-                $(".blocks-widget li img").css("width", "94%");
-                $(".blocks-widget li p").css({ "width":"94%", "margin-top":5});
+                $(".blocks-widget2 li").css("width", "23%");
+                $(".blocks-widget2 li").css("max-width", 160);
+                $(".blocks-widget2 li img").css("width", "94%");
+                $(".blocks-widget2 li p").css({ "width":"94%", "margin-top":5});
                 $(".vidpop-playbutton-big").css("width", "94%");
             }
         }
 	},1);
 
 	var videoPopupPlayButton=self.setInterval(function(){
-		var getImageHeight = $('.blocks-widget li img').height();
+		var getImageHeight = $('.blocks-widget2 li img').height();
 		$(".vidpop-playbutton-big").css("height", getImageHeight);
 	},1);
 
