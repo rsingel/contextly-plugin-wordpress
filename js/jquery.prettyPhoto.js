@@ -6,6 +6,7 @@
 ------------------------------------------------------------------------- */
 (function($) {
 
+    // TODO: moce this code to main plugin script
     var mobileSite=self.setInterval(function(){
 		var widget = $( '#linker_widget' );
         var getWidgetWidth = widget.width();
