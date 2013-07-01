@@ -280,7 +280,7 @@ class Contextly
             wp_enqueue_script( 'jquery' );
             wp_enqueue_script( 'json2' );
             wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
-            wp_enqueue_script( 'pretty_photo', plugins_url( 'js/jquery.prettyPhoto.js' , __FILE__ ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
+            wp_enqueue_script( 'pretty_photo', Urls::getMainJsCdnUrl( 'js/jquery.prettyPhoto.js' ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'easy_xdm', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly', $this->getPluginJs(), 'contextly-create-class', CONTEXTLY_PLUGIN_VERSION, false );
 
