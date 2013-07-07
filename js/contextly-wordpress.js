@@ -26,9 +26,7 @@ Contextly.Loader = Contextly.createClass({
     extend: Contextly.Singleton,
 
     isCallAvailable: function () {
-        // TODO: Implement this method
-
-        return false;
+        return Contextly.Settings.getInstance().isReadyToLoad();
     },
 
     // Main method for load page widgets
@@ -501,6 +499,10 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
         }
 
         return html;
+    },
+
+    getCustomCssCode: function () {
+        return Contextly.TextWidgetCssCustomBuilder.getInstance().buildCSS( '.contextly-widget', this.getSettings() );
     }
 
 });
@@ -967,6 +969,31 @@ Contextly.CssCustomBuilder = Contextly.createClass({
     }
 });
 
+Contextly.TextWidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
+
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".link" , "font-size", settings.font_size );
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, "a.title" , "color", settings.color_links );
+        }
+
+        if ( settings.color_background ) {
+            css_code += this.buildCSSRule( entry, ".contextly_subhead" , "background-color", settings.color_background );
+        }
+
+        return css_code;
+    }
+
+});
+
 Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
     extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
 
@@ -1190,6 +1217,12 @@ Contextly.Settings = Contextly.createClass({
         } else {
             return 'http://contextlysiteimages.contextly.com/';
         }
+    },
+    isReadyToLoad: function() {
+        if ( Contextly.disable_autoload && Contextly.disable_autoload == true ) {
+            return false;
+        }
+        return true;
     }
 });
 
