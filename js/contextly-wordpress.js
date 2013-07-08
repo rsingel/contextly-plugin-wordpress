@@ -912,7 +912,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
     },
 
     getCustomCssCode: function () {
-        return Contextly.CssCustomBuilder.getInstance().buildCSS( '.contextly-sidebar', this.getSettings() );
+        return Contextly.SidebarWidgetCssCustomBuilder.getInstance().buildCSS( '.contextly-sidebar', this.getSettings() );
     }
 
 });
@@ -1060,6 +1060,40 @@ Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
         if ( settings.color_links ) {
             css_code += this.buildCSSRule( entry, ".link span" , "color", settings.color_links );
         }
+
+        return css_code;
+    }
+
+});
+
+Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
+
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, "a.title" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, "a.title" , "font-size", settings.font_size );
+
+        if ( settings.color_background ) {
+            css_code += this.buildCSSRule( entry, ".linker_content" , "background-color", settings.color_background );
+            css_code += this.buildCSSRule( entry, ".linker_images img" , "border-color", settings.color_background );
+        }
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, ".linker_content a" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".linker_content span" , "color", settings.color_links );
+        }
+
+        if ( settings.color_border ) {
+            css_code += this.buildCSSRule( entry, ".linker_content" , "border-color", settings.color_border );
+            css_code += this.buildCSSRule( entry, ".linker_tabs li.active span" , "border-color", settings.color_border );
+            css_code += this.buildCSSRule( entry, ".linker_tabs span" , "border-color", settings.color_border );
+        }
+
 
         return css_code;
     }
