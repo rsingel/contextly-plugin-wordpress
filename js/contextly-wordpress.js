@@ -8,6 +8,11 @@ Contextly.Errors = {
     ERROR_SUSPENDED: 408
 };
 
+Contextly.WidgetType = {
+    SNIPPET: 'snippet',
+    SIDEBAR: 'sidebar'
+};
+
 Contextly.Singleton = Contextly.createClass({
     statics: {
         construct: function() {
@@ -225,7 +230,7 @@ Contextly.SnippetWidgetFormatterFactory = Contextly.createClass({
      */
     getFormatter: function( widget ) {
         var type = widget.settings.display_type;
-        var style = widget.settings.tabs_style;
+
         if ( type == 'default' ) {
             return new Contextly.SnippetWidgetTextFormatter( widget );
         } else if ( type == 'tabs' ) {
@@ -257,6 +262,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
     construct: function( widget ) {
         this.widget = widget;
+        this.widget_type = Contextly.WidgetType.SNIPPET;
         this.widget_html_id = 'linker_widget';
     },
 
@@ -318,16 +324,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     loadCss: function () {
-        var css_url;
-        var settings = this.getSettings();
-
-        if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
-            css_url = "http://linker.site/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
-        } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
-            css_url = "http://dev.contextly.com/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
-        } else {
-            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
-        }
+        var css_url = this.getWidgetCSSUrl();
 
         Contextly.Utils.getInstance().loadCssFile( css_url );
 
@@ -338,10 +335,23 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
         // Make needed css rules and load custom widget css
         var custom_css = this.getCustomCssCode();
-
         if ( custom_css ) {
-            Contextly.Utils.getInstance().loadCustomCssCode( custom_css, 'snippet-custom' );
+            Contextly.Utils.getInstance().loadCustomCssCode( custom_css, this.getWidgetType() + '-custom' );
         }
+    },
+
+    getWidgetCSSUrl: function () {
+        var css_url;
+        var settings = this.getSettings();
+
+        if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
+            css_url = "http://linker.site/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
+        } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
+            css_url = "http://dev.contextly.com/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
+        } else {
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
+        }
+        return css_url;
     },
 
     getCustomCssCode: function () {
@@ -396,6 +406,10 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
     getWidget: function () {
         return this.widget;
+    },
+
+    getWidgetType: function () {
+        return this.widget_type;
     },
 
     getSettings: function () {
@@ -826,6 +840,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
     construct: function( widget ) {
         if ( widget ) {
             this.widget = widget;
+            this.widget_type = Contextly.WidgetType.SIDEBAR;
             this.widget_html_id = 'contextly-' + widget.id;
         }
     },
@@ -882,30 +897,22 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
         );
     },
 
-    loadCss: function () {
-        var css_url = '';
+    getWidgetCSSUrl: function () {
+        var css_url;
+        var settings = this.getSettings();
 
         if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
-            css_url = "http://linker.site/resources/css/plugin/sidebar/template-" + this.widget.settings.theme + ".css";
+            css_url = "http://linker.site/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
-            css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + this.widget.settings.theme + ".css";
+            css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
         } else {
-            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/sidebar/template-" + this.widget.settings.theme + ".css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/sidebar/template-" + settings.theme + ".css";
         }
+        return css_url;
+    },
 
-        Contextly.Utils.getInstance().loadCssFile( css_url );
-
-        if ( Contextly.Utils.getInstance().isIE7() ) {
-            var css_ie7fix = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css/template-ie-fix.css";
-            Contextly.Utils.getInstance().loadCssFile( css_ie7fix );
-        }
-
-        // Make needed css rules and load custom widget css
-        var custom_css = Contextly.CssCustomBuilder.getInstance().buildCSS( '.contextly-sidebar', this.widget.settings );
-
-        if ( custom_css ) {
-            Contextly.Utils.getInstance().loadCustomCssCode( custom_css );
-        }
+    getCustomCssCode: function () {
+        return Contextly.CssCustomBuilder.getInstance().buildCSS( '.contextly-sidebar', this.getSettings() );
     }
 
 });
