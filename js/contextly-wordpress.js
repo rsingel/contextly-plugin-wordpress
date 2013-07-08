@@ -1073,7 +1073,7 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
     {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '#linker_widget ' + settings.css_code;
+        if ( settings.css_code ) css_code += '.contextly-sidebar ' + settings.css_code;
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, "a.title" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, "a.title" , "font-size", settings.font_size );
