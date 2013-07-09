@@ -476,7 +476,6 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
 
         for ( var section in sections ) {
             var section_name = sections[section];
-
             if ( this.isDisplaySection( section_name ) ) {
                 var section_key = section_name + '_subhead';
                 var section_header = this.widget.settings[ section_key ];
@@ -813,7 +812,11 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
 Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetBlocksFormatter,
 
-    getLinkHTML: function ( link ) {
+    getWidgetCssName: function () {
+        return 'float-widget';
+    },
+
+    getLinkHTMLNormal: function ( link ) {
         var html = "<li><a href=\"" + link.native_url + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">";
 
         if ( link.thumbnail_url ) {
@@ -821,7 +824,27 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
         }
 
         var text_width = this.getImagesWidth() + 10;
+        html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
+        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
 
+        return html;
+    },
+
+    getLinkHTMLVideo: function ( link ) {
+        var html = "<li>";
+
+        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + link.title + "\" contextly-url=\"" + link.url + "\" >";
+
+        if ( this.getLinkThumbnailUrl( link ) ) {
+            html += "<div class='playbutton-wrapper'><img src='" + this.getLinkThumbnailUrl( link ) + "' />";
+        }
+        html += "<span class=\"vidpop-playbutton-big\"></span>";
+
+        if ( this.getLinkThumbnailUrl( link ) ) {
+            html += "</div>";
+        }
+
+        var text_width = this.getImagesWidth() + 10;
         html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
         html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
 
