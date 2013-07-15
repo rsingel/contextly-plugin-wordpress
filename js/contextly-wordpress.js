@@ -579,19 +579,21 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 
     getLinksHTMLOfType: function( type ) {
         var html = "";
+        var links = this.getWidgetSectionLinks( type );
 
-        if ( this.widget.links && this.widget.links[ type ] ) {
-            for ( var link_idx in this.widget.links[ type ] ) {
-                var link = this.widget.links[ type ][ link_idx ];
+        if ( links ) {
+            for ( var i = 0; i < links.length; i++ ) {
+                var link = links[ i ];
 
                 if ( link.id && link.title ) {
-                    html += "<li " + ( ( parseInt( link_idx ) + 1 ) > this.widget.settings.links_limit ? "class='li" + type +"'" : "" ) + ">";
+                    html += "<li " + ( ( parseInt( i ) + 1 ) > this.widget.settings.links_limit ? "class='li" + type +"'" : "" ) + ">";
                     html += this.getLinkHTML( link );
                     html += "</li>";
                 }
+
             }
 
-            if ( this.widget.links[ type ].length > this.widget.settings.links_limit ) {
+            if ( links.length > this.widget.settings.links_limit ) {
                 html += "<p class=\"show-more\" id=\"pmore" + type + "\"><a href=\"javascript:;\"  onclick=\"Contextly.PageEvents.getInstance().showMore('" + this.widget.settings.id + "', '" + type + "');\" name=\"amore" + type + "\">Show More</a></p>";
             }
         }
