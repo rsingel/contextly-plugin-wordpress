@@ -58,7 +58,7 @@ class Contextly
         $contextly_settings = new ContextlySettings();
         $display_type = $contextly_settings->getWidgetDisplayType();
 
-        if ( $display_type == $post->post_type ) {
+        if ( $display_type == get_post_type() ) {
             return true;
         } elseif ( $display_type == 'all' ) {
             return is_single() || is_page() || $this->isAdminEditPage();
