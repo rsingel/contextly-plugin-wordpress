@@ -58,7 +58,7 @@ class Contextly
         $contextly_settings = new ContextlySettings();
         $display_type = $contextly_settings->getWidgetDisplayType();
 
-        if ( $display_type == $post->post_type ) {
+        if ( $display_type == get_post_type() ) {
             return true;
         } elseif ( $display_type == 'all' ) {
             return is_single() || is_page() || $this->isAdminEditPage();
@@ -133,8 +133,10 @@ class Contextly
         if ( !current_user_can( 'edit_page', $post_id ) ) return false;
         if ( empty( $post_id ) ) return false;
 
+        $contextly_display_widgets = ( isset( $_POST['contextly_display_widgets'] ) ) ? $_POST['contextly_display_widgets'] : '';
+
         $contextly_settings = new ContextlySettings();
-        $contextly_settings->changePageDisplay( $post_id, $_POST['contextly_display_widgets'] );
+        $contextly_settings->changePageDisplay( $post_id, $contextly_display_widgets );
 
         return true;
     }
