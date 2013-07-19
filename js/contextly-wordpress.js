@@ -1211,8 +1211,8 @@ Contextly.PageEvents = Contextly.createClass({
     extend: Contextly.Singleton,
 
     switchTab: function ( setting_id, tab ) {
-        jQuery("#linker_content_previous,#linker_content_web,#linker_content_interesting").hide();
-        jQuery("#linker_tab_previous,#linker_tab_web,#linker_tab_interesting").attr( "class", "" );
+        jQuery("#linker_content_previous,#linker_content_web,#linker_content_interesting,#linker_content_custom").hide();
+        jQuery("#linker_tab_previous,#linker_tab_web,#linker_tab_interesting,#linker_tab_custom").attr( "class", "" );
         jQuery("#linker_content_" + tab).show();
         jQuery("#linker_tab_" + tab).attr( "class", "active" );
 
