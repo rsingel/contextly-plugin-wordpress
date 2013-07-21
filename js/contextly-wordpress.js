@@ -66,7 +66,7 @@ Contextly.Loader = Contextly.createClass({
             event_data,
             function ( response ) {
             }
-        );
+        );	
     }
 });
 
@@ -346,8 +346,8 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
         if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
             css_url = "http://linker.site/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
-        } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
-            css_url = "http://dev.contextly.com/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
+        } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {            
+			css_url = "http://dev.contextly.com/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
         } else {
             css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
         }
@@ -718,6 +718,23 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
             }
         }
         div += "</div>";
+		
+		/*branding popup*/
+		
+		div += "<div class=\"pluginauthor my_modal_open\"><span>Powered by</span></div>"; 		
+		div += "<div id=\"my_modal\" class=\"well\" style=\"display:none;margin:1em;\">";		
+		div += "<a href=\"#\" class=\"my_modal_close\" ></a>";
+		div += "<span id='brandpopsymbol'></span>";
+		div += "<div id='brandpopupcontainer'>";
+		div += "<span id=\"brandpoplogo\"></span><span id='brandpopupperbg'></span><div id='brandpoptext'>";
+		div += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";                          				
+		div += "Publishers or advertisers who would like to learn more about Contextly can contact us&nbsp;";
+		div += "<a href=\"http://contextly.com/sign-up/publishers/\" target=\"_blank\">here</a>.<br><br>";
+		div += "Our privacy policy is ";
+		div += "<a href=\"http://contextly.com/privacy/\" target=\"_blank\">here</a>.&nbsp;";
+		div += "</div></div></div>";
+		
+		/*branding popup*/
 
         return div;
     },
@@ -734,8 +751,8 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         var html = "<li>";
 
         html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" >";
-        html += "<span class=\"vidpop-playbutton-big\"></span>";
-        html += "<p class='link'><span>" + link.title + "<span></p>";
+ 
+        html += "<p class='link'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
         if ( link.thumbnail_url ) {
             html += "<img src='" + link.thumbnail_url + "' />";
         }
@@ -798,13 +815,13 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
         if ( this.getLinkThumbnailUrl( link ) ) {
             html += "<div class='playbutton-wrapper'><img src='" + this.getLinkThumbnailUrl( link ) + "' />";
         }
-        html += "<span class=\"vidpop-playbutton-big\"></span>";
 
         if ( this.getLinkThumbnailUrl( link ) ) {
             html += "</div>";
         }
-
-        html += "<p class='link'><span>" + link.title + "<span></p>";
+		
+		html += "<p class='link'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
+		
         html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
 
         return html;
@@ -857,14 +874,17 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
         if ( this.getLinkThumbnailUrl( link ) ) {
             html += "<div class='playbutton-wrapper'><img src='" + this.getLinkThumbnailUrl( link ) + "' />";
         }
-        html += "<span class=\"vidpop-playbutton-big\"></span>";
+
 
         if ( this.getLinkThumbnailUrl( link ) ) {
             html += "</div>";
         }
 
         var text_width = this.getImagesWidth() + 10;
-        html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
+		
+		html += "<p class='link' style='width: " + text_width + "px;'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
+		
+		
         html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
 
         return html;
@@ -938,15 +958,15 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
             }
         );
     },
-
+/*css_url = "/wp-content/plugins/contextly-plugin-wordpress-an_code_refactoring_for_mainsite/css/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";*/
     getWidgetCSSUrl: function () {
         var css_url;
         var settings = this.getSettings();
 
         if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
             css_url = "http://linker.site/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
-        } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
-            css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
+        } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {            
+			css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
         } else {
             css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/sidebar/template-" + settings.theme + ".css";
         }
@@ -1070,15 +1090,9 @@ Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
             if ( rgb.length == 3 ) {
                 var r = rgb[0];
                 var g = rgb[1];
-                var b = rgb[2];
-
-                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", color_border );
-                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "rgba("+r+","+g+","+b+",0.7)" );
-                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-moz-linear-gradient(top,  rgba(255,255,255,0) 0%, rgba("+r+","+g+","+b+",0.19) 10%, rgba("+r+","+g+","+b+",0.5) 27%, rgba("+r+","+g+","+b+",0.9) 100%)" );
-                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
-                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-o-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
-                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "-ms-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
-                css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba("+r+","+g+","+b+",0.19) 10%,rgba("+r+","+g+","+b+",0.5) 27%,rgba("+r+","+g+","+b+",0.9) 100%)" );
+                var b = rgb[2];	
+				
+ css_code += this.buildCSSRule( entry, ".blocks-widget li p" , "background", "rgba("+r+","+g+","+b+",0.5)" );                
             }
         }
 

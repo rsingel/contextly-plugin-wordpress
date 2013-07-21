@@ -281,6 +281,8 @@ class Contextly
             wp_enqueue_script( 'json2' );
             wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
+			wp_enqueue_script( 'mobile_opt', $this->getPluginJs( 'mobile_optimization.js' ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
+			wp_enqueue_script( 'popupoverlay', $this->getPluginJs( 'jquery.popupoverlay.js' ), 'jquery', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly-create-class', plugins_url( 'js/contextly-class.js' , __FILE__ ), 'easy_xdm', CONTEXTLY_PLUGIN_VERSION );
             wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', CONTEXTLY_PLUGIN_VERSION, false );
 

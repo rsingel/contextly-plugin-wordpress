@@ -4,30 +4,7 @@
 	Author: Stephane Caron (http://www.no-margin-for-errors.com)
 	Version: 3.1.5
 ------------------------------------------------------------------------- */
-(function($) {
-
-    // TODO: moce this code to main plugin script
-    var mobileSite=self.setInterval(function(){
-		var widget = $( '#linker_widget' );
-        var getWidgetWidth = widget.width();
-        var widgetType = widget.attr( 'widget-type' );
-
-        if ( widgetType == 'blocks2' ) {
-            if(getWidgetWidth<350) {
-                $(".blocks-widget2 li").css("width", "100%");
-                $(".blocks-widget2 li").css("max-width", "100%");
-                $(".blocks-widget2 li img").css("width", "30%");
-                $(".blocks-widget2 li p").css({"width":"60%", "margin-top":0});
-                $(".vidpop-playbutton-big").css("width", "30%");
-            } else {
-                $(".blocks-widget2 li").css("width", "23%");
-                $(".blocks-widget2 li").css("max-width", 160);
-                $(".blocks-widget2 li img").css("width", "94%");
-                $(".blocks-widget2 li p").css({ "width":"94%", "margin-top":5});
-                $(".vidpop-playbutton-big").css("width", "94%");
-            }
-        }
-	},1);
+(function($) {   
 
 	var videoPopupPlayButton=self.setInterval(function(){
 		var getImageHeight = $('.blocks-widget2 li img').height();
