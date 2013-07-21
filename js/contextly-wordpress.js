@@ -650,10 +650,14 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetTextFormatter,
 
+    getNumberOfLinksPerSection: function () {
+        return 4;
+    },
+
     getLinksHTMLOfType: function( type ) {
         var html = "";
         var widget = this.widget;
-        var links_limit = 4;
+        var links_limit = this.getNumberOfLinksPerSection();
 
         if ( widget.links && widget.links[ type ] ) {
             for ( var link_idx in widget.links[ type ] ) {
@@ -816,6 +820,10 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
 
     getWidgetCssName: function () {
         return 'float-widget';
+    },
+
+    getNumberOfLinksPerSection: function () {
+        return this.getSettings().links_limit;
     },
 
     getLinkHTMLNormal: function ( link ) {
