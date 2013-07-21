@@ -448,6 +448,10 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
     getWidgetCssName: function () {
         return 'default-widget';
+    },
+
+    escape: function ( text ) {
+        return escape( text );
     }
 });
 
@@ -493,7 +497,7 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
 
     getLinkHTML: function ( link )
     {
-        return "<li><a class=\"title module-contextly\" href=\"" + link.native_url + "\" title=\"" + link.title + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">" + link.title + "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
+        return "<li><a class=\"title module-contextly\" href=\"" + link.native_url + "\" title=\"" + this.escape( link.title ) + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">" + link.title + "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
     },
 
     getLinksHTMLOfType: function( type )
@@ -609,7 +613,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         }
 
         var html = "<ul class='horizontal-line' style='" + item_style + "'>";
-        var a_href = "<a class=\"title module-contextly\" href=\"" + link.native_url + "\" title=\"" + link.title + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">";
+        var a_href = "<a class=\"title module-contextly\" href=\"" + link.native_url + "\" title=\"" + this.escape( link.title ) + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">";
         var ie_fix = "<!--[if lte ie 7]><b></b><![endif]-->";
 
         if ( link.thumbnail_url ) {
@@ -724,7 +728,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     getLinkHTMLVideo: function ( link ) {
         var html = "<li>";
 
-        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + link.title + "\" contextly-url=\"" + link.url + "\" >";
+        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" >";
         html += "<span class=\"vidpop-playbutton-big\"></span>";
         html += "<p class='link'><span>" + link.title + "<span></p>";
         if ( link.thumbnail_url ) {
@@ -784,7 +788,7 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
     getLinkHTMLVideo: function ( link ) {
         var html = "<li>";
 
-        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + link.title + "\" contextly-url=\"" + link.url + "\" >";
+        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" >";
 
         if ( this.getLinkThumbnailUrl( link ) ) {
             html += "<div class='playbutton-wrapper'><img src='" + this.getLinkThumbnailUrl( link ) + "' />";
@@ -843,7 +847,7 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
     getLinkHTMLVideo: function ( link ) {
         var html = "<li>";
 
-        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + link.title + "\" contextly-url=\"" + link.url + "\" >";
+        html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" >";
 
         if ( this.getLinkThumbnailUrl( link ) ) {
             html += "<div class='playbutton-wrapper'><img src='" + this.getLinkThumbnailUrl( link ) + "' />";
