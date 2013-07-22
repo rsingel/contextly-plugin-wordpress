@@ -4,41 +4,15 @@
 	Author: Stephane Caron (http://www.no-margin-for-errors.com)
 	Version: 3.1.5
 ------------------------------------------------------------------------- */
-(function($) {
+(function($) {   
 
-    // TODO: move this code to main plugin script or some additional script
-    var responsive_images_handler = function () {
-        var widget = $( '#linker_widget' );
-        var getWidgetWidth = widget.width();
-        var widgetType = widget.attr( 'widget-type' );
+	var videoPopupPlayButton=self.setInterval(function(){
+		var getImageHeight = $('.blocks-widget2 li img').height();
+		$(".vidpop-playbutton-big").css("height", getImageHeight);
+	},1);
 
-        if ( widgetType == 'blocks2' ) {
-            if(getWidgetWidth<350) {
-                $(".blocks-widget2 li").css("width", "100%");
-                $(".blocks-widget2 li").css("max-width", "100%");
-                $(".blocks-widget2 li img").css("width", "30%");
-                $(".blocks-widget2 li p").css({"width":"60%", "margin-top":0});
-                $(".vidpop-playbutton-big").css("width", "30%");
-            } else {
-                $(".blocks-widget2 li").css("width", "23%");
-                $(".blocks-widget2 li").css("max-width", 160);
-                $(".blocks-widget2 li img").css("width", "94%");
-                $(".blocks-widget2 li p").css({ "width":"94%", "margin-top":5});
-                $(".vidpop-playbutton-big").css("width", "94%");
-            }
-
-            var getImageHeight = $('.blocks-widget2 li img').height();
-            $(".vidpop-playbutton-big").css("height", getImageHeight);
-        }
-    }
-
-    $(window).resize(
-        function() {
-            responsive_images_handler();
-        }
-    );
-
-    var screenWidth = window.innerWidth;
+	var screenWidth = window.innerWidth;
+	var screenHeight = window.innerHeight;
 
 	if(screenWidth <= 550 && screenWidth >= 520 ) { var video_width_mob = 470; }
 

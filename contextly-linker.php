@@ -8,7 +8,7 @@ Version: 1.0.85
 */
 
 define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.85' );
-define ( "CONTEXTLY_MODE", 'local' );
+define ( "CONTEXTLY_MODE", 'dev' );
 define ( "CONTEXTLY_HTTPS", isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' );
 
 require_once ( "Api.php" );
