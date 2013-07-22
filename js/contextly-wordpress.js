@@ -34,15 +34,46 @@ Contextly.Loader = Contextly.createClass({
         return Contextly.Settings.getInstance().isReadyToLoad();
     },
 
+    getLastResponse: function () {
+        return this.response;
+    },
+
+    isWidgetHasLinks: function () {
+        var has_links = false;
+        var response = this.getLastResponse();
+
+        if ( response && response.entry ) {
+            if ( response.entry.snippets ) {
+                has_links = this.isEntryWidgetsHasLinks( response.entry.snippets );
+            } else if ( response.entry.sidebars ) {
+                has_links = this.isEntryWidgetsHasLinks( response.entry.sidebars );
+            }
+        }
+
+        return has_links;
+    },
+
+    isEntryWidgetsHasLinks: function ( entry_widgets ) {
+        for ( var i = 0; i < entry_widgets.length; i++ ) {
+            if ( entry_widgets[i].links ) {
+                return true;
+            }
+        }
+        return false;
+    },
+
     // Main method for load page widgets
     load: function () {
         if ( !this.isCallAvailable() ) return;
 
+        var self = this;
         Contextly.RESTClient.getInstance().call(
             'pagewidgets',
             'get',
             {},
             function ( response ) {
+                self.response = response;
+
                 var pageView = new Contextly.PageView( response );
                 pageView.display();
             }
@@ -124,7 +155,21 @@ Contextly.PageView = Contextly.createClass({
                 this.checkPost();
             }
         }
+
+        if ( Contextly.Settings.getInstance().isAdmin() ) {
+            this.attachPublishConfirmation();
+        }
     },
+
+    attachPublishConfirmation: function () {
+        jQuery( '#publish').click(
+            function() {
+                Contextly.PopupHelper.getInstance().showPublishConfirmation();
+                return false;
+            }
+        );
+    },
+
     checkPost: function () {
         var update = false;
 
@@ -1547,6 +1592,55 @@ Contextly.PopupHelper = Contextly.createClass({
     showStubPopup: function () {
         this.url = this.url || 'http://contextly.com/contact-us/';
         window.open( this.url );
+    },
+
+    showPublishConfirmation: function () {
+        if ( Contextly.Loader.getInstance().isWidgetHasLinks() ) {
+            jQuery( '#post').submit();
+            return;
+        }
+
+        var popup_id = 'contextly_publish_confirmation';
+        var contextly_add_related_links_btn = 'contextly_add_related_links_btn';
+        var contextly_publish_now_btn = 'contextly_publish_now_btn';
+
+        var popup_width = 400;
+        var popup_height = 120;
+
+        var title = 'Publish confirmation';
+        var publish_button_value = jQuery( '#publish').attr( "value" );
+        var add_related_button_value = "Add Related Links";
+
+        jQuery( '#publish').removeClass( 'button-primary-disabled' );
+        jQuery( 'span.spinner').hide()
+
+        jQuery( "body" ).append(
+            jQuery(
+                '<div id="' + popup_id + '" style="display:none;">' +
+                "<div style='float:left; padding:10px;'>You haven't added any related links or a sidebar. If you want to add a sidebar, put the cursor where you'd like it in the post and click the sidebar button.</div>" +
+                '<input id="contextly_add_related_links_btn" type="button" value="' + add_related_button_value + '" class="button" />' +
+                '<input id="contextly_publish_now_btn" type="button" value="' + publish_button_value + '" class="button button-primary" style="margin-left: 20px; float: right;" />' +
+                '</div>'
+            )
+        );
+
+        jQuery( '#' + contextly_add_related_links_btn ).click(
+            function () {
+                tb_remove();
+                Contextly.PopupHelper.getInstance().snippetPopup();
+            }
+        );
+
+        jQuery( '#' + contextly_publish_now_btn ).click(
+            function () {
+                tb_remove();
+                jQuery( '#post').submit();
+            }
+        );
+
+        tb_show( title, "#TB_inline?height=" + popup_height + "&amp;width=" + popup_width + "&amp;inlineId=" + popup_id );
+        jQuery("#TB_window").width( popup_width + 30 );
+        jQuery("#TB_window").height( popup_height + 20 );
     }
 
 });

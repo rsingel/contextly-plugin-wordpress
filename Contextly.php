@@ -321,6 +321,10 @@ class Contextly
                 array( 'l10n_print_after' => 'Contextly = ' . json_encode( $data ) . ';' )
             );
         }
+
+	    if ( $this->isAdminEditPage() ) {
+		    add_thickbox();
+	    }
     }
 
 	function loadStyles() {
