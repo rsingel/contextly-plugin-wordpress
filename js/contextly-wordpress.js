@@ -752,7 +752,8 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 
         html += "<a href=\"" + link.native_url + "\" rel=\"contextly-video-link\" title=\"" + this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" >";
 
-        html += "<p class='link'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
+        //html += "<p class='link'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
+        html += "<p class='link'><span>" + link.title + "<span></p>";
         if ( link.thumbnail_url ) {
             html += "<img src='" + link.thumbnail_url + "' />";
         }
@@ -820,7 +821,8 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
             html += "</div>";
         }
 
-		html += "<p class='link'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
+		//html += "<p class='link'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
+		html += "<p class='link'><span>" + link.title + "<span></p>";
 
         html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
 
@@ -882,7 +884,8 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
 
         var text_width = this.getImagesWidth() + 10;
 
-		html += "<p class='link' style='width: " + text_width + "px;'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
+		//html += "<p class='link' style='width: " + text_width + "px;'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
+		html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "<span></p>";
 
 
         html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
