@@ -6,9 +6,9 @@
 ------------------------------------------------------------------------- */
 (function($) {
 
-    // TODO: moce this code to main plugin script
-    var mobileSite=self.setInterval(function(){
-		var widget = $( '#linker_widget' );
+    // TODO: move this code to main plugin script or some additional script
+    var responsive_images_handler = function () {
+        var widget = $( '#linker_widget' );
         var getWidgetWidth = widget.width();
         var widgetType = widget.attr( 'widget-type' );
 
@@ -26,16 +26,19 @@
                 $(".blocks-widget2 li p").css({ "width":"94%", "margin-top":5});
                 $(".vidpop-playbutton-big").css("width", "94%");
             }
+
+            var getImageHeight = $('.blocks-widget2 li img').height();
+            $(".vidpop-playbutton-big").css("height", getImageHeight);
         }
-	},1);
+    }
 
-	var videoPopupPlayButton=self.setInterval(function(){
-		var getImageHeight = $('.blocks-widget2 li img').height();
-		$(".vidpop-playbutton-big").css("height", getImageHeight);
-	},1);
+    $(window).resize(
+        function() {
+            responsive_images_handler();
+        }
+    );
 
-	var screenWidth = window.innerWidth;
-	var screenHeight = window.innerHeight;
+    var screenWidth = window.innerWidth;
 
 	if(screenWidth <= 550 && screenWidth >= 520 ) { var video_width_mob = 470; }
 
