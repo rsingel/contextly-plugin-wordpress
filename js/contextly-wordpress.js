@@ -1608,7 +1608,7 @@ Contextly.PopupHelper = Contextly.createClass({
 
         var title = 'Publish confirmation';
         var publish_button_value = jQuery( '#publish').attr( "value" );
-        var add_related_button_value = "Add Related Links";
+        var add_related_button_value = "Choose Related Posts";
 
         jQuery( '#publish').removeClass( 'button-primary-disabled' );
         jQuery( 'span.spinner').hide()
@@ -1616,9 +1616,9 @@ Contextly.PopupHelper = Contextly.createClass({
         jQuery( "body" ).append(
             jQuery(
                 '<div id="' + popup_id + '" style="display:none;">' +
-                "<div style='float:left; padding:10px;'>You haven't added any related links or a sidebar. If you want to add a sidebar, put the cursor where you'd like it in the post and click the sidebar button.</div>" +
-                '<input id="contextly_add_related_links_btn" type="button" value="' + add_related_button_value + '" class="button" />' +
-                '<input id="contextly_publish_now_btn" type="button" value="' + publish_button_value + '" class="button button-primary" style="margin-left: 20px; float: right;" />' +
+                "<div style='float:left; padding:10px;'>This post doesn't have related links or a sidebar. If you want to add a sidebar, close this window, put the cursor where you'd like it in the post and click the sidebar button.</div>" +
+                '<input id="contextly_add_related_links_btn" type="button" value="' + add_related_button_value + '" class="button button-primary" />' +
+                '<input id="contextly_publish_now_btn" type="button" value="' + publish_button_value + '" class="button" style="margin-left: 20px; float: right;" />' +
                 '</div>'
             )
         );
