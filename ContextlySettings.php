@@ -62,9 +62,7 @@ class ContextlySettings {
         add_settings_field( 'linker_block_position', 'Position', array( $this, 'settingsBlockPosition' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
 
         add_settings_section( 'display_section', 'Display Contextly Widgets For', array(), self::ADVANCED_SETTINGS_KEY );
-        add_settings_field( 'display_posts', 'Only Posts:', array( $this, 'settingsDisplayPosts' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
-        add_settings_field( 'display_pages', 'Only Pages:', array( $this, 'settingsDisplayPages' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
-        add_settings_field( 'display_all', 'Pages and Posts:', array( $this, 'settingsDisplayAll' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
+	    add_settings_field( 'display_control', 'Post Types:', array( $this, 'settingsDisplayFor' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 
         $this->tabs[ self::ADVANCED_SETTINGS_KEY ] = __( 'Advanced' );
     }
@@ -166,28 +164,17 @@ class ContextlySettings {
 			";
     }
 
-    public function settingsDisplayAll() {
-        $options = get_option( self::ADVANCED_SETTINGS_KEY );
-        echo "<label>";
-        echo "<input id='display_all' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type]' type='radio' value='all' " . ($options['display_type'] == 'all' ? "checked='checked'" : "") . "/>";
-        echo " ";
-        echo "</label>";
-    }
+    public function settingsDisplayFor() {
+        $values = $this->getWidgetDisplayType();
+	    $post_types = get_post_types( '', 'objects' );
 
-    public function settingsDisplayPosts() {
-        $options = get_option( self::ADVANCED_SETTINGS_KEY );
-        echo "<label>";
-        echo "<input id='display_posts' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type]' type='radio' value='post' " . ($options['display_type'] == 'post' || !isset( $options[ 'display_type' ] ) ? "checked='checked'" : "") . "/>";
-        echo " ";
-        echo "</label>";
-    }
-
-    public function settingsDisplayPages() {
-        $options = get_option( self::ADVANCED_SETTINGS_KEY );
-        echo "<label>";
-        echo "<input id='display_pages' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type]' type='radio' value='page' " . ($options['display_type'] == 'page' ? "checked='checked'" : "") . "/>";
-        echo " ";
-        echo "</label>";
+	    echo "<label>";
+	    echo "<select name='" . self::ADVANCED_SETTINGS_KEY . "[display_type][]' multiple='multiple' size='8'>";
+		foreach ( $post_types as $post_type ) {
+			echo "<option value='" . $post_type->name. "' " . (in_array( $post_type->name, ( $values ) ) ? "selected='selected'" : "" ) . ">" . $post_type->labels->name . "</option>";
+		}
+	    echo "</select>";
+	    echo "</label>";
     }
 
     public function getOptions() {
@@ -200,11 +187,22 @@ class ContextlySettings {
     public function getWidgetDisplayType() {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
 
-        if ( isset( $options['display_type'] ) ) {
-            return $options['display_type'];
-        }
+	    // Hack for previous plugin versions and selected values
+	    $values = isset( $options['display_type'] ) ? $options['display_type'] : array();
+	    if ( !is_array( $values ) ) {
+		    if ( $values == 'all' ) {
+			    $values = array( 'post', 'page' );
+		    } else {
+			    $values = array( $values );
+		    }
+	    }
 
-        return 'post';
+	    // Default choice
+	    if ( count( $values ) == 0 ) {
+		    $values = array( 'post' );
+	    }
+
+        return $values;
     }
 
     public function isPageDisplayDisabled( $page_id ) {

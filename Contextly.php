@@ -11,9 +11,6 @@ class Contextly
     const API_SETTINGS_KEY = 'contextly_options_api';
     const ADVANCED_SETTINGS_KEY = 'contextly_options_advanced';
 
-    const PAGE_TYPE_POST = 'post';
-    const PAGE_TYPE_PAGE = 'page';
-
     const WIDGET_SNIPPET_ID = 'linker_widget';
     const WIDGET_SNIPPET_CLASS = 'contextly-widget';
     const WIDGET_SNIPPET_META_BOX_TITLE = 'Contextly Related Links';
@@ -52,17 +49,20 @@ class Contextly
         return false;
     }
 
-    public function checkWidgetDisplayType() {
-        global $post;
+    public function checkWidgetDisplayType( $post_param = null ) {
+	    if ( null !== $post_param ) {
+			$post_object = $post_param;
+	    } else {
+		    global $post;
+		    $post_object = $post;
+	    }
 
         $contextly_settings = new ContextlySettings();
-        $display_type = $contextly_settings->getWidgetDisplayType();
+        $display_types = $contextly_settings->getWidgetDisplayType();
 
-        if ( $display_type == $post->post_type ) {
-            return true;
-        } elseif ( $display_type == 'all' ) {
-            return is_single() || is_page() || $this->isAdminEditPage();
-        }
+	    if ( in_array( $post_object->post_type, array_values( $display_types ) ) ) {
+		    return true;
+	    }
 
         return false;
     }
@@ -115,11 +115,13 @@ class Contextly
     }
 
     public function initAdmin() {
-        $this->addAdminMetaboxForPage( self::PAGE_TYPE_PAGE );
-        $this->addAdminMetaboxForPage( self::PAGE_TYPE_POST );
-
         if ( $this->checkWidgetDisplayType() ) {
-            $contextly_settings = new ContextlySettings();
+	        $contextly_settings = new ContextlySettings();
+	        $display_types = $contextly_settings->getWidgetDisplayType();
+
+	        foreach ( $display_types as $display_type ) {
+		        $this->addAdminMetaboxForPage( $display_type );
+	        }
 
             global $post;
             if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
@@ -334,8 +336,8 @@ class Contextly
 
     // Publish post action
     function publishPost($post_ID, $post) {
-        try {
-            if ( $post_ID && $post->post_status == "publish" && in_array( $post->post_type, array( self::PAGE_TYPE_PAGE, self::PAGE_TYPE_POST ) ) ) {
+	    try {
+            if ( $post_ID && $post->post_status == "publish" && $this->checkWidgetDisplayType( $post ) ) {
 
                 $client_options = $this->getAPIClientOptions();
 
@@ -353,7 +355,7 @@ class Contextly
                     'post_date'     => $post->post_date,
                     'post_modified' => $post->post_modified,
                     'post_status'   => $post->post_status,
-                    'post_type'     => self::PAGE_TYPE_POST,
+                    'post_type'     => $post->post_type,
                     'post_content'  => $post->post_content,
                     'url'           => get_permalink( $post->ID ),
                     'author_id'     => $post->post_author,
