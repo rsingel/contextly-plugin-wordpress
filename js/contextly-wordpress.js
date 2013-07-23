@@ -988,8 +988,8 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
                     var description = self.widget.description;
                     var sidebar_content = self.getDisplayElement().find( '.linker_content' );
 
-                    if ( description ) sidebar_content.prepend( "<div class='description'>" + this.escape( description ) + "</div>" );
-                    if ( title ) sidebar_content.prepend( "<div class='title'>" + this.escape( title ) + "</div>" );
+                    if ( description ) sidebar_content.prepend( "<div class='description'>" + self.escape( description ) + "</div>" );
+                    if ( title ) sidebar_content.prepend( "<div class='title'>" + self.escape( title ) + "</div>" );
 
                     self.loadCss();
                 }
