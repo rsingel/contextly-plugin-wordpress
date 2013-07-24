@@ -144,20 +144,13 @@ class Contextly
     }
 
     private function addAdminPublishMetaboxForPage( $page_type ) {
-        add_meta_box(
-            'contextly_socialer_sectionid',
-            __( self::WIDGET_SOCIALER_META_BOX_TITLE, 'contextly_socialer_textdomain' ),
-            array( $this, 'echoAdminPublishMetaboxForPage' ),
-            $page_type,
-            'side',
-            'high'
-        );
+	    add_action( 'post_submitbox_misc_actions', array( $this, 'echoAdminPublishMetaboxForPage' ) );
     }
 
     public function echoAdminPublishMetaboxForPage() {
-        // http://trepmal.com/2011/03/28/add-post-options-to-publish-meta-box/
-
-        echo '<input type="button" value="Test button" class="button action">';
+	    echo '<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee; margin-bottom: 5px;">';
+	    echo 'Contextly: <input type="button" value="Choose Related Posts" class="button action button-primary" onclick="Contextly.PopupHelper.getInstance().snippetPopup();" style="float: right;"/>';
+	    echo '</div>';
     }
 
     public function initDefault() {
@@ -226,7 +219,6 @@ class Contextly
     public function addMceButtons( $plugin_array ) {
         $plugin_array['contextlylink'] = plugins_url('js/contextly_linker_wplink.js?v=' . CONTEXTLY_PLUGIN_VERSION , __FILE__ );
         $plugin_array['contextlysidebar'] = plugins_url('js/contextly_linker_sidebar.js?v=' . CONTEXTLY_PLUGIN_VERSION , __FILE__ );
-        $plugin_array['contextly'] = plugins_url('js/contextly_linker_button.js?v=' . CONTEXTLY_PLUGIN_VERSION , __FILE__ );
 
         return $plugin_array;
     }
