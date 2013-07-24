@@ -14,6 +14,7 @@ class Contextly
     const WIDGET_SNIPPET_ID = 'linker_widget';
     const WIDGET_SNIPPET_CLASS = 'contextly-widget';
     const WIDGET_SNIPPET_META_BOX_TITLE = 'Contextly Related Links';
+    const WIDGET_SOCIALER_META_BOX_TITLE = 'Contextly Socialer';
 
     const WIDGET_SIDEBAR_CLASS = 'contextly-sidebar-hidden';
     const WIDGET_SIDEBAR_PREFIX = 'contextly-';
@@ -121,6 +122,7 @@ class Contextly
 
 	        foreach ( $display_types as $display_type ) {
 		        $this->addAdminMetaboxForPage( $display_type );
+                $this->addAdminPublishMetaboxForPage( $display_type );
 	        }
 
             global $post;
@@ -139,6 +141,23 @@ class Contextly
         $contextly_settings->changePageDisplay( $post_id, $_POST['contextly_display_widgets'] );
 
         return true;
+    }
+
+    private function addAdminPublishMetaboxForPage( $page_type ) {
+        add_meta_box(
+            'contextly_socialer_sectionid',
+            __( self::WIDGET_SOCIALER_META_BOX_TITLE, 'contextly_socialer_textdomain' ),
+            array( $this, 'echoAdminPublishMetaboxForPage' ),
+            $page_type,
+            'side',
+            'high'
+        );
+    }
+
+    public function echoAdminPublishMetaboxForPage() {
+        // http://trepmal.com/2011/03/28/add-post-options-to-publish-meta-box/
+
+        echo '<input type="button" value="Test button" class="button action">';
     }
 
     public function initDefault() {
