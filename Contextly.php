@@ -166,8 +166,8 @@ class Contextly
             __( self::WIDGET_SNIPPET_META_BOX_TITLE, 'contextly_linker_textdomain' ),
             array( $this, 'echoAdminMetaboxContent' ),
             $page_type,
-            'side',
-            'low'
+            'normal',
+            'high'
         );
     }
 

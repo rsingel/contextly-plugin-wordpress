@@ -330,10 +330,10 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     displayAdminControls: function () {
         var controls = '';
         if ( this.hasWidgetData() ) {
-            controls = "<br><input type='button' class='button action' value='Edit See Also' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' />";
+            controls = "<br><input type='button' class='button action' value='Edit Related Posts' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' />";
             this.appendText( controls );
         } else {
-            controls = "<input type='button' class='button action' value='Create See Also' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' />";
+            controls = "<input type='button' class='button action' value='Choose Related Posts' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' />";
             this.displayText( controls );
         }
     },
