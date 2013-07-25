@@ -1669,8 +1669,8 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
                 action: 'contextly_get_auth_token'
             },
             success: function( response ) {
-                if ( response.success && response.token ) {
-                    jQuery( settings_button_id).attr( 'token', response.token );
+                if ( response.success && response.contextly_access_token ) {
+                    jQuery( settings_button_id).attr( 'contextly_access_token', response.contextly_access_token );
                 }
             }
         });

@@ -528,7 +528,7 @@ class Contextly
 		try {
 			$data = array(
 				'success' => 1,
-				'token' => Contextly_Api::getInstance()->getAuthorizeToken()
+				'contextly_access_token' => Contextly_Api::getInstance()->getAuthorizeToken()
 			);
 		} catch ( Exception $e ) {
 			$data = array(

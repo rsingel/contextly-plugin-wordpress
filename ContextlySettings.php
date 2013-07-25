@@ -78,7 +78,7 @@ class ContextlySettings {
             function open_contextly_settings() {
                 var base_url = "<?php echo Urls::getMainServerUrl() ?>redirect/?type=settings";
 				var button_id = '#contextly-settings-btn';
-	            var auth_token_attr = 'token';
+	            var auth_token_attr = 'contextly_access_token';
 	            var token_attr = jQuery( button_id ).attr( auth_token_attr );
 
 	            if ( typeof token_attr !== 'undefined' && token_attr !== false ) {
