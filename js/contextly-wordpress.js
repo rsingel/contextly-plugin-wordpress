@@ -1168,7 +1168,14 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
     {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '.contextly-sidebar ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) {
+            var site_custom_code = Contextly.Utils.getInstance().escape( settings.css_code );
+            if ( site_custom_code.indexOf( '.contextly-sidebar' ) == -1 ) {
+                site_custom_code += '.contextly-sidebar ' + site_custom_code;
+            }
+
+            css_code += site_custom_code;
+        }
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, "a.title" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, "a.title" , "font-size", settings.font_size );
