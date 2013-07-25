@@ -232,7 +232,7 @@ class Contextly
             $flag = $contextly_settings->isPageDisplayDisabled( $post->ID );
 
             $html .= '<div style="border-top: 1px solid #DFDFDF; margin-top: 8px; padding-top: 8px;"><span id="timestamp">';
-            $html .= '<label>Do not display Contextly widgets: ';
+            $html .= '<label>Don\'t display Contextly content on this ' . $post->post_type . ': ';
             $html .= "<input type='checkbox' name='contextly_display_widgets' " . ( $flag == 'on' ? "checked='checked'" : "" ) . " onchange=\"jQuery('#post').submit();\" /></label>";
             $html .= '</span></div>';
         }
