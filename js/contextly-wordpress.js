@@ -759,7 +759,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 
 		div += "<div class=\"pluginauthor my_modal_open\"><span>Powered by</span></div>";
 		div += "<div id=\"my_modal\" class=\"well\" style=\"display:none;margin:1em;\">";
-		div += "<a href=\"#\" class=\"my_modal_close\" ></a>";		
+		div += "<a href=\"#\" class=\"my_modal_close\" ></a>";
 		div += "<div id='brandpopupcontainer'>";
 		div += "<span id=\"brandpoplogo\"></span><span id='brandpopupperbg'></span><div id='brandpoptext'>";
 		div += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";
@@ -1375,6 +1375,9 @@ Contextly.Settings = Contextly.createClass({
             return false;
         }
         return true;
+    },
+    getAjaxUrl: function () {
+        return Contextly.ajax_url;
     }
 });
 
@@ -1648,6 +1651,29 @@ Contextly.PopupHelper = Contextly.createClass({
         tb_show( title, "#TB_inline?height=" + popup_height + "&amp;width=" + popup_width + "&amp;inlineId=" + popup_id );
         jQuery("#TB_window").width( popup_width + 30 );
         jQuery("#TB_window").height( popup_height + 20 );
+    }
+
+});
+
+Contextly.SettingsAutoLogin = Contextly.createClass({
+    extend: Contextly.Singleton,
+
+    doLogin: function () {
+        var settings_button_id = '#contextly-settings-btn';
+
+        jQuery.ajax({
+            url: Contextly.Settings.getInstance().getAjaxUrl(),
+            type: 'post',
+            dataType: 'json',
+            data: {
+                action: 'contextly_get_auth_token'
+            },
+            success: function( response ) {
+                if ( response.success && response.token ) {
+                    jQuery( settings_button_id).attr( 'token', response.token );
+                }
+            }
+        });
     }
 
 });

@@ -249,7 +249,7 @@ class Contextly_Api {
     /**
      * @throws Exception
      */
-    protected function getAuthorizeToken() {
+    public function getAuthorizeToken() {
         $token_raw = null;
         $response = null;
 

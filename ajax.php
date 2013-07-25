@@ -19,6 +19,7 @@ $action = esc_attr( $_REQUEST['action'] );
 //A bit of security
 $allowed_actions = array(
     'contextly_publish_post',
+    'contextly_get_auth_token'
 );
 
 if( in_array($action, $allowed_actions) ) {
