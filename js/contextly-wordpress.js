@@ -1661,6 +1661,8 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
     doLogin: function () {
         var settings_button_id = '#contextly-settings-btn';
 
+        jQuery( settings_button_id ).attr( 'disabled', 'disabled' );
+
         jQuery.ajax({
             url: Contextly.Settings.getInstance().getAjaxUrl(),
             type: 'post',
@@ -1668,10 +1670,14 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
             data: {
                 action: 'contextly_get_auth_token'
             },
-            success: function( response ) {
+            success: function ( response ) {
                 if ( response.success && response.contextly_access_token ) {
-                    jQuery( settings_button_id).attr( 'contextly_access_token', response.contextly_access_token );
+                    jQuery( settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
                 }
+                jQuery( settings_button_id ).removeAttr( 'disabled' );
+            },
+            error: function () {
+                jQuery( settings_button_id ).removeAttr( 'disabled' );
             }
         });
     }

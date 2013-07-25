@@ -104,7 +104,7 @@ class ContextlySettings {
                     The majority of the settings for Contextly are handled outside Wordpress. Press the settings button to go to your settings panel. You will need your Twitter credentials to login.
                 </h3>
                 <p>
-                    <input type="button" value="Settings" class="button button-hero" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
+                    <input type="button" value="Settings" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
                 </p>
 	            <?
 	                if ( is_admin() ) {
