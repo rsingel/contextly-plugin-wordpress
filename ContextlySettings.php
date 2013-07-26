@@ -136,7 +136,7 @@ class ContextlySettings {
 				}
 			);
 		</script>
-		<?
+		<?php
 	}
 
     public function displaySettingsTabs() {
