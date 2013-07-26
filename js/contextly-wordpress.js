@@ -497,7 +497,37 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
     escape: function ( text ) {
         return Contextly.Utils.getInstance().escape( text );
+    },
+
+    getLinkATag: function ( link, content ) {
+        return "<a target=\"_blank\" class=\"title module-contextly\" href=\"" +
+            this.escape( link.native_url ) + "\" title=\"" +
+            this.escape( link.title ) + "\" onmousedown=\"this.href='" +
+            this.escape( link.url ) + "'\" onclick=\"" +
+            this.getTrackLinkJSHtml( link ) + "\">" +
+            content + "</a>" + this.getLinkATagIE7Fix();
+    },
+
+    getVideoLinkATag: function ( link, content ) {
+        return "<a class=\"title module-contextly\" rel=\"contextly-video-link\" href=\"" +
+            this.escape( link.native_url ) + "\" title=\"" +
+            this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" " +
+            "'\" onclick=\"" + this.getTrackLinkJSHtml( link ) + "\">" +
+            content + "</a>" + this.getLinkATagIE7Fix();
+    },
+
+    getTrackLinkJSHtml: function ( link ) {
+        var widget_type = this.escape( this.getWidgetType() );
+        var link_type = this.escape( link.type );
+        var link_title = this.escape( link.title );
+
+        return "Contextly.PageEvents.getInstance().trackLink('" + widget_type + "','" + link_type + "','" + link_title + "');";
+    },
+
+    getLinkATagIE7Fix: function () {
+        return "<!--[if lte ie 7]><b></b><![endif]-->";
     }
+
 });
 
 Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
@@ -542,7 +572,7 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
 
     getLinkHTML: function ( link )
     {
-        return "<li><a class=\"title module-contextly\" href=\"" + this.escape( link.native_url ) + "\" title=\"" + this.escape( link.title ) + "\" onmousedown=\"this.href='" + this.escape( link.url ) + "'\" onclick=\"javascript:return(true)\">" + link.title + "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
+        return "<li>" + this.getLinkATag( link, link.title ) + "</li>";
     },
 
     getLinksHTMLOfType: function( type )
@@ -604,7 +634,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 
         if ( this.isDisplayContextlyLogo() ) {
             /*div += "<li><span class='contextly_related'><a href='http://contextly.com'>Related Links by Contextly</a></span></li>";*/
-			
+
 		div += "<li>";/*branding popup*/
 		div += "<div class=\"pluginauthor my_modal_open\"><span>Powered by</span></div>";
 		div += "<div id=\"my_modal\" class=\"well\" style=\"display:none;margin:1em;\">";
@@ -620,7 +650,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 		div += "<span id='brandpopsymbol'></span>";
 		div += "</div>";/*branding popup*/
 		div += "</li>";
-		
+
         }
 
         div += "</ul>";
@@ -675,21 +705,21 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         }
 
         var html = "<ul class='horizontal-line' style='" + item_style + "'>";
-        var a_href = "<a class=\"title module-contextly\" href=\"" + this.escape( link.native_url ) + "\" title=\"" + this.escape( link.title ) + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">";
-        var ie_fix = "<!--[if lte ie 7]><b></b><![endif]-->";
 
         if ( link.thumbnail_url ) {
             var image_li_width = this.getImagesWidth() + 8;
-            html += "<li style='width: " + image_li_width + "px;'>" + a_href + "<img src='" + link.thumbnail_url + "' /></a>" + ie_fix + "</li>";
+            var image_html = "<img src='" + link.thumbnail_url + "' />";
+
+            html += "<li style='width: " + image_li_width + "px;'>" + this.getLinkATag( link, image_html ) + "</li>";
         }
 
-        html += "<li>" + a_href + link.title + "</a>";
+        html += "<li>" + this.getLinkATag( link, link.title ) + "</a>";
 
         if ( this.widget.settings.display_link_dates && link.publish_date ) {
             html += " <span class='link-pub-date'>" + Contextly.Utils.getInstance().dateTextDiff( link.publish_date ) + "</span>";
         }
 
-        html += ie_fix + "</li>";
+        html += this.getLinkATagIE7Fix() + "</li>";
         html += "</ul>";
 
         return html;
@@ -801,30 +831,21 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         }
     },
 
-    getLinkHTMLVideo: function ( link ) {
-        var html = "<li>";
-
-        html += "<a href=\"" + this.escape( link.native_url ) + "\" rel=\"contextly-video-link\" title=\"" + this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" >";
-
-        //html += "<p class='link'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
-        html += "<p class='link'><span>" + link.title + "<span></p>";
-        if ( link.thumbnail_url ) {
-            html += "<img src='" + link.thumbnail_url + "' />";
+    getInnerLinkHTML: function ( link ) {
+        var inner_html = "<p class='link'><span>" + link.title + "</span></p>";
+        if ( this.getLinkThumbnailUrl( link ) ) {
+            inner_html += "<img src='" + link.thumbnail_url + "' />";
         }
-        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
 
-        return html;
+        return inner_html;
+    },
+
+    getLinkHTMLVideo: function ( link ) {
+        return "<li>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link ) ) + "</li>";
     },
 
     getLinkHTMLNormal: function ( link ) {
-        var html = "<li><a href=\"" + this.escape( link.native_url ) + "\" title=\"" + this.escape( link.title ) + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\"><p class='link'><span>" + link.title + "</span></p>";
-
-        if ( link.thumbnail_url ) {
-            html += "<img src='" + link.thumbnail_url + "' />";
-        }
-        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
-
-        return html;
+        return "<li>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</li>";
     },
 
     getCustomCssCode: function () {
@@ -862,36 +883,24 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
         return 'blocks-widget2';
     },
 
-    getLinkHTMLVideo: function ( link ) {
-        var html = "<li>";
-
-        html += "<a href=\"" + this.escape( link.native_url ) + "\" rel=\"contextly-video-link\" title=\"" + this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" >";
-
+    getInnerLinkHTML: function ( link, is_video ) {
+        var inner_html = "";
         if ( this.getLinkThumbnailUrl( link ) ) {
-            html += "<div class='playbutton-wrapper'><img src='" + this.getLinkThumbnailUrl( link ) + "' />";
+            if ( is_video ) {
+                inner_html += "<div class='playbutton-wrapper'>";
+            }
+            inner_html += "<img src='" + link.thumbnail_url + "' />";
+            if ( is_video ) {
+                inner_html += "</div>";
+            }
         }
+        inner_html += "<p class='link'><span>" + link.title + "</span></p>";
 
-        if ( this.getLinkThumbnailUrl( link ) ) {
-            html += "</div>";
-        }
-
-		//html += "<p class='link'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
-		html += "<p class='link'><span>" + link.title + "<span></p>";
-
-        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
-
-        return html;
+        return inner_html;
     },
 
-    getLinkHTMLNormal: function ( link ) {
-        var html = "<li><a href=\"" + this.escape( link.native_url ) + "\" title=\"" + this.escape( link.title ) + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">";
-
-        if ( this.getLinkThumbnailUrl( link ) ) {
-            html += "<img src='" + this.getLinkThumbnailUrl( link ) + "' />";
-        }
-        html += "<p class='link'><span>" + link.title + "</span></p></a><!--[if lte ie 7]><b></b><![endif]--></li>";
-
-        return html;
+    getLinkHTMLVideo: function ( link ) {
+        return "<li>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</li>";
     }
 
 });
@@ -908,42 +917,26 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
         return this.getSettings().links_limit;
     },
 
-    getLinkHTMLNormal: function ( link ) {
-        var html = "<li><a href=\"" + this.escape( link.native_url ) + "\" title=\"" + this.escape( link.title ) + "\" onmousedown=\"this.href='" + link.url + "'\" onclick=\"javascript:return(true)\">";
-
-        if ( link.thumbnail_url ) {
-            html += "<img src='" + link.thumbnail_url + "' />";
+    getInnerLinkHTML: function ( link, is_video ) {
+        var inner_html = "";
+        if ( this.getLinkThumbnailUrl( link ) ) {
+            if ( is_video ) {
+                inner_html += "<div class='playbutton-wrapper'>";
+            }
+            inner_html += "<img src='" + link.thumbnail_url + "' />";
+            if ( is_video ) {
+                inner_html += "</div>";
+            }
         }
 
         var text_width = this.getImagesWidth() + 10;
-        html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
-        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
+        inner_html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
 
-        return html;
+        return inner_html;
     },
 
     getLinkHTMLVideo: function ( link ) {
-        var html = "<li>";
-
-        html += "<a href=\"" + this.escape( link.native_url ) + "\" rel=\"contextly-video-link\" title=\"" + this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" >";
-
-        if ( this.getLinkThumbnailUrl( link ) ) {
-            html += "<div class='playbutton-wrapper'><img src='" + this.getLinkThumbnailUrl( link ) + "' />";
-        }
-
-
-        if ( this.getLinkThumbnailUrl( link ) ) {
-            html += "</div>";
-        }
-
-        var text_width = this.getImagesWidth() + 10;
-
-		//html += "<p class='link' style='width: " + text_width + "px;'><span><i class='icon-youtube-play videooverlaybutton'></i>" + link.title + "<span></p>";
-		html += "<p class='link' style='width: " + text_width + "px;'><span>" + link.title + "<span></p>";
-
-        html += "</a><!--[if lte ie 7]><b></b><![endif]--></li>";
-
-        return html;
+        return "<li>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</li>";
     },
 
     getCustomCssCode: function () {
@@ -1014,7 +1007,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
             }
         );
     },
-/*css_url = "/wp-content/plugins/contextly-plugin-wordpress-an_code_refactoring_for_mainsite/css/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";*/
+
     getWidgetCSSUrl: function () {
         var css_url;
         var settings = this.getSettings();
@@ -1334,6 +1327,28 @@ Contextly.PageEvents = Contextly.createClass({
         }
 
         Contextly.Loader.getInstance().trackPageEvent( setting_id, "show_more", tab );
+    },
+
+    trackLink: function ( widget_type, link_type, link_title ) {
+        if ( typeof _gaq == 'undefined' ) return;
+        if ( !widget_type || !link_type || !link_title ) return;
+
+        var label_limit = 30;
+        var category = 'Contextly';
+        var action = 'ClickedOn';
+        var label = link_title;
+
+        if ( label.length > label_limit ) {
+            label = label.substr( 0, label_limit );
+        }
+
+        if ( widget_type == Contextly.WidgetType.SIDEBAR ) {
+            category += 'Sidebar';
+        } else {
+            category += link_type.charAt(0).toUpperCase() + link_type.slice(1)
+        }
+
+        _gaq.push(['_trackEvent', category, action, label]);
     }
 
 });
