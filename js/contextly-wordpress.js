@@ -603,7 +603,24 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         }
 
         if ( this.isDisplayContextlyLogo() ) {
-            div += "<li><span class='contextly_related'><a href='http://contextly.com'>Related Links by Contextly</a></span></li>";
+            /*div += "<li><span class='contextly_related'><a href='http://contextly.com'>Related Links by Contextly</a></span></li>";*/
+			
+		div += "<li>";/*branding popup*/
+		div += "<div class=\"pluginauthor my_modal_open\"><span>Powered by</span></div>";
+		div += "<div id=\"my_modal\" class=\"well\" style=\"display:none;margin:1em;\">";
+		div += "<a href=\"#\" class=\"my_modal_close\" ></a>";
+		div += "<div id='brandpopupcontainer'>";
+		div += "<span id=\"brandpoplogo\"></span><span id='brandpopupperbg'></span><div id='brandpoptext'>";
+		div += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";
+		div += "Publishers or advertisers who would like to learn more about Contextly can contact us&nbsp;";
+		div += "<a href=\"http://contextly.com/sign-up/publishers/\" target=\"_blank\">here</a>.<br><br>";
+		div += "We respect ";
+		div += "<a href=\"http://contextly.com/privacy/\" target=\"_blank\">readers' privacy </a>.&nbsp;";
+		div += "</div></div>";
+		div += "<span id='brandpopsymbol'></span>";
+		div += "</div>";/*branding popup*/
+		div += "</li>";
+		
         }
 
         div += "</ul>";
