@@ -73,10 +73,13 @@ class ContextlySettings {
 
     public function displaySettings() {
         $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : self::GENERAL_SETTINGS_KEY;
+
+	    $base_login_url = Urls::getMainServerUrl() . 'redirect/?type=settings';
+	    $twitter_login_link = $base_login_url . "&blog_url=" . urlencode( site_url() ) . "&blog_title=" . urlencode( get_bloginfo("name") );
         ?>
         <script>
             function open_contextly_settings() {
-                var base_url = "<?php echo Urls::getMainServerUrl() ?>redirect/?type=settings";
+                var base_url = "<?php echo $base_login_url ?>";
 				var button_id = '#contextly-settings-btn';
 	            var auth_token_attr = 'contextly_access_token';
 	            var token_attr = jQuery( button_id ).attr( auth_token_attr );
@@ -84,7 +87,7 @@ class ContextlySettings {
 	            if ( typeof token_attr !== 'undefined' && token_attr !== false ) {
 		            base_url += "&" + auth_token_attr + "=" + encodeURIComponent( token_attr );
 	            } else {
-		            base_url += "&blog_url=" + encodeURIComponent("<?php echo site_url(); ?>") + "&blog_title=" + encodeURIComponent( "<?php echo get_bloginfo("name"); ?>" );
+		            base_url = "<?php echo $twitter_login_link ?>";
 	            }
 
                 window.open( base_url );
@@ -101,12 +104,12 @@ class ContextlySettings {
                 </form>
             <?php } else { ?>
                 <h3>
-                    The majority of the settings for Contextly are handled outside Wordpress. Press the settings button to go to your settings panel. You will need your Twitter credentials to login.
+	                Click the settings button to securely login to your settings. If that fails, you can still login via Twitter using this <a target="_blank" href="<?php echo $twitter_login_link ?>">link</a>.
                 </h3>
                 <p>
                     <input type="button" value="Settings" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
                 </p>
-	            <?
+	            <?php
 	                if ( is_admin() ) {
 						$this->displaySettingsAutoloadStuff();
 	                }
