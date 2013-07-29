@@ -1577,6 +1577,7 @@ Contextly.PopupHelper = Contextly.createClass({
             function ( response ) {
                 if ( response.status == 'ok' && response.snippet_id ) {
                     send_to_editor( '[contextly_sidebar id="' + response.snippet_id + '"]' );
+                    Contextly.Loader.getInstance().load();
                 }
             }
         );
