@@ -7,20 +7,21 @@
  * @author Ivan Lazarevic
  */
 
-(function($) {	
-	
-	var videoPopupPlayButton=self.setInterval(function(){		
-		
-		$(document).ready(function() {		
+(function($) {
+
+    // TODO: remove this code for this file!!!
+	var videoPopupPlayButton=self.setInterval(function(){
+
+		$(document).ready(function() {
 			$('.my_modal_open').click(function(){
 				$('#my_modal').popup({
 					'autoopen': true
 				});
-			
+
 			});
 		});
-			
-	},10);	
+
+	},10);
 
     var level = [];
     var lastclicked = [];
