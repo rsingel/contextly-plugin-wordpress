@@ -164,8 +164,13 @@ Contextly.PageView = Contextly.createClass({
     attachPublishConfirmation: function () {
         jQuery( '#publish').click(
             function() {
-                Contextly.PopupHelper.getInstance().showPublishConfirmation();
-                return false;
+                if ( Contextly.Loader.getInstance().isWidgetHasLinks() ) {
+                    jQuery( '#post').submit();
+                    return true;
+                } else {
+                    Contextly.PopupHelper.getInstance().showPublishConfirmation();
+                    return false;
+                }
             }
         );
     },
@@ -1640,11 +1645,6 @@ Contextly.PopupHelper = Contextly.createClass({
     },
 
     showPublishConfirmation: function () {
-        if ( Contextly.Loader.getInstance().isWidgetHasLinks() ) {
-            jQuery( '#post').submit();
-            return;
-        }
-
         var popup_id = 'contextly_publish_confirmation';
         var contextly_add_related_links_btn = 'contextly_add_related_links_btn';
         var contextly_publish_now_btn = 'contextly_publish_now_btn';

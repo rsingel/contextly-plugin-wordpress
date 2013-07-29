@@ -370,7 +370,7 @@ class Contextly
 
     // Publish post action
 	public function publishPost($post_ID, $post) {
-	    try {
+		try {
             if ( $post_ID && $post->post_status == "publish" && $this->checkWidgetDisplayType( $post ) ) {
 
                 $client_options = $this->getAPIClientOptions();
