@@ -19,9 +19,9 @@ class Urls {
 
 	static public function getMainServerUrl() {
 		if ( CONTEXTLY_MODE == self::MODE_LIVE ) {
-			return 'http://contextly.com/';
+			return 'https://contextly.com/';
 		} elseif ( CONTEXTLY_MODE == self::MODE_DEV ) {
-			return 'http://dev.contextly.com/';
+			return 'https://dev.contextly.com/';
 		} else {
 			return 'http://linker.site/';
 		}

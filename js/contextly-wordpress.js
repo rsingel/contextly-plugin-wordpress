@@ -521,7 +521,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         var link_type = this.escape( link.type );
         var link_title = this.escape( link.title );
 
-        return "Contextly.PageEvents.getInstance().trackLink('" + widget_type + "','" + link_type + "','" + link_title + "');";
+        return this.escape( "Contextly.PageEvents.getInstance().trackLink('" + widget_type + "','" + link_type + "','" + link_title + "');" );
     },
 
     getLinkATagIE7Fix: function () {
@@ -1487,6 +1487,8 @@ Contextly.MainServerAjaxClient = Contextly.createClass({
     getXhr: function () {
         if ( !this.xhr ) {
             var remote_url = Contextly.Settings.getInstance().getMainServerUrl() + '/easy_xdm/cors/index.html';
+            remote_url = remote_url.replace('https://', 'http://');
+
             this.xhr = new easyXDM.Rpc({
                     remote: remote_url
                 },
