@@ -207,13 +207,15 @@ class ContextlySettings {
         $values = $this->getWidgetDisplayType();
 	    $post_types = get_post_types( '', 'objects' );
 
-	    echo "<label>";
-	    echo "<select name='" . self::ADVANCED_SETTINGS_KEY . "[display_type][]' multiple='multiple' size='8'>";
-		foreach ( $post_types as $post_type ) {
-			echo "<option value='" . $post_type->name. "' " . (in_array( $post_type->name, ( $values ) ) ? "selected='selected'" : "" ) . ">" . $post_type->labels->name . "</option>";
-		}
-	    echo "</select>";
-	    echo "</label>";
+	    echo "<table cellpadding='0' cellspacing='0'>";
+	    foreach ( $post_types as $post_type ) {
+		    echo "<tr><td style='padding: 3px;'>";
+		    echo "<input id='post-type-{$post_type->name}' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( $values ) ) ? "checked='checked'" : "" ) . " />";
+		    echo "</td><td style='padding: 3px;'><label for='post-type-{$post_type->name}'>";
+		    echo $post_type->labels->name;
+		    echo "</label></td></tr>";
+	    }
+	    echo "</table>";
     }
 
     public function getOptions() {

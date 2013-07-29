@@ -60,8 +60,6 @@
             }
         }
 
-        /*display type: sidebar left <--*/
-
         var getLeftSidebarWidth = $('.contextly-sidebar-left').width();
         if(getLeftSidebarWidth < 240) {
             $(".contextly-sidebar .horizontal-line li").css("float", "left");
@@ -81,13 +79,21 @@
 
     $.fn.checkIfWidgetLoadedAndResize = function () {
         var widgetType = $.fn.getWidgetType();
+        $.documentLoadCheckCount++;
 
         if ( widgetType ) {
             $.fn.responsiveResizeHandler();
+            $.fn.clearIfWidgetLoadedInterval();
+        }
 
-            if ( $.documentLoadInterval ) {
-                clearInterval( $.documentLoadInterval );
-            }
+        if ( $.documentLoadCheckCount > 10 ) {
+            $.fn.clearIfWidgetLoadedInterval();
+        }
+    }
+
+    $.fn.clearIfWidgetLoadedInterval = function () {
+        if ( $.documentLoadInterval ) {
+            clearInterval( $.documentLoadInterval );
         }
     }
 
@@ -98,6 +104,7 @@
     );
 
     $.documentLoadInterval = null;
+    $.documentLoadCheckCount = 0;
 
     $(document).ready(
         function() {
