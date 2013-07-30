@@ -1,7 +1,5 @@
 (function($) {
 
-    // TODO: Rewrite this code to be better and more intuitive
-
     $.fn.getWidget = function () {
         return $( '#linker_widget' );
     }
@@ -10,7 +8,15 @@
         return $.fn.getWidget().attr( 'widget-type' );
     }
 
-    $.fn.responsiveResizeHandler = function () {
+    $.fn.responsiveResizeHandler = function () {	
+
+			$('.my_modal_open').click(function(){
+				$('#my_modal').popup({
+					'autoopen': true
+				});
+
+			});		
+		
         var widgetType = $.fn.getWidgetType();
         var getWidgetWidth = $.fn.getWidget().width();
         var resizeMinLimit = 350;
