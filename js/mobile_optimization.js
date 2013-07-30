@@ -18,8 +18,14 @@
 				});
 
 			});	
-			
+		
+        var widgetType = $.fn.getWidgetType();
+        var getWidgetWidth = $.fn.getWidget().width();
+        var resizeMinLimit = 350;
+		
 		//blocks standardized text
+		
+		if ( widgetType == 'blocks' ) {
 			
 			$(".blocks-widget li a").on("mouseover", function(event){
 				$(this).toggleClass('heightauto');
@@ -33,10 +39,10 @@
 				$(".heightauto p").css("height", "46px");
 			    $(this).removeClass('heightauto');			  
 			});
+			
+		}
 		
-        var widgetType = $.fn.getWidgetType();
-        var getWidgetWidth = $.fn.getWidget().width();
-        var resizeMinLimit = 350;
+		
 
         if ( widgetType == 'blocks2' ) {
             if(getWidgetWidth < resizeMinLimit) {
