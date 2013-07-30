@@ -8,41 +8,20 @@
         return $.fn.getWidget().attr( 'widget-type' );
     }
 
-    $.fn.responsiveResizeHandler = function () {	
+    $.fn.responsiveResizeHandler = function () {
 
 		//branding popup
-		
-			$('.my_modal_open').click(function(){
-				$('#my_modal').popup({
-					'autoopen': true
-				});
 
-			});	
-		
+        $('.my_modal_open').click(function(){
+            $('#my_modal').popup({
+                'autoopen': true
+            });
+
+        });
+
         var widgetType = $.fn.getWidgetType();
         var getWidgetWidth = $.fn.getWidget().width();
         var resizeMinLimit = 350;
-		
-		//blocks standardized text
-		
-		if ( widgetType == 'blocks' ) {
-			
-			$(".blocks-widget li a").on("mouseover", function(event){
-				$(this).toggleClass('heightauto');
-				var getTextHeight = $('.heightauto p span').height();
-				if(getTextHeight>50) {
-					$(".heightauto p").css("height", getTextHeight);
-				}
-			});
-			
-			$(".blocks-widget li a").on("mouseout", function(event){
-				$(".heightauto p").css("height", "46px");
-			    $(this).removeClass('heightauto');			  
-			});
-			
-		}
-		
-		
 
         if ( widgetType == 'blocks2' ) {
             if(getWidgetWidth < resizeMinLimit) {
@@ -87,6 +66,19 @@
             } else {
                 $(".blocks-widget li").css({"width":"22%", "margin-left":"2.4%", "margin-bottom":"2.2%"});
             }
+
+            $(".blocks-widget li a").on("mouseover", function(event){
+                $(this).toggleClass('heightauto');
+                var getTextHeight = $('.heightauto p span').height();
+                if(getTextHeight>50) {
+                    $(".heightauto p").css("height", getTextHeight);
+                }
+            });
+
+            $(".blocks-widget li a").on("mouseout", function(event){
+                $(".heightauto p").css("height", "46px");
+                $(this).removeClass('heightauto');
+            });
         }
 
         var getLeftSidebarWidth = $('.contextly-sidebar-left').width();
