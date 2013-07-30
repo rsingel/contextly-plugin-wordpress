@@ -6,11 +6,6 @@
 ------------------------------------------------------------------------- */
 (function($) {   
 
-	var videoPopupPlayButton=self.setInterval(function(){
-		var getImageHeight = $('.blocks-widget2 li img').height();
-		$(".vidpop-playbutton-big").css("height", getImageHeight);
-	},1);
-
 	var screenWidth = window.innerWidth;
 	var screenHeight = window.innerHeight;
 
