@@ -10,12 +10,29 @@
 
     $.fn.responsiveResizeHandler = function () {	
 
+		//branding popup
+		
 			$('.my_modal_open').click(function(){
 				$('#my_modal').popup({
 					'autoopen': true
 				});
 
-			});		
+			});	
+			
+		//blocks standardized text
+			
+			$(".blocks-widget li a").on("mouseover", function(event){
+				$(this).toggleClass('heightauto');
+				var getTextHeight = $('.heightauto p span').height();
+				if(getTextHeight>50) {
+					$(".heightauto p").css("height", getTextHeight);
+				}
+			});
+			
+			$(".blocks-widget li a").on("mouseout", function(event){
+				$(".heightauto p").css("height", "46px");
+			    $(this).removeClass('heightauto');			  
+			});
 		
         var widgetType = $.fn.getWidgetType();
         var getWidgetWidth = $.fn.getWidget().width();
