@@ -162,7 +162,7 @@ Contextly.PageView = Contextly.createClass({
     },
 
     attachPublishConfirmation: function () {
-        jQuery( '#publish').click(
+        jQuery( '#publish' ).click(
             function() {
                 if ( Contextly.Loader.getInstance().isWidgetHasLinks() ) {
                     jQuery( '#post').submit();
@@ -1656,7 +1656,7 @@ Contextly.PopupHelper = Contextly.createClass({
         var publish_button_value = jQuery( '#publish').attr( "value" );
         var add_related_button_value = "Choose Related Posts";
 
-        jQuery( '#publish').removeClass( 'button-primary-disabled' );
+        jQuery( '.button-primary' ).removeClass( 'button-primary-disabled' );
         jQuery( 'span.spinner').hide()
 
         jQuery( "body" ).append(
@@ -1679,7 +1679,8 @@ Contextly.PopupHelper = Contextly.createClass({
         jQuery( '#' + contextly_publish_now_btn ).click(
             function () {
                 tb_remove();
-                jQuery( '#post').submit();
+                jQuery( '#publish').unbind( 'click' );
+                jQuery( '#publish').click();
             }
         );
 
