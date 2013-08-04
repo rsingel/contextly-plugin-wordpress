@@ -565,14 +565,6 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
         var value;
 
         div += "<div class='contextly_see_also " + this.getWidgetCssName() + "'>";
-        // Check for top links html
-        if ( value = this.widget.settings.html_above ) {
-            div += "<div class='contextly_html_above'>" + value + "</div>";
-        }
-        // Check for title
-        if ( value = this.widget.settings.title ) {
-            div += "<div class='contextly_title'>" + this.escape( value ) + "</div>";
-        }
 
         var sections = this.widget.settings.display_sections;
 
@@ -633,10 +625,6 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         var div = "<div class='contextly_see_also " + this.getWidgetCssName() + "'>";
 
         var sections = this.widget.settings.display_sections;
-
-        if ( value = this.widget.settings.html_above ) {
-            div += "<span class=\"contextly_above_related\">" + value + "</span>";
-        }
 
         div += "<ul class=\"linker_tabs\">";
         var active_flag = false;
@@ -802,10 +790,6 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         var value;
 
         div += "<div class='contextly_see_also " + this.getWidgetCssName() +"'>";
-        // Check for top links html
-        if ( value = this.widget.settings.html_above ) {
-            div += "<div class='contextly_html_above'>" + value + "</div>";
-        }
 
         var sections = this.widget.settings.display_sections;
 
