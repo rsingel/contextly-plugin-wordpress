@@ -424,6 +424,7 @@ class Contextly
                     // Lets try to update some post related stuff
                     $this->updatePostImages( $post );
                     $this->updatePostTags( $post );
+                    $this->updatePostCategories( $post );
                 }
 
                 return $response;
@@ -489,6 +490,49 @@ class Contextly
             }
         }
     }
+
+	public function updatePostCategories( $post )
+	{
+		$post_id = $post->ID;
+
+		$client_options = $this->getAPIClientOptions();
+		Contextly_Api::getInstance()->setOptions( $client_options );
+
+		// First of all we need to get list of all page categories and remove them
+		$post_cats = Contextly_Api::getInstance()
+			->api( 'postscategories', 'list' )
+			->searchParam( 'post_id', Contextly_Api::SEARCH_TYPE_EQUAL, $post_id )
+			->get();
+
+		if ( isset( $post_cats->list ) && is_array( $post_cats->list ) ) {
+			foreach ( $post_cats->list as $category ) {
+				Contextly_Api::getInstance()
+					->api( 'postscategories', 'delete' )
+					->param( 'id', $category->id )
+					->get();
+			}
+		}
+
+		// Save new post categories
+		$post_categories = wp_get_post_categories( $post_id );
+		if (is_array($post_categories) && count($post_categories) > 0) {
+			foreach (array_slice($post_categories, 0, 3) as $category_id) {
+				$category = get_category( $category_id );
+
+				if ( $category && strtolower( $category->name ) != "uncategorized" ) {
+					$category_data = array(
+						'post_id'   => $post_id,
+						'name'      => $category->name
+					);
+
+					Contextly_Api::getInstance()
+						->api( 'postscategories', 'put' )
+						->extraParams( $category_data )
+						->get();
+				}
+			}
+		}
+	}
 
 	public function updatePostImages( $post )
     {
