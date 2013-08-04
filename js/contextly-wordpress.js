@@ -13,6 +13,15 @@ Contextly.WidgetType = {
     SIDEBAR: 'sidebar'
 };
 
+Contextly.LinkType = {
+    PREVIOUS: 'previous',
+    RECENT: 'recent',
+    WEB: 'web',
+    INTERESTING: 'interesting',
+    CUSTOM: 'custom',
+    PROMO: 'sticky'
+};
+
 Contextly.Singleton = Contextly.createClass({
     statics: {
         construct: function() {
@@ -1339,18 +1348,28 @@ Contextly.PageEvents = Contextly.createClass({
         if ( !widget_type || !link_type || !link_title ) return;
 
         var label_limit = 30;
-        var category = 'Contextly';
-        var action = 'ClickedOn';
+        var category = 'ContextlyWidget';
+        var action = 'ClickedOutBound';
         var label = link_title;
+
+        if ( widget_type == Contextly.WidgetType.SIDEBAR ) {
+            category = 'ContextlySidebar';
+        }
 
         if ( label.length > label_limit ) {
             label = label.substr( 0, label_limit );
         }
 
-        if ( widget_type == Contextly.WidgetType.SIDEBAR ) {
-            category += 'Sidebar';
+        if( widget_type == Contextly.WidgetType.SIDEBAR && ( link_type == Contextly.LinkType.WEB || link_type == Contextly.LinkType.PREVIOUS ) ) {
+            action = 'ClickedRecentRelated';
+        } else if ( link_type == Contextly.LinkType.PREVIOUS ) {
+            action = 'ClickedPreviousRelated';
+        } else if( link_type == Contextly.LinkType.RECENT ) {
+            action = 'ClickedRecentRelated';
+        } else if( link_type == Contextly.LinkType.PROMO ) {
+            action = 'ClickedPromoLink';
         } else {
-            category += link_type.charAt(0).toUpperCase() + link_type.slice(1)
+            action = 'Clicked' + link_type.charAt(0).toUpperCase() + link_type.slice(1);
         }
 
         _gaq.push(['_trackEvent', category, action, label]);
