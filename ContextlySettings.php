@@ -230,20 +230,13 @@ class ContextlySettings {
     }
 
     public function settingsDisplayFor() {
-	    $options = get_option( self::ADVANCED_SETTINGS_KEY );
-
-	    if ( isset( $options[ 'display_type' ] ) ) {
-		    $values = $options[ 'display_type' ];
-	    } else {
-		    $values = array();
-	    }
-
+	    $values = $this->getWidgetDisplayType();
 	    $post_types = get_post_types( '', 'objects' );
 
 	    echo "<table cellpadding='0' cellspacing='0'>";
 	    foreach ( $post_types as $post_type ) {
 		    echo "<tr><td style='padding: 3px;'>";
-		    echo "<input id='post-type-{$post_type->name}' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( $values ) ) ? "checked='checked'" : "" ) . " />";
+		    echo "<input id='post-type-{$post_type->name}' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( array_values( $values ) ) ) ? "checked='checked'" : "" ) . " />";
 		    echo "</td><td style='padding: 3px;'><label for='post-type-{$post_type->name}'>";
 		    echo $post_type->labels->name;
 		    echo "</label></td></tr>";
