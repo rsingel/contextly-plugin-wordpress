@@ -513,12 +513,21 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         return Contextly.Utils.getInstance().escape( text );
     },
 
+    getOnclickHtml: function ( link ) {
+        var settings = this.getSettings();
+
+        if ( settings && settings.utm_enable ) {
+            return " onclick=\"" + this.getTrackLinkJSHtml( link ) + "\"";
+        }
+
+        return "";
+    },
+
     getLinkATag: function ( link, content ) {
         return "<a target=\"_blank\" class=\"title module-contextly\" href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" onmousedown=\"this.href='" +
-            this.escape( link.url ) + "'\" onclick=\"" +
-            this.getTrackLinkJSHtml( link ) + "\">" +
+            this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
             content + "</a>" + this.getLinkATagIE7Fix();
     },
 
@@ -526,7 +535,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         return "<a class=\"title module-contextly\" rel=\"contextly-video-link\" href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" " +
-            "'\" onclick=\"" + this.getTrackLinkJSHtml( link ) + "\">" +
+            "'\" " + this.getOnclickHtml( link ) + ">" +
             content + "</a>" + this.getLinkATagIE7Fix();
     },
 
