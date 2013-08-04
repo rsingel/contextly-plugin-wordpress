@@ -273,7 +273,7 @@ class ContextlySettings {
 
 	    // Default choice
 	    if ( count( $values ) == 0 ) {
-		    $values = array();
+		    $values = array('post');
 	    }
 
         return $values;
