@@ -13,6 +13,8 @@ class ContextlySettings {
     const OPTIONS_KEY               = 'contextly_options';
     const PLUGIN_NAME               = 'contextly-linker';
 
+	const MSG_ERROR_TYPE            = 'error';
+
     public $tabs                    = array();
 
     public function init() {
@@ -42,16 +44,13 @@ class ContextlySettings {
     }
 
     public function registerSettings() {
-        register_setting( self::GENERAL_SETTINGS_KEY, self::GENERAL_SETTINGS_KEY, array( $this, 'validate' ) );
-        register_setting( self::API_SETTINGS_KEY, self::API_SETTINGS_KEY, array( $this, 'validate' ) );
-        register_setting( self::ADVANCED_SETTINGS_KEY, self::ADVANCED_SETTINGS_KEY, array( $this, 'validate' ) );
+        register_setting( self::GENERAL_SETTINGS_KEY, self::GENERAL_SETTINGS_KEY );
+        register_setting( self::API_SETTINGS_KEY, self::API_SETTINGS_KEY, array( $this, 'validateApi' ) );
+        register_setting( self::ADVANCED_SETTINGS_KEY, self::ADVANCED_SETTINGS_KEY, array( $this, 'validateAdvanced' ) );
 
-        $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
 
         add_settings_section( 'api_section', 'API Settings', array( $this, 'apiLayoutSection' ), self::API_SETTINGS_KEY );
         add_settings_field( 'api_key', 'API Key', array( $this, 'apiKeyInput' ), self::API_SETTINGS_KEY, 'api_section');
-
-        $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API' );
 
         add_settings_section( 'main_section', 'Single Link Button', array(), self::ADVANCED_SETTINGS_KEY );
         add_settings_field( 'link_type_override', 'Override', array( $this, 'settingsOverride' ), self::ADVANCED_SETTINGS_KEY, 'main_section' );
@@ -64,12 +63,39 @@ class ContextlySettings {
         add_settings_section( 'display_section', 'Display Contextly Widgets For', array(), self::ADVANCED_SETTINGS_KEY );
 	    add_settings_field( 'display_control', 'Post Types:', array( $this, 'settingsDisplayFor' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 
+	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
+	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API' );
         $this->tabs[ self::ADVANCED_SETTINGS_KEY ] = __( 'Advanced' );
     }
 
-    public function validate( $input ) {
-        return $input;
-    }
+	public function validateApi( $input ) {
+		$input['api_key'] = trim($input['api_key']);
+
+		if ( !$input['api_key'] ) {
+			$this->showMessage( self::MSG_ERROR_TYPE, 'API can not be empty.' );
+		}
+
+		return $input;
+	}
+
+	public function validateAdvanced( $input ) {
+		$input['target_id'] = trim( wp_filter_nohtml_kses( $input['target_id'] ) );
+
+		if ( !is_array( $input['display_type'] ) || count( $input['display_type'] ) == 0 ) {
+			$this->showMessage( self::MSG_ERROR_TYPE, 'At least one of post type need to be selected.' );
+		}
+
+		return $input;
+	}
+
+	private function showMessage( $type, $message ) {
+		add_settings_error(
+	        'contextlyErrorId',
+	        esc_attr( 'settings_updated' ),
+			__( $message ),
+	        $type
+	    );
+	}
 
     public function displaySettings() {
         $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : self::GENERAL_SETTINGS_KEY;
@@ -176,7 +202,7 @@ class ContextlySettings {
 
         echo "<label>";
         echo "<input id='link_type_override' name='" . self::ADVANCED_SETTINGS_KEY . "[link_type]' type='radio' value='override' " . ($options['link_type'] == "override" ? "checked='checked'" : "") . "/>";
-        echo " With this setting, the Wordpress link button in the Visual editor is changed to used Contextly to add links to the body of your posts. There is no dedicated button for adding single links through Contextly with this option.";
+        echo " With this setting, the WordPress link button in the Visual editor is changed to used Contextly to add links to the body of your posts. There is no dedicated button for adding single links through Contextly with this option.";
         echo "</label>";
     }
 
@@ -184,7 +210,7 @@ class ContextlySettings {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
         echo "<label>";
         echo "<input id='link_type_default' name='" . self::ADVANCED_SETTINGS_KEY . "[link_type]' type='radio' value='' " . (!$options['link_type'] ? "checked='checked'" : "") . "/>";
-        echo " With this setting, Wordpress's single link button in the Visual editor works as it normally does. The Visual editor bar gets an additional single link button so you can add links to the body of your post using Contextly.";
+        echo " With this setting, WordPress's single link button in the Visual editor works as it normally does. The Visual editor bar gets an additional single link button so you can add links to the body of your post using Contextly.";
         echo "</label>";
     }
 
@@ -204,7 +230,14 @@ class ContextlySettings {
     }
 
     public function settingsDisplayFor() {
-        $values = $this->getWidgetDisplayType();
+	    $options = get_option( self::ADVANCED_SETTINGS_KEY );
+
+	    if ( isset( $options[ 'display_type' ] ) ) {
+		    $values = $options[ 'display_type' ];
+	    } else {
+		    $values = array();
+	    }
+
 	    $post_types = get_post_types( '', 'objects' );
 
 	    echo "<table cellpadding='0' cellspacing='0'>";
@@ -240,7 +273,7 @@ class ContextlySettings {
 
 	    // Default choice
 	    if ( count( $values ) == 0 ) {
-		    $values = array( 'post' );
+		    $values = array();
 	    }
 
         return $values;

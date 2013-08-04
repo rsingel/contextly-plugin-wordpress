@@ -38,11 +38,14 @@ class Contextly
 
         add_action( 'publish_post', array( $this, 'publishPost'), 10, 2 );
 
-        add_action('contextly_linker_ajax_contextly_publish_post', array( $this, 'ajaxPublishPostCallback' ) );
-        add_action('contextly_linker_ajax_nopriv_contextly_publish_post', array( $this, 'ajaxPublishPostCallback' ) );
-
-        add_action('contextly_linker_ajax_contextly_get_auth_token', array( $this, 'ajaxGetAuthTokenCallback' ) );
+	    $this->attachAjaxActions();
     }
+
+	private function attachAjaxActions() {
+		add_action('wp_ajax_nopriv_contextly_publish_post', array( $this, 'ajaxPublishPostCallback' ) );
+		add_action('wp_ajax_contextly_publish_post', array( $this, 'ajaxPublishPostCallback' ) );
+		add_action('wp_ajax_contextly_get_auth_token', array( $this, 'ajaxGetAuthTokenCallback' ) );
+	}
 
     private function isAdminEditPage() {
         global $pagenow;
@@ -54,18 +57,22 @@ class Contextly
     }
 
     public function checkWidgetDisplayType( $post_param = null ) {
+	    global $post;
+
+	    $post_object = null;
 	    if ( null !== $post_param ) {
 			$post_object = $post_param;
-	    } else {
-		    global $post;
+	    } elseif ( isset( $post ) ) {
 		    $post_object = $post;
 	    }
 
-        $contextly_settings = new ContextlySettings();
-        $display_types = $contextly_settings->getWidgetDisplayType();
+	    if ( $post_object !== null && isset( $post_object->post_type ) ) {
+	        $contextly_settings = new ContextlySettings();
+	        $display_types = $contextly_settings->getWidgetDisplayType();
 
-	    if ( in_array( $post_object->post_type, array_values( $display_types ) ) ) {
-		    return true;
+		    if ( in_array( $post_object->post_type, array_values( $display_types ) ) ) {
+			    return true;
+		    }
 	    }
 
         return false;
@@ -140,13 +147,18 @@ class Contextly
         if ( !current_user_can( 'edit_page', $post_id ) ) return false;
         if ( empty( $post_id ) ) return false;
 
-        $contextly_settings = new ContextlySettings();
-        $contextly_settings->changePageDisplay( $post_id, $_POST['contextly_display_widgets'] );
+	    $display_widget_flag = null;
+	    if ( isset( $_POST['contextly_display_widgets'] ) ) {
+		    $display_widget_flag = $_POST['contextly_display_widgets'];
+	    }
+
+	    $contextly_settings = new ContextlySettings();
+	    $contextly_settings->changePageDisplay( $post_id, $display_widget_flag );
 
         return true;
     }
 
-    private function addAdminPublishMetaboxForPage( $page_type ) {
+    private function addAdminPublishMetaboxForPage() {
 	    add_action( 'post_submitbox_misc_actions', array( $this, 'echoAdminPublishMetaboxForPage' ) );
     }
 
@@ -263,7 +275,7 @@ class Contextly
                 if ( $display_post_settings && $display_global_settings ) {
                     $default_html_code = 'Contextly content is turned off for this post/page. You can change this via the checkbox below.';
                 } else {
-                    $default_html_code = 'Contextly content is turned off for this page. You can change this in <a href="admin.php?page=contextly_options&tab=contextly_options_advanced">Contextly settings page</a> in Wordpress, under advanced.';
+                    $default_html_code = 'Contextly content is turned off for this page. You can change this in <a href="admin.php?page=contextly_options&tab=contextly_options_advanced">Contextly settings page</a> in WordPress, under advanced.';
                 }
             }
 
@@ -299,7 +311,8 @@ class Contextly
 	}
 
 	private function getAjaxUrl() {
-		$ajax_url = plugins_url( 'ajax.php' , __FILE__ );
+		$ajax_url = admin_url( 'admin-ajax.php' );
+		/*
 		$home_url = home_url( '/' );
 
 		$ajax_url_parts = parse_url( $ajax_url );
@@ -311,6 +324,7 @@ class Contextly
 				$ajax_url = rtrim( $home_url, '/' ) . $ajax_url_parts[ 'path' ];
 			}
 		}
+		*/
 
 		return $ajax_url;
 	}
@@ -368,7 +382,6 @@ class Contextly
 		wp_enqueue_style( 'pretty-photo-style' );
 	}
 
-    // Publish post action
 	public function publishPost($post_ID, $post) {
 		try {
             if ( $post_ID && $post->post_status == "publish" && $this->checkWidgetDisplayType( $post ) ) {

@@ -4,6 +4,7 @@
             'static' : {
                 selected_text: null,
                 editor: null,
+                select_text_message: 'First highlight the word or phrase you want to link, then press this button.',
 
                 setSelectedText: function( text ) {
                     this.selected_text = text;
@@ -27,7 +28,10 @@
 
 				// Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mceExample');
 				ed.addCommand('WP_Contextly_Link', function() {
-					if ( disabled ) return;
+					if ( disabled ) {
+                        alert( tinymce.plugins.ContextlyPluginLink.select_text_message );
+                        return;
+                    }
 						// Open contextly window for select link
                     Contextly.PopupHelper.getInstance().linkPopup();
 				});
