@@ -713,8 +713,9 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         var html = "<ul class='horizontal-line' style='" + item_style + "'>";
 
         if ( link.thumbnail_url ) {
-            var image_li_width = this.getImagesWidth() + 8;
-            var image_html = "<img src='" + link.thumbnail_url + "' />";
+            var image_width = this.getImagesWidth();
+            var image_li_width = image_width + 8;
+            var image_html = "<img src='" + link.thumbnail_url + "' style='width: " + image_width + "px !important;' />";
 
             html += "<li style='width: " + image_li_width + "px;'>" + this.getLinkATag( link, image_html ) + "</li>";
         }
