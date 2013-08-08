@@ -174,7 +174,6 @@ Contextly.PageView = Contextly.createClass({
         jQuery( '#publish' ).click(
             function() {
                 if ( Contextly.Loader.getInstance().isWidgetHasLinks() ) {
-                    jQuery( '#post').submit();
                     return true;
                 } else {
                     Contextly.PopupHelper.getInstance().showPublishConfirmation();
