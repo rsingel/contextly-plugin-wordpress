@@ -51,7 +51,7 @@
             }
 
             else {
-                $(".float-widget li").css({"width":"30.3%", "min-height":"190px"});
+                $(".float-widget li").css({"width":"32.3%"});
                 $(".float-widget img").css("width", "100%");
                 $(".float-widget p.link").css({ "width":"100%", "max-width":"100%", "margin-left":"0"});
             }
