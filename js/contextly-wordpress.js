@@ -417,6 +417,11 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     fixSnippetPagePosition: function () {
+        // We need to be sure that our control is last in content element
+        if (!this.getDisplayElement().is(":last-child")) {
+            this.getDisplayElement().parent().append(this.getDisplayElement());
+        }
+
         // Check for a custom position on page
         var wp_settings = Contextly.Settings.getInstance().getWPSettings();
         if (typeof wp_settings != "undefined" && typeof wp_settings.target_id != "undefined" && wp_settings.target_id) {
