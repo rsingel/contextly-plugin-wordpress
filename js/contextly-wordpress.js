@@ -132,7 +132,7 @@ Contextly.PageView = Contextly.createClass({
         // Check if we have error on page
         if ( this.isError() && Contextly.Settings.getInstance().isAdmin() ) {
             var message = '';
-            var url = 'http://contextly.com/contact-us/';
+            var url = 'admin.php?page=contextly_options&tab=contextly_options_api';
 
             if ( this.error.error ) {
                 if ( this.error.error_code == Contextly.Errors.ERROR_FORBIDDEN ) {
@@ -140,7 +140,6 @@ Contextly.PageView = Contextly.createClass({
                 } else if ( this.error.error_code == Contextly.Errors.ERROR_SUSPENDED ) {
                     message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
                 } else {
-                    url = "admin.php?page=contextly_options&tab=contextly_options_api";
                     message = "Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
                 }
             } else {
