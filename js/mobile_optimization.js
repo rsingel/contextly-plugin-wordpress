@@ -81,7 +81,7 @@
             });
         }
 
-        var getLeftSidebarWidth = $('.contextly-sidebar-left').width();
+        var getLeftSidebarWidth = $('.contextly-sidebar').width();
         if(getLeftSidebarWidth < 240) {
             $(".contextly-sidebar .horizontal-line li").css("float", "left");
             $("horizontal-line").css("float", "left");
