@@ -7,7 +7,12 @@
     $.fn.getWidgetType = function () {
         return $.fn.getWidget().attr( 'widget-type' );
     }
-
+	
+	function classChanger(widgetClass,hasClassName,addClassName) {
+		if($('.'+widgetClass).hasClass(hasClassName)) {$('.'+widgetClass).removeClass(hasClassName)}
+		$('.'+widgetClass).addClass(addClassName);
+	}
+	
     $.fn.responsiveResizeHandler = function () {
 
 		//branding popup
@@ -17,23 +22,17 @@
                 'autoopen': true
             });
 
-        });
+        }); 
 
         var widgetType = $.fn.getWidgetType();
         var getWidgetWidth = $.fn.getWidget().width();
         var resizeMinLimit = 350;
 
         if ( widgetType == 'blocks2' ) {
-            if(getWidgetWidth < resizeMinLimit) {
-                $(".blocks-widget2 li").css("width", "100%");
-                $(".blocks-widget2 li").css("max-width", "100%");
-                $(".blocks-widget2 li img").css("width", "30%");
-                $(".blocks-widget2 li p").css({"width":"60%", "margin-top":0});
-            } else {
-                $(".blocks-widget2 li").css("width", "23%");
-                $(".blocks-widget2 li").css("max-width", 160);
-                $(".blocks-widget2 li img").css("width", "94%");
-                $(".blocks-widget2 li p").css({ "width":"94%", "margin-top":5});
+            if(getWidgetWidth < resizeMinLimit) {			
+				classChanger('blocks-widget2','blocks2site', 'blocks2mobile');						 		
+            } else {			
+				classChanger('blocks-widget2','blocks2mobile', 'blocks2site');		
             }
         }
 
