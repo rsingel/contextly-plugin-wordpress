@@ -7,12 +7,14 @@
     $.fn.getWidgetType = function () {
         return $.fn.getWidget().attr( 'widget-type' );
     }
-	
-	function classChanger(widgetClass,hasClassName,addClassName) {
-		if($('.'+widgetClass).hasClass(hasClassName)) {$('.'+widgetClass).removeClass(hasClassName)}
-		$('.'+widgetClass).addClass(addClassName);
+
+    $.fn.classChanger = function ( widgetClass, hasClassName, addClassName) {
+		if( $( '.' + widgetClass ).hasClass( hasClassName ) ) {
+            $( '.' + widgetClass ).removeClass( hasClassName );
+        }
+		$( '.'+widgetClass ).addClass( addClassName );
 	}
-	
+
     $.fn.responsiveResizeHandler = function () {
 
 		//branding popup
@@ -22,17 +24,17 @@
                 'autoopen': true
             });
 
-        }); 
+        });
 
         var widgetType = $.fn.getWidgetType();
         var getWidgetWidth = $.fn.getWidget().width();
         var resizeMinLimit = 350;
 
         if ( widgetType == 'blocks2' ) {
-            if(getWidgetWidth < resizeMinLimit) {			
-				classChanger('blocks-widget2','blocks2site', 'blocks2mobile');						 		
-            } else {			
-				classChanger('blocks-widget2','blocks2mobile', 'blocks2site');		
+            if(getWidgetWidth < resizeMinLimit) {
+                $.fn.classChanger('blocks-widget2','blocks2site', 'blocks2mobile');
+            } else {
+                $.fn.classChanger('blocks-widget2','blocks2mobile', 'blocks2site');
             }
         }
 
