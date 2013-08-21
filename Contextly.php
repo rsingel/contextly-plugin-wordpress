@@ -396,7 +396,7 @@ class Contextly
 	 * @return bool|Exception
 	 */
 	public function publishPost( $post_ID, $post ) {
-		if ( isset( $post ) && $post_ID && $post->post_status == "publish" && $this->checkWidgetDisplayType( $post ) ) {
+		if ( isset( $post ) && $post_ID && $this->checkWidgetDisplayType( $post ) ) {
 			try {
 				// Check if we have this post in our db
 				$contextly_post = Contextly_Api::getInstance()
