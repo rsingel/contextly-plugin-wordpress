@@ -234,7 +234,7 @@ class Contextly_Api {
     }
 
     public function isDebug() {
-        return isset( $_REQUEST[ 'debug' ] ) && $_REQUEST[ 'debug' ] == 1;
+        return is_admin() && isset( $_REQUEST[ 'debug' ] ) && $_REQUEST[ 'debug' ] == 1;
     }
 
     /**

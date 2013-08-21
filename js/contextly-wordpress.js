@@ -205,7 +205,8 @@ Contextly.PageView = Contextly.createClass({
     updatePost: function () {
         var data = {
             action: 'contextly_publish_post',
-            page_id: Contextly.Settings.getInstance().getPageId()
+            page_id: Contextly.Settings.getInstance().getPageId(),
+            contextly_nonce: Contextly.Settings.getInstance().getAjaxNonce()
         };
 
         jQuery.ajax({
@@ -1426,6 +1427,12 @@ Contextly.Settings = Contextly.createClass({
     },
     getAjaxUrl: function () {
         return Contextly.ajax_url;
+    },
+    getAjaxNonce: function () {
+        if ( Contextly.ajax_nonce ) {
+            return Contextly.ajax_nonce;
+        }
+        return null;
     }
 });
 

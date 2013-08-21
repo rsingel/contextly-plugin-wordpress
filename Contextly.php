@@ -103,13 +103,17 @@ class Contextly
     private function getPostData() {
         global $post;
 
-        return array(
-            'post_id'       => $post->ID,
-            'post_date'     => $post->post_date,
-            'post_modified' => $post->post_modified,
-            'author'        => $post->post_author,
-            'type'          => $post->post_type,
-        );
+	    if ( isset( $post ) && $post->ID ) {
+	        return array(
+	            'post_id'       => $post->ID,
+	            'post_date'     => $post->post_date,
+	            'post_modified' => $post->post_modified,
+	            'author'        => $post->post_author,
+	            'type'          => $post->post_type,
+	        );
+	    }
+
+	    return null;
     }
 
     private function getAuthorName( $post ) {
@@ -311,22 +315,7 @@ class Contextly
 	}
 
 	private function getAjaxUrl() {
-		$ajax_url = admin_url( 'admin-ajax.php' );
-		/*
-		$home_url = home_url( '/' );
-
-		$ajax_url_parts = parse_url( $ajax_url );
-		$home_url_parts = parse_url( $home_url );
-
-		// Fix in case if we have different url for site address
-		if ( !is_admin() ) {
-			if ( $ajax_url_parts[ 'host' ] != $home_url_parts[ 'host' ] ) {
-				$ajax_url = rtrim( $home_url, '/' ) . $ajax_url_parts[ 'path' ];
-			}
-		}
-		*/
-
-		return $ajax_url;
+		return admin_url( 'admin-ajax.php' );
 	}
 
 	public function makeContextlyJSObject( $additional_options = array() ) {
@@ -345,6 +334,10 @@ class Contextly
 			'https'         => CONTEXTLY_HTTPS,
 			'version'       => CONTEXTLY_PLUGIN_VERSION
 		);
+
+		if ( isset( $api_options[ 'appSecret' ] ) && $api_options[ 'appSecret' ] ) {
+			$options[ 'ajax_nonce' ] = wp_create_nonce( $api_options[ 'appSecret' ] );
+		}
 
 		if ( is_array( $additional_options ) ) {
 			$options = $additional_options + $options;
@@ -382,9 +375,26 @@ class Contextly
 		wp_enqueue_style( 'pretty-photo-style' );
 	}
 
+	public function ajaxPublishPostCallback() {
+		$api_options = $this->getAPIClientOptions();
+		check_ajax_referer( $api_options[ 'appSecret' ], 'contextly_nonce');
+
+		$page_id = $_REQUEST[ 'page_id' ];
+		$post = get_post( $page_id );
+		if ( $post ) {
+			$contextly = new Contextly();
+			$result = $contextly->publishPost( $page_id, $post );
+
+			echo json_encode( $result );
+		}
+		exit;
+	}
+
 	public function publishPost($post_ID, $post) {
+		// TODO: Refactor this code for work better and faster
+
 		try {
-            if ( $post_ID && $post->post_status == "publish" && $this->checkWidgetDisplayType( $post ) ) {
+			if ( $post_ID && $post->post_status == "publish" && $this->checkWidgetDisplayType( $post ) ) {
 
                 $client_options = $this->getAPIClientOptions();
 
@@ -436,20 +446,6 @@ class Contextly
         }
 
         return null;
-    }
-
-	public function ajaxPublishPostCallback() {
-        $page_id = $_REQUEST[ 'page_id' ];
-
-        $post = get_post( $page_id );
-
-        if ( $post ) {
-            $contextly = new Contextly();
-            $result = $contextly->publishPost( $page_id, $post );
-
-            echo json_encode( $result );
-        }
-        exit;
     }
 
 	public function updatePostTags( $post )

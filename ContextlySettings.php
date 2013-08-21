@@ -69,10 +69,14 @@ class ContextlySettings {
     }
 
 	public function validateApi( $input ) {
-		$input['api_key'] = trim($input['api_key']);
+		$input['api_key'] = sanitize_text_field($input['api_key']);
 
 		if ( !$input['api_key'] ) {
-			$this->showMessage( self::MSG_ERROR_TYPE, 'API can not be empty.' );
+			$this->showMessage( self::MSG_ERROR_TYPE, 'API Key can not be empty.' );
+		} else {
+			if ( !preg_match( "/^[a-zA-Z0-9_]+-[a-zA-Z0-9#*;]+$/", $input['api_key'] ) ) {
+				$this->showMessage( self::MSG_ERROR_TYPE, 'Invalid characters in API Key.' );
+			}
 		}
 
 		return $input;
@@ -146,23 +150,27 @@ class ContextlySettings {
     }
 
 	private function displaySettingsAutoloadStuff() {
-		$contextly_object = new Contextly();
-		$contextly_object->loadContextlyAjaxJSScripts();
-		$contextly_object->makeContextlyJSObject(
-			array(
-				'disable_autoload' => true
-			)
-		);
+		global $post;
 
-		?>
-		<script>
-			jQuery( document ).ready(
-				function () {
-					Contextly.SettingsAutoLogin.getInstance().doLogin();
-				}
+		if ( isset( $post ) && $post->ID ) {
+			$contextly_object = new Contextly();
+			$contextly_object->loadContextlyAjaxJSScripts();
+			$contextly_object->makeContextlyJSObject(
+				array(
+					'disable_autoload' => true
+				)
 			);
-		</script>
-		<?php
+
+			?>
+			<script>
+				jQuery( document ).ready(
+					function () {
+						Contextly.SettingsAutoLogin.getInstance().doLogin();
+					}
+				);
+			</script>
+			<?php
+		}
 	}
 
     public function displaySettingsTabs() {
