@@ -390,183 +390,123 @@ class Contextly
 		exit;
 	}
 
-	public function publishPost($post_ID, $post) {
-		// TODO: Refactor this code for work better and faster
-
-		try {
-			if ( $post_ID && $post->post_status == "publish" && $this->checkWidgetDisplayType( $post ) ) {
-
-                $client_options = $this->getAPIClientOptions();
-
-                Contextly_Api::getInstance()->setOptions( $client_options );
-
-                // Check if we have this post in our db
-                $contextly_post = Contextly_Api::getInstance()
-                    ->api( 'posts', 'get' )
-                    ->param( 'page_id', $post->ID )
-                    ->get();
-
-                $post_data = array(
-                    'post_id'       => $post->ID,
-                    'post_title'    => $post->post_title,
-                    'post_date'     => $post->post_date,
-                    'post_modified' => $post->post_modified,
-                    'post_status'   => $post->post_status,
-                    'post_type'     => $post->post_type,
-                    'post_content'  => $post->post_content,
-                    'url'           => get_permalink( $post->ID ),
-                    'author_id'     => $post->post_author,
-                    'post_author'   => $this->getAuthorName( $post )
-                );
-
-                // Lets publish this post in our DB
-                $publish_post = Contextly_Api::getInstance()
-                    ->api( 'posts', 'put' )
-                    ->extraParams( $post_data );
-
-                if ( isset( $contextly_post->entry ) ) {
-                    $publish_post->param( 'id', $contextly_post->entry->id );
-                }
-                $response = $publish_post->get();
-
-                // Check if all fine and post was really updated
-                if ( !isset( $response->error ) && $response->affected ) {
-                    // Lets try to update some post related stuff
-                    $this->updatePostImages( $post );
-                    $this->updatePostTags( $post );
-                    $this->updatePostCategories( $post );
-                }
-
-                return $response;
-            }
-        }
-        catch ( Exception $e )
-        {
-            return $e;
-        }
-
-        return null;
-    }
-
-	public function updatePostTags( $post )
-    {
-        $post_id = $post->ID;
-
-        $client_options = $this->getAPIClientOptions();
-        Contextly_Api::getInstance()->setOptions( $client_options );
-
-        // First of all we need to get list of all page tags and remove
-        $post_tags = Contextly_Api::getInstance()
-            ->api( 'poststags', 'list' )
-            ->searchParam( 'post_id', Contextly_Api::SEARCH_TYPE_EQUAL, $post_id )
-            ->get();
-
-        if ( isset( $post_tags->list ) && is_array( $post_tags->list ) ) {
-            foreach ( $post_tags->list as $tag ) {
-                Contextly_Api::getInstance()
-                    ->api( 'poststags', 'delete' )
-                    ->param( 'id', $tag->id )
-                    ->get();
-            }
-        }
-
-        // Save new post tags
-        $post_tags = get_the_tags( $post_id );
-        if (is_array($post_tags) && count($post_tags) > 0) {
-            foreach (array_slice($post_tags, 0, 3) as $post_tag) {
-                $tag_data = array(
-                    'post_id'   => $post_id,
-                    'name'      => $post_tag->name
-                );
-
-                Contextly_Api::getInstance()
-                    ->api( 'poststags', 'put' )
-                    ->extraParams( $tag_data )
-                    ->get();
-            }
-        }
-    }
-
-	public function updatePostCategories( $post )
-	{
-		$post_id = $post->ID;
-
-		$client_options = $this->getAPIClientOptions();
-		Contextly_Api::getInstance()->setOptions( $client_options );
-
-		// First of all we need to get list of all page categories and remove them
-		$post_cats = Contextly_Api::getInstance()
-			->api( 'postscategories', 'list' )
-			->searchParam( 'post_id', Contextly_Api::SEARCH_TYPE_EQUAL, $post_id )
-			->get();
-
-		if ( isset( $post_cats->list ) && is_array( $post_cats->list ) ) {
-			foreach ( $post_cats->list as $category ) {
-				Contextly_Api::getInstance()
-					->api( 'postscategories', 'delete' )
-					->param( 'id', $category->id )
+	/**
+	 * @param $post_ID
+	 * @param $post
+	 * @return bool|Exception
+	 */
+	public function publishPost( $post_ID, $post ) {
+		if ( isset( $post ) && $post_ID && $post->post_status == "publish" && $this->checkWidgetDisplayType( $post ) ) {
+			try {
+				// Check if we have this post in our db
+				$contextly_post = Contextly_Api::getInstance()
+					->api( 'posts', 'get' )
+					->param( 'page_id', $post->ID )
 					->get();
+
+				$post_data = array(
+					'post_id'           => $post->ID,
+					'post_title'        => $post->post_title,
+					'post_date'         => $post->post_date,
+					'post_modified'     => $post->post_modified,
+					'post_status'       => $post->post_status,
+					'post_type'         => $post->post_type,
+					'post_content'      => $post->post_content,
+					'url'               => get_permalink( $post->ID ),
+					'author_id'         => $post->post_author,
+					'post_author'       => $this->getAuthorName( $post ),
+					'post_tags'         => $this->getPostTagsArray( $post->ID ),
+					'post_categories'   => $this->getPostCategoriesArray( $post->ID ),
+					'post_images'       => $this->getPostImagesArray( $post->ID )
+				);
+
+				// Lets publish this post in our DB
+				$publish_post = Contextly_Api::getInstance()
+					->api( 'posts', 'put' )
+					->extraParams( $post_data );
+
+				if ( isset( $contextly_post->entry ) && $contextly_post->entry->id ) {
+					$publish_post->param( 'id', $contextly_post->entry->id );
+				}
+
+				$publish_post->get();
+			} catch ( Exception $e ) {
+	            return $e;
+            }
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param $post_id
+	 * @param int $tags_num_limit
+	 * @return array
+	 */
+	private function getPostTagsArray( $post_id, $tags_num_limit = 5 ) {
+		$tags_array = array();
+		$post_tags = get_the_tags( $post_id );
+		if (is_array($post_tags) && count($post_tags) > 0) {
+			foreach (array_slice($post_tags, 0, $tags_num_limit) as $post_tag) {
+				$tags_array[] = $post_tag->name;
 			}
 		}
 
-		// Save new post categories
+		return $tags_array;
+	}
+
+	/**
+	 * @param $post_id
+	 * @param int $categories_num_limit
+	 * @return array
+	 */
+	private function getPostCategoriesArray( $post_id, $categories_num_limit = 5 ) {
+		$categories_array = array();
 		$post_categories = wp_get_post_categories( $post_id );
 		if (is_array($post_categories) && count($post_categories) > 0) {
-			foreach (array_slice($post_categories, 0, 3) as $category_id) {
+			foreach ( array_slice($post_categories, 0, $categories_num_limit) as $category_id ) {
 				$category = get_category( $category_id );
-
 				if ( $category && strtolower( $category->name ) != "uncategorized" ) {
-					$category_data = array(
-						'post_id'   => $post_id,
-						'name'      => $category->name
-					);
-
-					Contextly_Api::getInstance()
-						->api( 'postscategories', 'put' )
-						->extraParams( $category_data )
-						->get();
+					$categories_array[] = $category->name;
 				}
 			}
 		}
+
+		return $categories_array;
 	}
 
-	public function updatePostImages( $post )
-    {
-        $post_id = $post->ID;
+	/**
+	 * @param $post_id
+	 * @return array
+	 */
+	private function getPostImagesArray( $post_id ) {
+		$images_array = array();
 
-        $client_options = $this->getAPIClientOptions();
-        Contextly_Api::getInstance()->setOptions( $client_options );
+		$attachment_images = get_children(
+			array(
+				'post_parent' => $post_id,
+				'post_type' => 'attachment',
+				'numberposts' => 0,
+				'post_mime_type' => 'image'
+			)
+		);
 
-        // Try to get attached images
-        $attachment_images = get_children(
-            array(
-                'post_parent' => $post_id,
-                'post_type' => 'attachment',
-                'numberposts' => 0,
-                'post_mime_type' => 'image'
-            )
-        );
+		if ($attachment_images && is_array($attachment_images)) {
+			foreach($attachment_images as $image) {
+				list($src) = wp_get_attachment_image_src($image->ID, 'full');
+				$images_array[] = $src;
+			}
+		}
 
-        if ($attachment_images && is_array($attachment_images)) {
-            foreach($attachment_images as $image) {
-                list($src) = wp_get_attachment_image_src($image->ID, 'full');
+		return $images_array;
+	}
 
-                $image_data = array(
-                    'image_url' => $src,
-                    'page_id'   => $post_id
-                );
-
-                // Lets post save images in contextly
-                Contextly_Api::getInstance()
-                    ->api( 'images', 'put' )
-                    ->extraParams( $image_data )
-                    ->get();
-            }
-        }
-    }
-
-    // In this method we will display hidden div. After page loading we will load it's content with javascript.
-    // This will help to load page about loosing performance.
+	/**
+	 * In this method we will display hidden div. After page loading we will load it's content with javascript.
+	 * This will help to load page without loosing performance.
+	 * @param $attrs
+	 * @return string
+	 */
 	public function prepareSidebar( $attrs ) {
         // We will display sidebar only if we have id for this sidebar
         if ( isset( $attrs[ 'id' ] ) ) {
@@ -594,6 +534,5 @@ class Contextly
 		echo json_encode( $data );
 		exit;
 	}
-
 
 }
