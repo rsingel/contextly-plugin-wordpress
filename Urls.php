@@ -29,7 +29,7 @@ class Urls {
 
 	static public function getPopupServerUrl() {
 		if ( CONTEXTLY_MODE == self::MODE_LIVE ) {
-			return 'http://app.contextly.com/';
+			return 'https://app.contextly.com/';
 		} elseif ( CONTEXTLY_MODE == self::MODE_DEV ) {
 			return 'http://devapi.contextly.com/';
 		} else {
