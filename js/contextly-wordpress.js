@@ -1053,7 +1053,7 @@ Contextly.CssCustomBuilder = Contextly.createClass({
         }
 
         if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".linker_content a" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".linker_content li a" , "color", settings.color_links );
             css_code += this.buildCSSRule( entry, ".linker_content span" , "color", settings.color_links );
         }
 
