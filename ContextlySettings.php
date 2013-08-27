@@ -150,27 +150,23 @@ class ContextlySettings {
     }
 
 	private function displaySettingsAutoloadStuff() {
-		global $post;
+		$contextly_object = new Contextly();
+		$contextly_object->loadContextlyAjaxJSScripts();
+		$contextly_object->makeContextlyJSObject(
+			array(
+				'disable_autoload' => true
+			)
+		);
 
-		if ( isset( $post ) && $post->ID ) {
-			$contextly_object = new Contextly();
-			$contextly_object->loadContextlyAjaxJSScripts();
-			$contextly_object->makeContextlyJSObject(
-				array(
-					'disable_autoload' => true
-				)
+		?>
+		<script>
+			jQuery( document ).ready(
+				function () {
+					Contextly.SettingsAutoLogin.getInstance().doLogin();
+				}
 			);
-
-			?>
-			<script>
-				jQuery( document ).ready(
-					function () {
-						Contextly.SettingsAutoLogin.getInstance().doLogin();
-					}
-				);
-			</script>
-			<?php
-		}
+		</script>
+		<?php
 	}
 
     public function displaySettingsTabs() {
