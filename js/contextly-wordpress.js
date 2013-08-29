@@ -811,18 +811,18 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 
 		/*branding popup*/
 
-		div += "<div class=\"pluginauthor my_modal_open\"><span>Powered by</span></div>";
-		div += "<div id=\"my_modal\" class=\"well\" style=\"display:none;margin:1em;\">";
-		div += "<a href=\"#\" class=\"my_modal_close\" ></a>";
-		div += "<div id='brandpopupcontainer'>";
-		div += "<span id=\"brandpoplogo\"></span><span id='brandpopupperbg'></span><div id='brandpoptext'>";
+		div += "<div class=\"pluginauthor contextly_modal_open\"><span>Powered by</span></div>";
+		div += "<div id=\"contextly_modal\" class=\"contextly_well\" style=\"display:none;margin:1em;\">";
+		div += "<a href=\"#\" class=\"contextly_modal_close\" ></a>";
+		div += "<div id='contextly_popupcontainer'>";
+		div += "<span id=\"contextly_poplogo\"></span><span id='contextly_popupperbg'></span><div id='contextly_poptext'>";
 		div += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";
 		div += "Publishers or advertisers who would like to learn more about Contextly can contact us&nbsp;";
 		div += "<a href=\"http://contextly.com/sign-up/publishers/\" target=\"_blank\">here</a>.<br><br>";
 		div += "We respect ";
 		div += "<a href=\"http://contextly.com/privacy/\" target=\"_blank\">readers' privacy </a>.&nbsp;";
 		div += "</div></div>";
-		div += "<span id='brandpopsymbol'></span>";
+		div += "<span id='contextly_popsymbol'></span>";
 		div += "</div>";
 
 		/*branding popup*/

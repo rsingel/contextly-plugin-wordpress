@@ -19,11 +19,10 @@
 
 		//branding popup
 
-        $('.my_modal_open').click(function(){
-            $('#my_modal').popup({
+        $('.contextly_modal_open').click(function(){
+            $('#contextly_modal').popup({
                 'autoopen': true
             });
-
         });
 
         var widgetType = $.fn.getWidgetType();
