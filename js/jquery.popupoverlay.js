@@ -12,7 +12,7 @@
     var level = [];
     var lastclicked = [];
 
-    $.fn.popup = $.fn.popup = function(customoptions) {
+    $.fn.contextlyPopup = $.fn.contextlyPopup = function(customoptions) {
 
         var $body = $('body'),
             $window = $(window),
