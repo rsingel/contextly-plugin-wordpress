@@ -146,7 +146,7 @@ class ContextlySettings {
                         <?php submit_button(
 		                    'Save API Key',
 		                    'primary large button-hero',
-		                    null,
+		                    'submit',
 		                    null,
 		                    array(
 			                    'style' => 'font-size: 18px; margin-top: 20px; background-color: maroon; background-image: linear-gradient(to bottom, #a93232, #982121); border-color: #800000;'
