@@ -142,7 +142,19 @@ class ContextlySettings {
                 <form action="options.php" method="post">
                     <?php settings_fields( $tab ); ?>
                     <?php do_settings_sections( $tab ); ?>
-                    <?php submit_button(); ?>
+                    <?php if ( $tab == self::API_SETTINGS_KEY ) { ?>
+                        <?php submit_button(
+		                    'Save API Key',
+		                    'primary large button-hero',
+		                    null,
+		                    null,
+		                    array(
+			                    'style' => 'font-size: 18px; margin-top: 20px; background-color: maroon; background-image: linear-gradient(to bottom, #a93232, #982121); border-color: #800000;'
+		                    )
+	                    ); ?>
+	                <?php } else { ?>
+	                    <?php submit_button( null, 'primary' ); ?>
+                    <?php } ?>
                 </form>
             <?php } else { ?>
                 <h3>
@@ -202,7 +214,7 @@ class ContextlySettings {
 	    $input_style = "";
 
 	    if ( isset( $_GET[ 'api_key' ] ) && ( !isset( $options["api_key"] ) || !$options["api_key"] ) ) {
-		    $options["api_key"] = sanitize_text_field( $_GET[ 'api_key' ] );
+		    $options["api_key"] = sanitize_text_field( urldecode( $_GET[ 'api_key' ] ) );
 		    $input_style = " style='background-color: #FFEBE8; border-color: #CC0000;'";
 	    }
 
