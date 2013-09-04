@@ -1055,7 +1055,7 @@ Contextly.Blocks2WidgetCssCustomBuilder = Contextly.createClass({
     {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '.ctx_blocks_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) css_code += '.ctx_blocks2_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget2 p.ctx_link" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget2 p.ctx_link" , "font-size", settings.font_size );
@@ -1118,17 +1118,15 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
 Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
     extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
 
-    buildCSS: function ( entry, settings )
-    {
+    buildCSS: function ( entry, settings ) {
         var css_code = "";
+        if ( settings.css_code ) css_code += '.ctx_float_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
 
-        if ( settings.css_code ) css_code += '#ctx_linker ' + Contextly.Utils.getInstance().escape( settings.css_code );
-
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_link" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_link" , "font-size", settings.font_size );
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link" , "font-size", settings.font_size );
 
         if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx_link span" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link span" , "color", settings.color_links );
         }
 
         return css_code;
