@@ -883,7 +883,6 @@ Contextly.TabsWidgetCssCustomBuilder = Contextly.createClass({
 //////////////////////////////////////////////////////////////
 //                    Blocks Widget                         //
 //////////////////////////////////////////////////////////////
-
 Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetTextFormatter,
 
@@ -938,23 +937,9 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         }
         div += "</div>";
 
-		/*branding popup*/
-
-		div += "<div class=\"ctx_pluginauthor ctx_modal_open\"><span>Powered by</span></div>";
-		div += "<div id=\"ctx_modal\" class=\"ctx_well\" style=\"display:none;margin:1em;\">";
-		div += "<a href=\"#\" class=\"ctx_modal_close\" ></a>";
-		div += "<div id='ctx_popupcontainer'>";
-		div += "<span id=\"ctx_poplogo\"></span><span id='ctx_popupperbg'></span><div id='ctx_poptext'>";
-		div += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";
-		div += "Publishers or advertisers who would like to learn more about Contextly can contact us&nbsp;";
-		div += "<a href=\"http://contextly.com/sign-up/publishers/\" target=\"_blank\">here</a>.<br><br>";
-		div += "We respect ";
-		div += "<a href=\"http://contextly.com/privacy/\" target=\"_blank\">readers' privacy </a>.&nbsp;";
-		div += "</div></div>";
-		div += "<span id='ctx_popsymbol'></span>";
-		div += "</div>";
-
-		/*branding popup*/
+        if ( this.isDisplayContextlyLogo() ) {
+            div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
+        }
 
         return div;
     },
@@ -988,9 +973,46 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         return Contextly.BlocksWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
     }
 
+});
 
+Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
+
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '.ctx_blocks_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget p.ctx_link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget p.ctx_link" , "font-size", settings.font_size );
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, ".ctx_blocks_widget .ctx_link span" , "color", settings.color_links );
+        }
+
+        if ( settings.color_background ) {
+            css_code += this.buildCSSRule( entry, ".ctx_blocks_widget .ctx_subhead" , "background-color", settings.color_background );
+        }
+
+        if ( settings.color_border ) {
+            var color_border = settings.color_border;
+            var rgb = this.hex2Vals( color_border );
+
+            if ( rgb.length == 3 ) {
+                var r = rgb[0];
+                var g = rgb[1];
+                var b = rgb[2];
+
+                css_code += this.buildCSSRule( entry, ".ctx_blocks_widget li p" , "background", "rgba("+r+","+g+","+b+",0.5)" );
+            }
+        }
+
+        return css_code;
+    }
 
 });
+
 
 Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetBlocksFormatter,
@@ -1140,45 +1162,6 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
 
     getCustomCssCode: function () {
         return Contextly.SidebarWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx-sidebar', this.getSettings() );
-    }
-
-});
-
-
-Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
-    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
-
-    buildCSS: function ( entry, settings )
-    {
-        var css_code = "";
-
-        if ( settings.css_code ) css_code += '#ctx_linker ' + Contextly.Utils.getInstance().escape( settings.css_code );
-
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_link" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_link" , "font-size", settings.font_size );
-
-        if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx_link span" , "color", settings.color_links );
-        }
-
-        if ( settings.color_background ) {
-            css_code += this.buildCSSRule( entry, ".ctx_subhead" , "background-color", settings.color_background );
-        }
-
-        if ( settings.color_border ) {
-            var color_border = settings.color_border;
-            var rgb = this.hex2Vals( color_border );
-
-            if ( rgb.length == 3 ) {
-                var r = rgb[0];
-                var g = rgb[1];
-                var b = rgb[2];
-
-                css_code += this.buildCSSRule( entry, ".ctx_blocks_widget li p" , "background", "rgba("+r+","+g+","+b+",0.5)" );
-            }
-        }
-
-        return css_code;
     }
 
 });
