@@ -4,10 +4,10 @@ Plugin Name: Contextly
 Plugin URI: http://contextly.com
 Description: Adds the Contextly related links tool to your blog. Contextly lets you create related links that helps your readers find more to read, increases your page views and shows off your best content.
 Author: Contextly
-Version: 1.0.86
+Version: 1.0.87
 */
 
-define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.86' );
+define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.87' );
 define ( "CONTEXTLY_MODE", 'local' );
 define ( "CONTEXTLY_HTTPS", is_ssl() );
 

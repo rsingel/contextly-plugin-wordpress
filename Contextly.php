@@ -373,6 +373,8 @@ class Contextly
 	public function loadStyles() {
 		wp_register_style( 'pretty-photo-style', plugins_url( 'css/prettyPhoto/style.css', __FILE__ ), '', CONTEXTLY_PLUGIN_VERSION );
 		wp_enqueue_style( 'pretty-photo-style' );
+		wp_register_style( 'contextly-branding', plugins_url( 'css/branding/branding.css', __FILE__ ), '', CONTEXTLY_PLUGIN_VERSION );
+		wp_enqueue_style( 'contextly-branding' );
 	}
 
 	public function ajaxPublishPostCallback() {
