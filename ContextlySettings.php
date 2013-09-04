@@ -14,6 +14,9 @@ class ContextlySettings {
     const PLUGIN_NAME               = 'contextly-linker';
 
 	const MSG_ERROR_TYPE            = 'error';
+	const MSG_SUCCESS_TYPE          = 'updated';
+
+	const MSG_SETTINGS_SAVED        = 'Settings saved.';
 
     public $tabs                    = array();
 
@@ -73,10 +76,10 @@ class ContextlySettings {
 
 		if ( !$input['api_key'] ) {
 			$this->showMessage( self::MSG_ERROR_TYPE, 'API Key can not be empty.' );
+		} elseif ( !preg_match( "/^[a-zA-Z0-9_]+-[a-zA-Z0-9#*;]+$/", $input['api_key'] ) ) {
+			$this->showMessage( self::MSG_ERROR_TYPE, 'Invalid characters in API Key.' );
 		} else {
-			if ( !preg_match( "/^[a-zA-Z0-9_]+-[a-zA-Z0-9#*;]+$/", $input['api_key'] ) ) {
-				$this->showMessage( self::MSG_ERROR_TYPE, 'Invalid characters in API Key.' );
-			}
+			$this->showMessage( self::MSG_SUCCESS_TYPE, self::MSG_SETTINGS_SAVED );
 		}
 
 		return $input;
@@ -87,6 +90,8 @@ class ContextlySettings {
 
 		if ( !is_array( $input['display_type'] ) || count( $input['display_type'] ) == 0 ) {
 			$this->showMessage( self::MSG_ERROR_TYPE, 'At least one of post type need to be selected.' );
+		} else {
+			$this->showMessage( self::MSG_SUCCESS_TYPE, self::MSG_SETTINGS_SAVED );
 		}
 
 		return $input;
@@ -94,7 +99,7 @@ class ContextlySettings {
 
 	private function showMessage( $type, $message ) {
 		add_settings_error(
-	        'contextlyErrorId',
+	        'contextlyMessageId',
 	        esc_attr( 'settings_updated' ),
 			__( $message ),
 	        $type
