@@ -930,7 +930,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
                 var section_header = this.widget.settings[ section_key ];
 
                 div += "<div class='ctx_previous'>";
-                div += "<div class='ctx_subhead'><span class='ctx_subhead_title'>" + this.escape( section_header ) + "</span><span class='ctx_subhead_line'></span></div>";
+                div += "<div class='ctx_subhead'><span class='ctx_subhead_title'>" + this.escape( section_header ) + "</span></div>";
                 div += "<ul class='ctx_link'>" + this.getLinksHTMLOfType( section_name ) + "</ul>";
                 div += "</div>";
             }
@@ -1010,10 +1010,11 @@ Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
 
         return css_code;
     }
-
 });
 
-
+//////////////////////////////////////////////////////////////
+//                   Blocks2 Widget                         //
+//////////////////////////////////////////////////////////////
 Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetBlocksFormatter,
 
@@ -1039,11 +1040,42 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
 
     getLinkHTMLVideo: function ( link ) {
         return "<li>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</li>";
+    },
+
+    getCustomCssCode: function () {
+        return Contextly.Blocks2WidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
     }
 
 });
 
+Contextly.Blocks2WidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
 
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '.ctx_blocks_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget2 p.ctx_link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget2 p.ctx_link" , "font-size", settings.font_size );
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, ".ctx_blocks_widget2 .ctx_link span" , "color", settings.color_links );
+        }
+
+        if ( settings.color_background ) {
+            css_code += this.buildCSSRule( entry, ".ctx_blocks_widget2 .ctx_subhead" , "background-color", settings.color_background );
+        }
+
+        return css_code;
+    }
+});
+
+
+//////////////////////////////////////////////////////////////
+//                   Float Widget                           //
+//////////////////////////////////////////////////////////////
 Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetBlocksFormatter,
 
@@ -1083,6 +1115,31 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
 
 });
 
+Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
+    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
+
+    buildCSS: function ( entry, settings )
+    {
+        var css_code = "";
+
+        if ( settings.css_code ) css_code += '#ctx_linker ' + Contextly.Utils.getInstance().escape( settings.css_code );
+
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_link" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_link" , "font-size", settings.font_size );
+
+        if ( settings.color_links ) {
+            css_code += this.buildCSSRule( entry, ".ctx_link span" , "color", settings.color_links );
+        }
+
+        return css_code;
+    }
+
+});
+
+//////////////////////////////////////////////////////////////
+//                   Sidebar Widget                         //
+//////////////////////////////////////////////////////////////
+// TODO:
 Contextly.SidebarWidgetFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetTabsFormatter,
 
@@ -1162,27 +1219,6 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
 
     getCustomCssCode: function () {
         return Contextly.SidebarWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx-sidebar', this.getSettings() );
-    }
-
-});
-
-Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
-    extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
-
-    buildCSS: function ( entry, settings )
-    {
-        var css_code = "";
-
-        if ( settings.css_code ) css_code += '#ctx_linker ' + Contextly.Utils.getInstance().escape( settings.css_code );
-
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_link" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_link" , "font-size", settings.font_size );
-
-        if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx_link span" , "color", settings.color_links );
-        }
-
-        return css_code;
     }
 
 });
