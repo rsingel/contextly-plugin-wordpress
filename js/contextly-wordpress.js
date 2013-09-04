@@ -648,9 +648,9 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 		div += "<li>";
 		
 		/*branding popup*/
-		div += "<div class=\"ctx_pluginauthor ctx_modal_open\"><span>Powered by</span></div>";
-		div += "<div id=\"ctx_modal\" class=\"ctx_well\" style=\"display:none;margin:1em;\">";
-		div += "<a href=\"#\" class=\"ctx_modal_close\" ></a>";
+		
+		div += "<a href='#ctx_branding_content' id='ctx_branding_open' class=\"ctx_pluginauthor ctx_modal_open\"><span>Powered by</span></a>";
+		div += "<div id='ctx_branding_content' style=\"display:none;margin:1em;\"><div id=\"ctx_modal\" class=\"ctx_well\">";
 		div += "<div id='ctx_popupcontainer'>";
 		div += "<span id=\"ctx_poplogo\"></span><span id='ctx_popupperbg'></span><div id='ctx_poptext'>";
 		div += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";
@@ -660,8 +660,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 		div += "<a href=\"http://contextly.com/privacy/\" target=\"_blank\">readers' privacy </a>.&nbsp;";
 		div += "</div></div>";
 		div += "<span id='ctx_popsymbol'></span>";
-		div += "</div>";
-		
+		div += "</div></div>";	
 		
 		/*branding popup*/
 		div += "</li>";
@@ -816,9 +815,8 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 
 		/*branding popup*/
 
-		div += "<div class=\"ctx_pluginauthor ctx_modal_open\"><span>Powered by</span></div>";
-		div += "<div id=\"ctx_modal\" class=\"ctx_well\" style=\"display:none;margin:1em;\">";
-		div += "<a href=\"#\" class=\"ctx_modal_close\" ></a>";
+		div += "<a href='#ctx_branding_content' id='ctx_branding_open' class=\"ctx_pluginauthor ctx_modal_open\"><span>Powered by</span></a>";
+		div += "<div id='ctx_branding_content' style=\"display:none;margin:1em;\"><div id=\"ctx_modal\" class=\"ctx_well\">";
 		div += "<div id='ctx_popupcontainer'>";
 		div += "<span id=\"ctx_poplogo\"></span><span id='ctx_popupperbg'></span><div id='ctx_poptext'>";
 		div += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";
@@ -828,8 +826,8 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 		div += "<a href=\"http://contextly.com/privacy/\" target=\"_blank\">readers' privacy </a>.&nbsp;";
 		div += "</div></div>";
 		div += "<span id='ctx_popsymbol'></span>";
-		div += "</div>";
-
+		div += "</div></div>";		
+				
 		/*branding popup*/
 
         return div;

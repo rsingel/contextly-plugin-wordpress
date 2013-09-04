@@ -311,7 +311,6 @@ class Contextly
 	public function loadContextlyAdditionalJSScripts() {
 		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', null );
 		wp_enqueue_script( 'mobile_opt', $this->getPluginJs( 'mobile_optimization.js' ), 'jquery', null );
-		wp_enqueue_script( 'popupoverlay', $this->getPluginJs( 'jquery.popupoverlay.js' ), 'jquery', null );
 	}
 
 	private function getAjaxUrl() {

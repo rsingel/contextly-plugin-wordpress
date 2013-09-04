@@ -16,15 +16,28 @@
 	}
 
     $.fn.responsiveResizeHandler = function () {
+		
+		$(document).ready(function() {
+		  // Handler for .ready() called.
+		});
 
-		//branding popup
+		var screenWidth = window.innerWidth;
+		var screenHeight = window.innerHeight;
 
-        $('.ctx_modal_open').click(function(){
-            $('#ctx_modal').contextlyPopup({
-                'autoopen': true
-            });
-        });
+		if(screenWidth > 605) { var cxt_popup_width = 552; var cxt_popup_height = 292; }
+		else { var cxt_popup_width = 250; var cxt_popup_height = 500; }
+			
 
+		//branding popup	
+		$("#ctx_branding_open").prettyPhoto({
+			theme:'light_square',
+			autoplay_slideshow: false,
+			default_width: cxt_popup_width,
+			default_height: cxt_popup_height,
+			social_tools: false,
+			show_title: false
+		});		
+		
         var widgetType = $.fn.getWidgetType();
         var getWidgetWidth = $.fn.getWidget().width();
         var resizeMinLimit = 350;
