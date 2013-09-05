@@ -482,7 +482,7 @@ div.pp_default .pp_details, div.light_rounded .pp_details, div.dark_rounded .pp_
     position: relative
 }
 div.light_rounded .pp_top .pp_middle, div.light_rounded .pp_content_container .pp_left, div.light_rounded .pp_content_container .pp_right, div.light_rounded .pp_bottom .pp_middle, div.light_square .pp_left, div.light_square .pp_middle, div.light_square .pp_right, div.light_square .pp_content, div.facebook .pp_content {
-    background: #fff
+    background-color: #fff
 }
 div.light_rounded .pp_description, div.light_square .pp_description {
     margin-right: 85px
@@ -499,7 +499,7 @@ div.light_rounded .pp_arrow_next.disabled, div.dark_rounded .pp_arrow_next.disab
     cursor: default
 }
 div.light_rounded .pp_loaderIcon, div.light_square .pp_loaderIcon {
-    background: url(images/light_rounded/loader.gif) center center no-repeat
+    /*background: url(images/light_rounded/loader.gif) center center no-repeat*/
 }
 div.dark_rounded .pp_top .pp_middle, div.dark_rounded .pp_content, div.dark_rounded .pp_bottom .pp_middle {
     background: url(images/dark_rounded/contentPattern.png) top left repeat
@@ -543,10 +543,6 @@ div.dark_rounded #pp_full_res .pp_inline, div.dark_square #pp_full_res .pp_inlin
 }
 .pp_fade, .pp_gallery li.default a img {
     display: none
-}
-* {
-    margin: 0;
-    padding: 0;
 }
 .wide {
     border-bottom: 1px #000 solid;
@@ -841,11 +837,33 @@ div.dark_rounded #pp_full_res .pp_inline, div.dark_square #pp_full_res .pp_inlin
 /*tiny popup end*/
 
 .pp_social .twitter {
-	float: left;
-	width: 70px
+    float: left;
+    width: 70px
 }
 
 .pp_social .facebook {
-	float: left;
-	width: 100px
+    float: left;
+    width: 100px
+}
+.light_square .pp_top {
+    display: none !important
+}
+.light_square .pp_bottom {
+    display: none !important
+}
+.light_square .pp_details {
+    position: absolute !important;
+    top: 0;
+    margin: 0 !important
+}
+.light_square .pp_left {
+    background-color: transparent !important;
+    padding: 0 !important
+}
+.light_square .pp_right {
+    background-color: transparent !important;
+    padding: 0 !important
+}
+.light_square .ppt {
+    display: none !important
 }

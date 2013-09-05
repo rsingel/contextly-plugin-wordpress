@@ -16,13 +16,20 @@
 	}
 
     $.fn.responsiveResizeHandler = function () {
+        var screenWidth = window.innerWidth;
+        var cxt_popup_width;
+        var cxt_popup_height;
 
-		//branding popup
+        if(screenWidth > 605) { cxt_popup_width = 552; cxt_popup_height = 292; }
+        else { cxt_popup_width = 250; cxt_popup_height = 500; }
 
-        $('.ctx_modal_open').click(function(){
-            $('#ctx_modal').contextlyPopup({
-                'autoopen': true
-            });
+        $("#ctx_branding_open").prettyPhoto({
+            theme:'light_square',
+            autoplay_slideshow: false,
+            default_width: cxt_popup_width,
+            default_height: cxt_popup_height,
+            social_tools: false,
+            show_title: false
         });
 
         var widgetType = $.fn.getWidgetType();

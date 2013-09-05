@@ -1,8 +1,8 @@
-#ctx_modal .ctx_well blockquote {
+#ctx_modal.ctx_well blockquote {
     border-color: #ddd;
     border-color: rgba(0, 0, 0, 0.15);
 }
-#ctx_modal .ctx_well #ctx_popupperbg {
+#ctx_modal.ctx_well #ctx_popupperbg {
     display: block;
     float: left;
     width: 100%;
@@ -19,23 +19,23 @@
     background: linear-gradient(to right, #def4f9 0%, #f4fbfd 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#def4f9', endColorstr='#f4fbfd', GradientType=1 ); /* IE6-9 */
 }
-#ctx_modal .ctx_well #ctx_poptext a {
+#ctx_modal.ctx_well #ctx_poptext a {
     color: #0897d3
 }
-#ctx_modal .ctx_well #ctx_poptext a:hover {
+#ctx_modal.ctx_well #ctx_poptext a:hover {
     color: #94d2ec;
     text-decoration: none
 }
-#ctx_modal .ctx_well p {
+#ctx_modal.ctx_well p {
     text-shadow: 1px 1px 0px #ffffff;
     filter: dropshadow(color=#ffffff, offx=1, offy=1);
 }
 
+/*branding popup for desktop*/
 
 @media all and (min-width: 605px) {
-    #ctx_modal.ctx_well {
-        width: 552px;
-        height: 278px;
+    .light_square .pp_content {
+        height: 278px !important;
         background-color: #ffffff;
         border: 7px solid #def4f9;
         -webkit-border-radius: 20px;
@@ -44,6 +44,21 @@
         -webkit-box-shadow: 0px 0px 0px 2px rgba(255,255,255,1);
         -moz-box-shadow: 0px 0px 0px 2px rgba(255,255,255,1);
         box-shadow: 0px 0px 0px 2px rgba(255,255,255,1);
+        padding: 0 !important;
+        position: relative;
+        left: 12px;
+    }
+    .light_square a.pp_close {
+        display: block;
+        float: right;
+        height: 31px;
+        width: 31px;
+        background: url(images/brandpopupimgs.png) no-repeat 0px -59px;
+        cursor: pointer;
+        top: -3px;
+    }
+    .light_square a.pp_close:active {
+        background-position: 0px -91px
     }
     #ctx_modal.ctx_well p {
         text-shadow: 1px 1px 0px #ffffff;
@@ -54,11 +69,10 @@
         float: right;
         height: 31px;
         width: 31px;
-        background: url(images/brandpopupimgs.png) no-repeat 0px -59px;
+        background-image: url(images/brandpopupimgs.png);
+        background-repeat: no-repeat;
+        background-position: 0px -59px;
         cursor: pointer
-    }
-    #ctx_modal.ctx_well .ctx_modal_close:active {
-        background-position: 0px -91px
     }
     #ctx_modal.ctx_well #ctx_poplogo {
         display: block;
@@ -71,7 +85,7 @@
     #ctx_modal.ctx_well #ctx_popupcontainer {
         float: left;
         width: 257px;
-        margin-left: 33px;
+        margin-left: 27px;
         font-size: 13px;
         line-height: 15px
     }
@@ -86,13 +100,17 @@
         height: 229px;
         width: 228px;
         background: url(images/brandpopupimgs.png) no-repeat -38px -59px;
-        margin-top: 34px
+        margin-top: 34px;
+        margin-right: 13px
     }
 }
 
+/*desktop branding popup end */
+
+/*branding popup for mobile devices*/
+
 @media all and (max-width: 604px) {
-    #ctx_modal.ctx_well {
-        width: 263px;
+    .light_square .pp_content {
         height: 420px;
         background-color: #ffffff;
         border: 4px solid #def4f9;
@@ -102,15 +120,18 @@
         -webkit-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
         -moz-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
         box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
+        padding: 0 !important;
+        position: relative;
+        left: 12px;
     }
-    #ctx_modal.ctx_well .ctx_modal_close {
+    .light_square a.pp_close {
         display: block;
         float: right;
         height: 23px;
         width: 23px;
         background: url(images/brandpopupimgs-mobile.png) no-repeat 0px -42px;
     }
-    #ctx_modal.ctx_well .ctx_modal_close:active {
+    .light_square a.pp_close:active {
         background-position: 0px -65px
     }
     #ctx_modal.ctx_well #ctx_poplogo {
@@ -144,11 +165,11 @@
     }
 }
 
-
 .ctx_widget .ctx_pluginauthor {
     float: right;
     padding-top: 8px;
     margin-right: 3px;
+    margin-bottom: 5px;
 }
 .ctx_widget .ctx_pluginauthor span {
     display: block;
@@ -163,8 +184,12 @@
     cursor: pointer;
     padding: 0px !important;
     text-transform: none !important;
+    float: right;
 }
 .ctx_widget .ctx_pluginauthor span:hover {
     background: url(images/brandedlogo.png) no-repeat right 0px !important;
     color: #1babab !important;
+}
+#ctx_branding_open {
+    float: right;
 }

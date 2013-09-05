@@ -584,9 +584,8 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     getBrandingHtml: function() {
-        var html = "<div class=\"ctx_pluginauthor ctx_modal_open\"><span>Powered by</span></div>";
-        html += "<div id=\"ctx_modal\" class=\"ctx_well\" style=\"display:none;margin:1em;\">";
-        html += "<a href=\"#\" class=\"ctx_modal_close\" ></a>";
+        var html = "<a href='#ctx_branding_content' id='ctx_branding_open' class=\"ctx_pluginauthor ctx_modal_open\"><span>Powered by</span></a>";
+        html += "<div id='ctx_branding_content' style=\"display:none;margin:1em;\"><div id=\"ctx_modal\" class=\"ctx_well\">";
         html += "<div id='ctx_popupcontainer'>";
         html += "<span id=\"ctx_poplogo\"></span><span id='ctx_popupperbg'></span><div id='ctx_poptext'>";
         html += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";
@@ -596,7 +595,8 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         html += "<a href=\"http://contextly.com/privacy/\" target=\"_blank\">readers' privacy </a>.&nbsp;";
         html += "</div></div>";
         html += "<span id='ctx_popsymbol'></span>";
-        html += "</div>";
+        html += "</div></div>";
+
         return html;
     },
 
