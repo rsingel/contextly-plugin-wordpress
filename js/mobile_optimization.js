@@ -12,7 +12,7 @@
 		if( $( '.' + widgetClass ).hasClass( hasClassName ) ) {
             $( '.' + widgetClass ).removeClass( hasClassName );
         }
-		$( '.'+widgetClass ).addClass( addClassName );
+		$( '.' + widgetClass ).addClass( addClassName );
 	}
 
     $.fn.responsiveResizeHandler = function () {
@@ -81,14 +81,14 @@
             });
         }
 
-        var getLeftSidebarWidth = $('.ctx-sidebar').width();
+        var getLeftSidebarWidth = $('.ctx_sidebar').width();
         if(getLeftSidebarWidth < 240) {
-            $(".ctx-sidebar .ctx_horizontal_line li").css("float", "left");
+            $(".ctx_sidebar .ctx_horizontal_line li").css("float", "left");
             $("ctx_horizontal_line").css("float", "left");
-            $(".ctx-sidebar .linker_images li:first-child").css("margin-bottom", "5px");
+            $(".ctx_sidebar .linker_images li:first-child").css("margin-bottom", "5px");
         } else {
-            $(".ctx-sidebar .ctx_horizontal_line li").css("float", "none");
-            $(".ctx-sidebar .linker_images li:first-child").css("margin-bottom", "0");
+            $(".ctx_sidebar .ctx_horizontal_line li").css("float", "none");
+            $(".ctx_sidebar .linker_images li:first-child").css("margin-bottom", "0");
         }
 
         if( getWidgetWidth < resizeMinLimit ) {

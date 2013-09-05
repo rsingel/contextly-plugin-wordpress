@@ -16,7 +16,7 @@ class Contextly
     const WIDGET_SNIPPET_META_BOX_TITLE = 'Contextly Related Links';
     const WIDGET_SOCIALER_META_BOX_TITLE = 'Contextly Socialer';
 
-    const WIDGET_SIDEBAR_CLASS = 'contextly-sidebar-hidden';
+    const WIDGET_SIDEBAR_CLASS = 'ctx_widget_hidden';
     const WIDGET_SIDEBAR_PREFIX = 'contextly-';
 
     function __construct() {

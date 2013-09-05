@@ -1137,7 +1137,6 @@ Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
 //////////////////////////////////////////////////////////////
 //                   Sidebar Widget                         //
 //////////////////////////////////////////////////////////////
-// TODO:
 Contextly.SidebarWidgetFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetTabsFormatter,
 
@@ -1151,7 +1150,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
 
     getWidgetHTML: function()
     {
-        return "<div class='ctx_linker_content'><ul class='ctx_sidebar_link " + ( this.hasImagesForLinks( 'previous' ) ? 'ctx_linker_images' : '' ) + " '>"
+        return "<div class='ctx_content'><ul class='ctx_sidebar_link " + ( this.hasImagesForLinks( 'previous' ) ? 'ctx_images' : '' ) + " '>"
             + this.getLinksHTMLOfType( 'previous' )
             + "</ul></div>";
     },
@@ -1182,17 +1181,16 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
                     self.displayText( html );
 
                     // Do some sidebar modifications
-                    self.getDisplayElement().removeClass( 'contextly-sidebar-hidden' )
-                        .addClass( 'ctx-sidebar' )
-                        .addClass( 'ctx-sidebar-' + self.widget.layout )
-                        .addClass( 'ctx_widget');
+                    self.getDisplayElement().removeClass( 'ctx_sidebar_hidden' )
+                        .addClass( 'ctx_sidebar' )
+                        .addClass( 'ctx_sidebar_' + self.widget.layout );
 
                     // Check if we need to add sidebar title and description
                     var title = self.widget.name;
                     var description = self.widget.description;
-                    var sidebar_content = self.getDisplayElement().find( '.ctx_linker_content' );
+                    var sidebar_content = self.getDisplayElement().find( '.ctx_content' );
 
-                    if ( description ) sidebar_content.prepend( "<div class='ctx_description'>" + self.escape( description ) + "</div>" );
+                    if ( description ) sidebar_content.prepend( "<div class='ctx_sidebar_description'>" + self.escape( description ) + "</div>" );
                     if ( title ) sidebar_content.prepend( "<div class='ctx_sidebar_title'>" + self.escape( title ) + "</div>" );
 
                     self.loadCss();
@@ -1216,7 +1214,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
     },
 
     getCustomCssCode: function () {
-        return Contextly.SidebarWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx-sidebar', this.getSettings() );
+        return Contextly.SidebarWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_sidebar', this.getSettings() );
     }
 
 });
@@ -1224,14 +1222,12 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
 Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
     extend: [ Contextly.CssCustomBuilder, Contextly.Singleton ],
 
-    buildCSS: function ( entry, settings )
-    {
+    buildCSS: function ( entry, settings ) {
         var css_code = "";
-
         if ( settings.css_code ) {
             var site_custom_code = Contextly.Utils.getInstance().escape( settings.css_code );
-            if ( site_custom_code.indexOf( '.ctx-sidebar' ) == -1 ) {
-                site_custom_code += '.ctx-sidebar ' + site_custom_code;
+            if ( site_custom_code.indexOf( entry ) == -1 ) {
+                site_custom_code += entry + site_custom_code;
             }
 
             css_code += site_custom_code;
@@ -1241,19 +1237,17 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-size", settings.font_size );
 
         if ( settings.color_background ) {
-            css_code += this.buildCSSRule( entry, ".ctx_linker_content" , "background-color", settings.color_background );
-            css_code += this.buildCSSRule( entry, ".ctx_linker_images img" , "border-color", settings.color_background );
+            css_code += this.buildCSSRule( entry, ".ctx_content" , "background-color", settings.color_background );
+            css_code += this.buildCSSRule( entry, ".ctx_images img" , "border-color", settings.color_background );
         }
 
         if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx_linker_content .ctx_title" , "color", settings.color_links );
-            css_code += this.buildCSSRule( entry, ".ctx_linker_content span" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx_content .ctx_title" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx_content span" , "color", settings.color_links );
         }
 
         if ( settings.color_border ) {
-            css_code += this.buildCSSRule( entry, ".ctx_linker_content" , "border-top", "5px solid " + settings.color_border );
-            css_code += this.buildCSSRule( entry, ".ctx_linker_tabs li.active span" , "border-color", settings.color_border );
-            css_code += this.buildCSSRule( entry, ".ctx_linker_tabs span" , "border-color", settings.color_border );
+            css_code += this.buildCSSRule( entry, ".ctx_content" , "border-color", settings.color_border + " !important;" );
         }
 
         return css_code;
