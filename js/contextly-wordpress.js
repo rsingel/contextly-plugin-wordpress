@@ -1129,6 +1129,10 @@ Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
             css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link span" , "color", settings.color_links );
         }
 
+        if ( settings.color_background ) {
+            css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_subhead" , "background-color", settings.color_background );
+        }
+
         return css_code;
     }
 
