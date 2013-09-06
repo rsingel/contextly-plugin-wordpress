@@ -1084,5 +1084,10 @@ div.dark_rounded #pp_full_res .pp_inline, div.dark_square #pp_full_res .pp_inlin
     color: #1babab !important;
 }
 #ctx_branding_open {
-    float: right;
+    float: right;	
 }
+.ctx_widget .ctx_tabs_widget .ctx_pluginauthor {
+	margin-top: 15px !important
+}
+
+
