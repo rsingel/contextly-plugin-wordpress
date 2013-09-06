@@ -89,6 +89,13 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.0.87 =
+
+- Namespace changes to CSS.
+- Changes to make install and activation easier.
+- Minor performance tweaks.
+
+
 = 1.0.86 =
 
 - Minor performance tweaks.
