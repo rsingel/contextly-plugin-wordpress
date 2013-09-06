@@ -867,3 +867,25 @@ div.dark_rounded #pp_full_res .pp_inline, div.dark_square #pp_full_res .pp_inlin
 .light_square .ppt {
     display: none !important
 }
+.light_square .pp_top {
+	display: none !important
+}
+.light_square .pp_bottom {
+	display: none !important
+}
+.light_square .pp_details {
+	position: absolute !important;
+	top: 0;
+	margin: 0 !important
+}
+.light_square .pp_left {
+	background-color: transparent !important;
+	padding: 0 !important
+}
+.light_square .pp_right {
+	background-color: transparent !important;
+	padding: 0 !important
+}
+.light_square .ppt {
+	display: none !important
+}
