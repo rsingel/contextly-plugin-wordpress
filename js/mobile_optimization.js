@@ -1,27 +1,29 @@
 (function($) {
 
-    $.fn.getWidget = function () {
+    function ctxGetWidget() {
         return $( '#ctx_linker' );
     }
 
-    $.fn.getWidgetType = function () {
-        return $.fn.getWidget().attr( 'widget-type' );
+    function ctxGetWidgetType() {
+        return ctxGetWidget().attr( 'widget-type' );
     }
-
-    $.fn.classChanger = function ( widgetClass, hasClassName, addClassName) {
-		if( $( '.' + widgetClass ).hasClass( hasClassName ) ) {
-            $( '.' + widgetClass ).removeClass( hasClassName );
-        }
-		$( '.' + widgetClass ).addClass( addClassName );
+	
+	function ctxClassChanger(className) {
+		var fullClass = 'ctx_around_site ' + className;
+		$('.ctx_around_site').attr('class',fullClass);
 	}
 
-    $.fn.responsiveResizeHandler = function () {
+    function ctxResponsiveResizeHandler() {
         var screenWidth = window.innerWidth;
         var cxt_popup_width;
         var cxt_popup_height;
 
-        if(screenWidth > 605) { cxt_popup_width = 552; cxt_popup_height = 292; }
-        else { cxt_popup_width = 250; cxt_popup_height = 500; }
+        if(screenWidth > 605) { 
+			cxt_popup_width = 552; cxt_popup_height = 292; 
+		}
+        else { 
+			cxt_popup_width = 250; cxt_popup_height = 500; 
+		}
 
         $("#ctx_branding_open").prettyPhoto({
             theme:'light_square',
@@ -32,47 +34,36 @@
             show_title: false
         });
 
-        var widgetType = $.fn.getWidgetType();
-        var getWidgetWidth = $.fn.getWidget().width();
+        var widgetType = ctxGetWidgetType();
+        var getWidgetWidth = ctxGetWidget().width();
         var resizeMinLimit = 350;
 
         if ( widgetType == 'blocks2' ) {
             if(getWidgetWidth < resizeMinLimit) {
-                $.fn.classChanger('ctx_blocks_widget2','ctx_blocks2site', 'ctx_blocks2mobile');
-            } else {
-                $.fn.classChanger('ctx_blocks_widget2','ctx_blocks2mobile', 'ctx_blocks2site');
-            }
+				ctxClassChanger('ctx_blocks2mobile');
+			} else {
+				ctxClassChanger('ctx_blocks2site');
+			}
         }
 
         if ( widgetType == 'float' ) {
             if(getWidgetWidth < resizeMinLimit) {
-                $(".ctx_float_widget li").css({"width":"100%", "min-height":"90px"});
-                $(".ctx_float_widget img").css("width", "100%");
-                $(".ctx_float_widget p.ctx_link").css({ "width":"100%", "max-width":"100%", "margin-left":"0"});
-            }
-
+				ctxClassChanger('ctx_floatmobile');
+			}
             else if(getWidgetWidth < 550 && getWidgetWidth > resizeMinLimit) {
-                $(".ctx_float_widget li").css({"width":"100%", "min-height":"90px"});
-                $(".ctx_float_widget img").css("width", "38%");
-                $(".ctx_float_widget p.ctx_link").css({ "width":"59%", "max-width":"100%", "margin-left":"2%"});
-            }
-
-            else {
-                $(".ctx_float_widget li").css({"width":"32.3%"});
-                $(".ctx_float_widget img").css("width", "100%");
-                $(".ctx_float_widget p.ctx_link").css({ "width":"100%", "max-width":"100%", "margin-left":"0"});
-            }
+				ctxClassChanger('ctx_floattablet');
+            } 
+			else { 
+				ctxClassChanger('ctx_floatsite'); 
+			}
         }
 
-        if ( widgetType == 'blocks' ) {
-            var getImageHeight = $('.ctx_blocks_widget li img').height();
-            $(".vidpop-playbutton-big").css("height", getImageHeight);
-
-            if( getWidgetWidth <  500 ) {
-                $(".ctx_blocks_widget li").css({"width":"153px", "margin-left":"6.4%", "margin-bottom":"5%"});
+        if ( widgetType == 'blocks' ) {  
+            if( getWidgetWidth <  500 ) { 
+				ctxClassChanger('ctx_blockmobile');
             } else {
-                $(".ctx_blocks_widget li").css({"width":"22%", "margin-left":"2.4%", "margin-bottom":"2.2%"});
-            }
+				ctxClassChanger('ctx_blocksite'); 
+			}
 
             $(".ctx_blocks_widget li a").on("mouseover", function(event){
                 $(this).toggleClass('heightauto');
@@ -91,54 +82,46 @@
         var getLeftSidebarWidth = $('.ctx_sidebar').width();
         if(getLeftSidebarWidth < 240) {
             $(".ctx_sidebar .ctx_horizontal_line li").css("float", "left");
-            $("ctx_horizontal_line").css("float", "left");
-            $(".ctx_sidebar .linker_images li:first-child").css("margin-bottom", "5px");
+            $("ctx_horizontal_line").css("float", "left");       
         } else {
             $(".ctx_sidebar .ctx_horizontal_line li").css("float", "none");
-            $(".ctx_sidebar .linker_images li:first-child").css("margin-bottom", "0");
-        }
-
-        if( getWidgetWidth < resizeMinLimit ) {
-            $(".vidpop-playbutton-big").css("width", "30%");
-        } else {
-            $(".vidpop-playbutton-big").css("width", "94%");
-        }
+        }      
     }
 
-    $.fn.checkIfWidgetLoadedAndResize = function () {
-        var widgetType = $.fn.getWidgetType();
-        $.documentLoadCheckCount++;
+    function ctxCheckIfWidgetLoadedAndResize() {
+        var widgetType = ctxGetWidgetType();
+        documentLoadCheckCount++;
 
         if ( widgetType ) {
-            $.fn.responsiveResizeHandler();
-            $.fn.clearIfWidgetLoadedInterval();
+            ctxResponsiveResizeHandler();
+            ctxClearIfWidgetLoadedInterval();
         }
 
-        if ( $.documentLoadCheckCount > 10 ) {
-            $.fn.clearIfWidgetLoadedInterval();
+        if ( documentLoadCheckCount > 10 ) {
+            ctxClearIfWidgetLoadedInterval();
         }
     }
 
-    $.fn.clearIfWidgetLoadedInterval = function () {
-        if ( $.documentLoadInterval ) {
-            clearInterval( $.documentLoadInterval );
+    function ctxClearIfWidgetLoadedInterval() {
+        if ( documentLoadInterval ) {
+            clearInterval( documentLoadInterval );
         }
     }
 
     $(window).resize(
         function() {
-            $.fn.responsiveResizeHandler();
+            ctxResponsiveResizeHandler();
         }
     );
 
-    $.documentLoadInterval = null;
-    $.documentLoadCheckCount = 0;
+    var documentLoadInterval = null;
+    var documentLoadCheckCount = 0;
 
     $(document).ready(
         function() {
-            $.documentLoadInterval = self.setInterval(
+            documentLoadInterval = self.setInterval(
                 function () {
-                    $.fn.checkIfWidgetLoadedAndResize();
+                    ctxCheckIfWidgetLoadedAndResize();
                 },
                 500
             );
