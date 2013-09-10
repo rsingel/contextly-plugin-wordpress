@@ -851,7 +851,7 @@ Contextly.TabsWidgetCssCustomBuilder = Contextly.createClass({
     {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '.ctx_text_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) css_code += '.ctx_tabs_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_tabs_widget .ctx_link" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_tabs_widget .ctx_link" , "font-size", settings.font_size );
