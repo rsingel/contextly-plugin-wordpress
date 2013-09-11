@@ -66,16 +66,16 @@
 			}
 
             $(".ctx_blocks_widget li a").on("mouseover", function(event){
-                $(this).toggleClass('heightauto');
-                var getTextHeight = $('.heightauto p span').height();
+                $(this).toggleClass('ctx_blocksslider');
+                var getTextHeight = $('.ctx_blocksslider p span').height();
                 if(getTextHeight>50) {
-                    $(".heightauto p").css("height", getTextHeight);
+                    $(".ctx_blocksslider p").css("height", getTextHeight);
                 }
             });
 
             $(".ctx_blocks_widget li a").on("mouseout", function(event){
-                $(".heightauto p").css("height", "46px");
-                $(this).removeClass('heightauto');
+                $(".ctx_blocksslider p").css("height", "46px");
+                $(this).removeClass('ctx_blocksslider');
             });
         }
 
