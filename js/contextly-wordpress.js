@@ -1177,7 +1177,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
     display: function () {
         var self = this;
 
-        jQuery( document).ready(
+        jQuery( document ).ready(
             function () {
                 if ( self.hasWidgetData() && !Contextly.Settings.getInstance().isAdmin() ) {
                     // Build widget html and display it
@@ -1252,6 +1252,14 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
 
         if ( settings.color_border ) {
             css_code += this.buildCSSRule( entry, ".ctx_content" , "border-color", settings.color_border + " !important;" );
+        }
+
+        if ( settings.title_font_size ) {
+            css_code += this.buildCSSRule( entry, ".ctx_sidebar_title" , "font-size", settings.title_font_size );
+        }
+
+        if ( settings.description_font_size ) {
+            css_code += this.buildCSSRule( entry, ".ctx_sidebar_description" , "font-size", settings.description_font_size );
         }
 
         return css_code;
