@@ -1672,7 +1672,14 @@ Contextly.PopupHelper = Contextly.createClass({
             popup_url,
             function ( response ) {
                 if ( response.status == 'ok' && response.snippet_id ) {
-                    send_to_editor( '[contextly_sidebar id="' + response.snippet_id + '"]' );
+                    var api_response = response.data;
+
+                    if ( api_response.entry && api_response.entry.type == Contextly.WidgetType.AUTO_SIDEBAR ) {
+                        send_to_editor( '[contextly_auto_sidebar id="' + response.snippet_id + '"]' );
+                    } else {
+                        send_to_editor( '[contextly_sidebar id="' + response.snippet_id + '"]' );
+                    }
+
                     Contextly.Loader.getInstance().load();
                 }
             }
