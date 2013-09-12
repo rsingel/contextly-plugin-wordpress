@@ -18,6 +18,7 @@ class Contextly
 
     const WIDGET_SIDEBAR_CLASS = 'ctx_widget_hidden';
     const WIDGET_SIDEBAR_PREFIX = 'contextly-';
+	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar id="%HASH%"]';
 
     function __construct() {
         Contextly_Api::getInstance()->setOptions( $this->getAPIClientOptions() );
@@ -27,6 +28,7 @@ class Contextly
         if ( is_admin() ) {
             add_action( 'admin_enqueue_scripts', array( $this, 'initAdmin' ), 1 );
             add_action( 'save_post', array( $this, 'publishBoxControlSavePostHook' ) );
+	        add_filter( 'default_content', array( $this, 'addAutosidebarCodeFilter' ), 10, 2 );
         } else {
             add_action( 'init', array( $this, 'initDefault' ), 1 );
             add_action('the_content', array( $this, 'addSnippetWidgetToContent' ) );
@@ -174,6 +176,7 @@ class Contextly
 
     public function initDefault() {
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
+        add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
     }
 
     public function wpautop( $content ) {
@@ -535,5 +538,70 @@ class Contextly
 		echo json_encode( $data );
 		exit;
 	}
+
+	/**
+	 * @param $content
+	 * @param $post
+	 * @return mixed
+	 */
+	public function addAutosidebarCodeFilter( $content, $post ) {
+		if ( $this->checkWidgetDisplayType( $post ) ) {
+			$hash = $this->getNewAutoSidebarHashForPost( $post->ID );
+
+			if ( null !== $hash ) {
+				$content = $this->getAutoSidebarCodeForPost( $post->ID, $hash ) . $content;
+			}
+		}
+
+		return $content;
+	}
+
+	/**
+	 * @param $post_id
+	 * @return null|string
+	 */
+	private function getNewAutoSidebarHashForPost( $post_id ) {
+		try {
+			$response = $publish_post = Contextly_Api::getInstance()
+				->api( 'autosidebars', 'put' )
+				->extraParams(
+					array(
+						'custom_id' => $post_id
+					)
+				)->get();
+
+			if ( isset( $response->success ) && isset( $response->id ) ) {
+				return $response->id;
+			}
+		} catch ( Exception $e ) {
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param $hash
+	 * @return string
+	 */
+	private function getAutoSidebarCodeForPost( $hash ) {
+		$code = self::WIDGET_AUTO_SIDEBAR_CODE;
+		$code = str_replace( '%HASH%', $hash, $code );
+
+		return $code;
+	}
+
+	/**
+	 * @param $attrs
+	 * @return string
+	 */
+	public function prepareAutoSidebar( $attrs ) {
+		if ( isset( $attrs[ 'id' ] ) ) {
+			return "<div class='" . self::WIDGET_SIDEBAR_CLASS . "' id='" . self::WIDGET_SIDEBAR_PREFIX . $attrs[ 'id' ] ."' sidebar-type='auto'></div>";
+		}
+		else {
+			return '';
+		}
+	}
+
 
 }
