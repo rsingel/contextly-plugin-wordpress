@@ -549,7 +549,7 @@ class Contextly
 			$hash = $this->getNewAutoSidebarHashForPost( $post->ID );
 
 			if ( null !== $hash ) {
-				$content = $this->getAutoSidebarCodeForPost( $post->ID, $hash ) . $content;
+				$content = $this->getAutoSidebarCodeForPost( $hash ) . $content;
 			}
 		}
 

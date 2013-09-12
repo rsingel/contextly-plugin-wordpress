@@ -10,7 +10,8 @@ Contextly.Errors = {
 
 Contextly.WidgetType = {
     SNIPPET: 'snippet',
-    SIDEBAR: 'sidebar'
+    SIDEBAR: 'sidebar',
+    AUTO_SIDEBAR: 'auto-sidebar'
 };
 
 Contextly.LinkType = {
@@ -155,8 +156,15 @@ Contextly.PageView = Contextly.createClass({
             Contextly.PopupHelper.getInstance().initWithWidget( this.entry );
 
             // Display widgets
-            this.displayWidgets( this.entry.snippets );
-            this.displayWidgets( this.entry.sidebars );
+            if ( this.entry.snippets && this.entry.snippets.length > 0 ) {
+                this.displayWidgets( this.entry.snippets );
+            }
+            if ( this.entry.sidebars && this.entry.sidebars.length > 0 ) {
+                this.displayWidgets( this.entry.sidebars );
+            }
+            if ( this.entry.auto_sidebars && this.entry.auto_sidebars.length > 0 ) {
+                this.displayWidgets( this.entry.auto_sidebars );
+            }
 
             // Check if we need to update this post in our DB
             if ( !Contextly.Settings.getInstance().isAdmin() ) {
@@ -236,8 +244,10 @@ Contextly.WidgetFactory = Contextly.createClass({
     getWidget: function( entry ) {
         if ( !entry ) return null;
 
-        if ( entry.type == 'sidebar' ) {
+        if ( entry.type == Contextly.WidgetType.SIDEBAR ) {
             return new Contextly.SidebarWidget( entry );
+        } else if ( entry.type == Contextly.WidgetType.AUTO_SIDEBAR ) {
+                return new Contextly.AutoSidebarWidget( entry );
         } else {
             return new Contextly.SnippetWidget( entry );
         }
@@ -271,6 +281,15 @@ Contextly.SnippetWidget = Contextly.createClass({
 });
 
 Contextly.SidebarWidget = Contextly.createClass({
+    extend: Contextly.Widget,
+
+    getWidgetFormatter: function () {
+        return Contextly.SidebarWidgetFormatterFactory.getInstance().getFormatter( this.widget );
+    }
+
+});
+
+Contextly.AutoSidebarWidget = Contextly.createClass({
     extend: Contextly.Widget,
 
     getWidgetFormatter: function () {
