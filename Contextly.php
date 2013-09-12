@@ -566,7 +566,8 @@ class Contextly
 				->api( 'autosidebars', 'put' )
 				->extraParams(
 					array(
-						'custom_id' => $post_id
+						'custom_id' => $post_id,
+						'editor'    => true
 					)
 				)->get();
 
