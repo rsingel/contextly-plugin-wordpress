@@ -12,7 +12,13 @@
 		var fullClass = 'ctx_around_site ' + className;
 		$('.ctx_around_site').attr('class',fullClass);
 	}
+	
+	function ctxTextClassChanger(className) {
+		var fullClass = 'ctx_see_also ctx_text_widget ' + className;
+		$('.ctx_see_also').attr('class',fullClass);
+	}
 
+	// branding popup
     function ctxResponsiveResizeHandler() {
         var screenWidth = window.innerWidth;
         var cxt_popup_width;
@@ -33,7 +39,8 @@
             social_tools: false,
             show_title: false
         });
-
+		
+		// blocks2 widget
         var widgetType = ctxGetWidgetType();
         var getWidgetWidth = ctxGetWidget().width();
         var resizeMinLimit = 350;
@@ -46,6 +53,7 @@
 			}
         }
 
+		//float widget
         if ( widgetType == 'float' ) {
             if(getWidgetWidth < resizeMinLimit) {
 				ctxClassChanger('ctx_floatmobile');
@@ -58,6 +66,7 @@
 			}
         }
 
+		//blocks widget
         if ( widgetType == 'blocks' ) {  
             if( getWidgetWidth <  500 ) { 
 				ctxClassChanger('ctx_blockmobile');
@@ -78,7 +87,17 @@
                 $(this).removeClass('ctx_blocksslider');
             });
         }
-
+		
+		//text widget
+        if ( widgetType == 'default' ) {  		
+            if( getWidgetWidth <  400 ) { 
+				ctxTextClassChanger('ctx_textmobile');
+            } else {
+				ctxTextClassChanger('ctx_textsite'); 
+			}
+        }
+		
+		//sidebar
         var getLeftSidebarWidth = $('.ctx_sidebar').width();
         if(getLeftSidebarWidth < 240) {
             $(".ctx_sidebar .ctx_horizontal_line li").css("float", "left");
