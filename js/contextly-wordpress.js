@@ -645,11 +645,7 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
     },
 
     getWidgetHTML: function () {
-        var div = "";
-
-        if ( this.isDisplayContextlyLogo() ) {
-            div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
-        }
+        var div = "";        
 
         div += "<div class='ctx_see_also " + this.getWidgetCssName() + "'>";
 
@@ -668,6 +664,10 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
             }
         }
         div += "</div>";
+		
+		if ( this.isDisplayContextlyLogo() ) {
+            div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
+        }
 
         return div;
     },
