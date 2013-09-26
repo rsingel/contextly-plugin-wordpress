@@ -1344,7 +1344,12 @@ Contextly.Utils = Contextly.createClass({
     },
 
     isIE7: function () {
-        return jQuery.browser.msie && parseFloat( jQuery.browser.version ) < 8;
+        if( navigator.userAgent.match( /MSIE ([0-9]+)\./ ) ) {
+            if ( RegExp.$1 < 8 ) {
+                return true;
+            }
+        }
+        return false;
     },
 
     loadCssFile: function ( css_url ) {
@@ -1503,7 +1508,7 @@ Contextly.Settings = Contextly.createClass({
         return null;
     },
     isDisplayBranding: function () {
-        return true;
+        return !this.isAdmin();
     }
 });
 
