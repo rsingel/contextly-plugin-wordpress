@@ -1634,7 +1634,7 @@ Contextly.PopupHelper = Contextly.createClass({
         if ( widget && widget.snippets && widget.snippets.length ) {
             var snippet = widget.snippets[0];
 
-            if ( snippet.links ) {
+            if ( snippet.id ) {
                 this.snippet = snippet;
             }
         }
