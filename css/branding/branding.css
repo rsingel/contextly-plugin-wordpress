@@ -167,13 +167,6 @@
         margin-left: 43px
     }
 }
-
-.ctx_widget .ctx_pluginauthor {
-    float: right;
-    padding-top: 8px;
-    margin-right: 3px;
-    margin-bottom: 5px;
-}
 .ctx_widget .ctx_pluginauthor span {
     display: block;
     background: url(images/brandedlogo.png) no-repeat right -12px !important;
@@ -193,11 +186,16 @@
     background: url(images/brandedlogo.png) no-repeat right 0px !important;
     color: #1babab !important;
 }
-#ctx_branding_open {
-    float: right;
-	width: auto !important	
-}
 .ctx_widget .ctx_tabs_widget .ctx_pluginauthor {
 	margin-top: 15px !important
 }
-
+.ctx_branding #ctx_branding_open {
+	display: block;
+	float: right;
+	height: 12px;
+	width: auto !important
+}
+.ctx_branding {
+	padding-top: 2px !important;
+	padding-bottom: 10px !important
+}
