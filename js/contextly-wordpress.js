@@ -1256,7 +1256,11 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
             css_code += site_custom_code;
         }
 
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-family", settings.font_family );
+        if ( settings.font_family ) {
+            css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-family", settings.font_family );
+            css_code += this.buildCSSRule( entry, ".ctx_sidebar_title" , "font-family", settings.font_family );
+            css_code += this.buildCSSRule( entry, ".ctx_sidebar_description" , "font-family", settings.font_family );
+        }
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-size", settings.font_size );
 
         if ( settings.color_background ) {
