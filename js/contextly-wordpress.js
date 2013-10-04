@@ -55,8 +55,12 @@ Contextly.Loader = Contextly.createClass({
         if ( response && response.entry ) {
             if ( response.entry.snippets ) {
                 has_links = this.isEntryWidgetsHasLinks( response.entry.snippets );
-            } else if ( response.entry.sidebars ) {
+            }
+            if ( !has_links && response.entry.sidebars ) {
                 has_links = this.isEntryWidgetsHasLinks( response.entry.sidebars );
+            }
+            if ( !has_links && response.entry.auto_sidebars ) {
+                has_links = this.isEntryWidgetsHasLinks( response.entry.auto_sidebars );
             }
         }
 
@@ -1634,7 +1638,7 @@ Contextly.PopupHelper = Contextly.createClass({
         if ( widget && widget.snippets && widget.snippets.length ) {
             var snippet = widget.snippets[0];
 
-            if ( snippet.links ) {
+            if ( snippet.id ) {
                 this.snippet = snippet;
             }
         }
@@ -1762,7 +1766,7 @@ Contextly.PopupHelper = Contextly.createClass({
         var add_related_button_value = "Choose Related Posts";
 
         jQuery( '.button-primary' ).removeClass( 'button-primary-disabled' );
-        jQuery( 'span.spinner').hide()
+        jQuery( 'span.spinner').hide();
 
         jQuery( "body" ).append(
             jQuery(
