@@ -181,13 +181,17 @@
     padding: 0px !important;
     text-transform: none !important;
     float: right;
+	font-weight: normal
 }
 .ctx_widget .ctx_pluginauthor span:hover {
     background: url(images/brandedlogo.png) no-repeat right 0px !important;
     color: #1babab !important;
 }
 .ctx_widget .ctx_tabs_widget .ctx_pluginauthor {
-	margin-top: 15px !important
+	float: none !important
+}
+.ctx_widget .ctx_tabs_widget .ctx_branding {
+	margin-top: 10px
 }
 .ctx_branding #ctx_branding_open {
 	display: block;
@@ -196,6 +200,7 @@
 	width: auto !important
 }
 .ctx_branding {
+	height: 12px;
 	padding-top: 2px !important;
 	padding-bottom: 10px !important
 }
