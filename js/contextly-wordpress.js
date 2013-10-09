@@ -668,7 +668,7 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
     },
 
     getWidgetHTML: function () {
-        var div = "";        
+        var div = "";
 
         div += "<div class='ctx_see_also " + this.getWidgetCssName() + "'>";
 
@@ -687,7 +687,7 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
             }
         }
         div += "</div>";
-		
+
 		if ( this.isDisplayContextlyLogo() ) {
             div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
         }
@@ -746,117 +746,92 @@ Contextly.TextWidgetCssCustomBuilder = Contextly.createClass({
 Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetFormatter,
 
-    	
 	getTabsWidget: function () {
 		return jQuery('.ctx_widget');
 	},
-	
+
 	getWidgetCssName: function () {
         return 'ctx_tabs_widget';
     },
-	
+
 	getWidgetWidth: function () {
 		return this.getTabsWidget().width();
 	},
-	
+
 	WidgetIsChromeBlocks: function () {
-		if(this.getWidgetWidth() < 400) {
+		if( this.getWidgetWidth() < 400 ) {
 			return true;
-		} else { return false; }
-	},	
-	
+		} else {
+            return false;
+        }
+	},
+
     getWidgetHTML: function () {
-		
-		if(this.WidgetIsChromeBlocks()==true) {
-		
-		this.getTabsWidget().addClass('ctx_tabs_block');		
-
-		var div = "<div class='ctx_see_also " + this.getWidgetCssName() + "'>";
-
+        var div = "<div class='ctx_see_also " + this.getWidgetCssName() + "'>";
         var sections = this.widget.settings.display_sections;
 
         div += "<ul class=\"ctx_tabs\">";
-		
-        for ( var section in sections ) {
-            var section_name = sections[section];
-            if ( this.isDisplaySection( section_name ) ) {
-				
-                var section_key = section_name + '_subhead';
-                var section_header = this.widget.settings[ section_key ];
 
-                div += "<li id='ctx_linker_tab_" + section_name + "'>";
-                div += "<span style='width: 100%'>" + this.escape( section_header ) + "</span>";
-				
-				//tabs content
-                div += "<div id='ctx_linker_content_" + section_name + "' class='ctx_content'  style='display: block;'>"
-                    + "<ul class='ctx_link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : '' ) + " '>"
-                    + this.getLinksHTMLOfType( section_name )
-                    + "</ul>"
-                    + "</div>";
-          		//tabs content				
-				
-                div += "</li>";	
-				
-                active_flag = true;
+        if( this.WidgetIsChromeBlocks()==true ) {
+            this.getTabsWidget().addClass('ctx_tabs_block');
+            for ( var section in sections ) {
+                var section_name = sections[section];
+                if ( this.isDisplaySection( section_name ) ) {
+
+                    var section_key = section_name + '_subhead';
+                    var section_header = this.widget.settings[ section_key ];
+
+                    div += "<li id='ctx_linker_tab_" + section_name + "'>";
+                    div += "<span style='width: 100%'>" + this.escape( section_header ) + "</span>";
+
+                    div += "<div id='ctx_linker_content_" + section_name + "' class='ctx_content'  style='display: block;'>"
+                        + "<ul class='ctx_link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : '' ) + " '>"
+                        + this.getLinksHTMLOfType( section_name )
+                        + "</ul>"
+                        + "</div>";
+
+                    div += "</li>";
+                }
             }
-        }
-        div += "</ul>";
-				
-		if ( this.isDisplayContextlyLogo() ) {
-    		div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
-        }
-		
-        div += "</div>";
-		
-		}//Chrome blocks END		
-		
-		else {  
-		
-		var div = "<div class='ctx_see_also " + this.getWidgetCssName() + "'>";
+            div += "</ul>";
+		} else {
+            var active_flag = false;
 
-        var sections = this.widget.settings.display_sections;
+            for ( var section in sections ) {
+                var section_name = sections[section];
 
-        div += "<ul class=\"ctx_tabs\">";
-        var active_flag = false;
+                if ( this.isDisplaySection( section_name ) ) {
+                    var section_key = section_name + '_subhead';
+                    var section_header = this.widget.settings[ section_key ];
 
-        for ( var section in sections ) {
-            var section_name = sections[section];
-
-            if ( this.isDisplaySection( section_name ) ) {
-                var section_key = section_name + '_subhead';
-                var section_header = this.widget.settings[ section_key ];
-
-                div += "<li id='ctx_linker_tab_" + section_name + "' " + (!active_flag ? "class='active'" : "") + ">";
-                div += "<a href='javascript:;' onclick='Contextly.PageEvents.getInstance().switchTab(\"" + this.widget.settings.id + "\", \"" + section_name + "\")'><span>" + this.escape( section_header ) + "</span></a>";
-                div += "</li>";
-                active_flag = true;
+                    div += "<li id='ctx_linker_tab_" + section_name + "' " + (!active_flag ? "class='active'" : "") + ">";
+                    div += "<a href='javascript:;' onclick='Contextly.PageEvents.getInstance().switchTab(\"" + this.widget.settings.id + "\", \"" + section_name + "\")'><span>" + this.escape( section_header ) + "</span></a>";
+                    div += "</li>";
+                    active_flag = true;
+                }
             }
-        }        
 
-        div += "</ul>";
+            div += "</ul>";
 
-        active_flag = false;
-        for (var section in sections) {
-            var section_name = sections[section];
-            if ( this.isDisplaySection( section_name ) ) {
-                div += "<div id='ctx_linker_content_" + section_name + "' class='ctx_content' " + (!active_flag ? "style='display: block;'" :"") + ">"
-                    + "<ul class='ctx_link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : '' ) + " '>"
-                    + this.getLinksHTMLOfType( section_name )
-                    + "</ul>"
-                    + "</div>";
-                active_flag = true;
+            active_flag = false;
+            for (var section in sections) {
+                var section_name = sections[section];
+                if ( this.isDisplaySection( section_name ) ) {
+                    div += "<div id='ctx_linker_content_" + section_name + "' class='ctx_content' " + (!active_flag ? "style='display: block;'" :"") + ">"
+                        + "<ul class='ctx_link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : '' ) + " '>"
+                        + this.getLinksHTMLOfType( section_name )
+                        + "</ul>"
+                        + "</div>";
+                    active_flag = true;
+                }
             }
-        }
-		
-		if ( this.isDisplayContextlyLogo() ) {
-    		div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
-        }
-		
-        div += "</div>";
-		
 		}
-		
-        
+
+        if ( this.isDisplayContextlyLogo() ) {
+            div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
+        }
+
+        div += "</div>";
 
         return div;
     },
@@ -898,8 +873,15 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
             var image_width = this.getImagesWidth();
             var image_li_width = image_width + 8;
             var image_html = "<img src='" + link.thumbnail_url + "' style='width: " + image_width + "px !important;' />";
+            var image_href;
 
-            html += "<li style='width: " + image_li_width + "px;'>" + this.getLinkATag( link, image_html ) + "</li>";
+            if ( link.video ) {
+                image_href = this.getVideoLinkATag( link, image_html );
+            } else {
+                image_href = this.getLinkATag( link, image_html );
+            }
+
+            html += "<li style='width: " + image_li_width + "px;'>" + image_href + "</li>";
         }
 
         if ( link.video ) {
@@ -928,7 +910,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
 
     getCustomCssCode: function () {
         return Contextly.TabsWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
-		
+
     }
 
 });
