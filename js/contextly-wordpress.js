@@ -645,11 +645,7 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
     },
 
     getWidgetHTML: function () {
-        var div = "";
-
-        if ( this.isDisplayContextlyLogo() ) {
-            div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
-        }
+        var div = "";        
 
         div += "<div class='ctx_see_also " + this.getWidgetCssName() + "'>";
 
@@ -662,12 +658,16 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
                 var section_header = this.widget.settings[ section_key ];
 
                 div += "<div class='ctx_previous'>";
-                div += "<div class='ctx_subhead'><span class='ctx_subhead_title'>" + this.escape( section_header ) + "</span><span class='ctx_subhead_line'></span></div>";
+                div += "<div class='ctx_subhead'><span class='ctx_subhead_title'>" + this.escape( section_header ) + "</span></div>";
                 div += "<ul class='ctx_link'>" + this.getLinksHTMLOfType( section_name ) + "</ul>";
                 div += "</div>";
             }
         }
         div += "</div>";
+		
+		if ( this.isDisplayContextlyLogo() ) {
+            div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
+        }
 
         return div;
     },
