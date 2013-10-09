@@ -10,7 +10,8 @@ Contextly.Errors = {
 
 Contextly.WidgetType = {
     SNIPPET: 'snippet',
-    SIDEBAR: 'sidebar'
+    SIDEBAR: 'sidebar',
+    AUTO_SIDEBAR: 'auto-sidebar'
 };
 
 Contextly.LinkType = {
@@ -54,8 +55,12 @@ Contextly.Loader = Contextly.createClass({
         if ( response && response.entry ) {
             if ( response.entry.snippets ) {
                 has_links = this.isEntryWidgetsHasLinks( response.entry.snippets );
-            } else if ( response.entry.sidebars ) {
+            }
+            if ( !has_links && response.entry.sidebars ) {
                 has_links = this.isEntryWidgetsHasLinks( response.entry.sidebars );
+            }
+            if ( !has_links && response.entry.auto_sidebars ) {
+                has_links = this.isEntryWidgetsHasLinks( response.entry.auto_sidebars );
             }
         }
 
@@ -155,8 +160,15 @@ Contextly.PageView = Contextly.createClass({
             Contextly.PopupHelper.getInstance().initWithWidget( this.entry );
 
             // Display widgets
-            this.displayWidgets( this.entry.snippets );
-            this.displayWidgets( this.entry.sidebars );
+            if ( this.entry.snippets && this.entry.snippets.length > 0 ) {
+                this.displayWidgets( this.entry.snippets );
+            }
+            if ( this.entry.sidebars && this.entry.sidebars.length > 0 ) {
+                this.displayWidgets( this.entry.sidebars );
+            }
+            if ( this.entry.auto_sidebars && this.entry.auto_sidebars.length > 0 ) {
+                this.displayWidgets( this.entry.auto_sidebars );
+            }
 
             // Check if we need to update this post in our DB
             if ( !Contextly.Settings.getInstance().isAdmin() ) {
@@ -236,8 +248,10 @@ Contextly.WidgetFactory = Contextly.createClass({
     getWidget: function( entry ) {
         if ( !entry ) return null;
 
-        if ( entry.type == 'sidebar' ) {
+        if ( entry.type == Contextly.WidgetType.SIDEBAR ) {
             return new Contextly.SidebarWidget( entry );
+        } else if ( entry.type == Contextly.WidgetType.AUTO_SIDEBAR ) {
+                return new Contextly.AutoSidebarWidget( entry );
         } else {
             return new Contextly.SnippetWidget( entry );
         }
@@ -271,6 +285,15 @@ Contextly.SnippetWidget = Contextly.createClass({
 });
 
 Contextly.SidebarWidget = Contextly.createClass({
+    extend: Contextly.Widget,
+
+    getWidgetFormatter: function () {
+        return Contextly.SidebarWidgetFormatterFactory.getInstance().getFormatter( this.widget );
+    }
+
+});
+
+Contextly.AutoSidebarWidget = Contextly.createClass({
     extend: Contextly.Widget,
 
     getWidgetFormatter: function () {
@@ -851,7 +874,7 @@ Contextly.TabsWidgetCssCustomBuilder = Contextly.createClass({
     {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '.ctx_text_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) css_code += '.ctx_tabs_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_tabs_widget .ctx_link" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_tabs_widget .ctx_link" , "font-size", settings.font_size );
@@ -1177,7 +1200,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
     display: function () {
         var self = this;
 
-        jQuery( document).ready(
+        jQuery( document ).ready(
             function () {
                 if ( self.hasWidgetData() && !Contextly.Settings.getInstance().isAdmin() ) {
                     // Build widget html and display it
@@ -1237,7 +1260,11 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
             css_code += site_custom_code;
         }
 
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-family", settings.font_family );
+        if ( settings.font_family ) {
+            css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-family", settings.font_family );
+            css_code += this.buildCSSRule( entry, ".ctx_sidebar_title" , "font-family", settings.font_family );
+            css_code += this.buildCSSRule( entry, ".ctx_sidebar_description" , "font-family", settings.font_family );
+        }
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-size", settings.font_size );
 
         if ( settings.color_background ) {
@@ -1252,6 +1279,14 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
 
         if ( settings.color_border ) {
             css_code += this.buildCSSRule( entry, ".ctx_content" , "border-color", settings.color_border + " !important;" );
+        }
+
+        if ( settings.title_font_size ) {
+            css_code += this.buildCSSRule( entry, ".ctx_sidebar_title" , "font-size", settings.title_font_size );
+        }
+
+        if ( settings.description_font_size ) {
+            css_code += this.buildCSSRule( entry, ".ctx_sidebar_description" , "font-size", settings.description_font_size );
         }
 
         return css_code;
@@ -1317,7 +1352,12 @@ Contextly.Utils = Contextly.createClass({
     },
 
     isIE7: function () {
-        return jQuery.browser.msie && parseFloat( jQuery.browser.version ) < 8;
+        if( navigator.userAgent.match( /MSIE ([0-9]+)\./ ) ) {
+            if ( RegExp.$1 < 8 ) {
+                return true;
+            }
+        }
+        return false;
     },
 
     loadCssFile: function ( css_url ) {
@@ -1476,7 +1516,7 @@ Contextly.Settings = Contextly.createClass({
         return null;
     },
     isDisplayBranding: function () {
-        return true;
+        return !this.isAdmin();
     }
 });
 
@@ -1598,7 +1638,7 @@ Contextly.PopupHelper = Contextly.createClass({
         if ( widget && widget.snippets && widget.snippets.length ) {
             var snippet = widget.snippets[0];
 
-            if ( snippet.links ) {
+            if ( snippet.id ) {
                 this.snippet = snippet;
             }
         }
@@ -1645,7 +1685,14 @@ Contextly.PopupHelper = Contextly.createClass({
             popup_url,
             function ( response ) {
                 if ( response.status == 'ok' && response.snippet_id ) {
-                    send_to_editor( '[contextly_sidebar id="' + response.snippet_id + '"]' );
+                    var api_response = response.data;
+
+                    if ( api_response.entry && api_response.entry.type == Contextly.WidgetType.AUTO_SIDEBAR ) {
+                        send_to_editor( '[contextly_auto_sidebar id="' + response.snippet_id + '"]' );
+                    } else {
+                        send_to_editor( '[contextly_sidebar id="' + response.snippet_id + '"]' );
+                    }
+
                     Contextly.Loader.getInstance().load();
                 }
             }
@@ -1719,7 +1766,7 @@ Contextly.PopupHelper = Contextly.createClass({
         var add_related_button_value = "Choose Related Posts";
 
         jQuery( '.button-primary' ).removeClass( 'button-primary-disabled' );
-        jQuery( 'span.spinner').hide()
+        jQuery( 'span.spinner').hide();
 
         jQuery( "body" ).append(
             jQuery(
