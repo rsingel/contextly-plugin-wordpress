@@ -187,9 +187,6 @@
     background: url(images/brandedlogo.png) no-repeat right 0px !important;
     color: #1babab !important;
 }
-.ctx_widget .ctx_tabs_widget .ctx_pluginauthor {
-	float: none !important
-}
 .ctx_widget .ctx_tabs_widget .ctx_branding {
 	margin-top: 10px
 }
