@@ -861,17 +861,24 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
-        var item_style = "padding-bottom: 5px;";
-
-        if ( link.thumbnail_url ) {
-            item_style += "height: " + this.getImagesHeight() + "px;";
+        var item_style = "padding-bottom: 5px;";	
+		
+        if ( link.thumbnail_url ) {			
+			if( this.WidgetIsChromeBlocks()==true ) {
+				item_style += "height: 70px;";
+			} else { 
+				item_style += "height: " + this.getImagesHeight() + "px;";
+			}    			        
         }
 
         var html = "<ul class='ctx_horizontal_line' style='" + item_style + "'>";
 
         if ( link.thumbnail_url ) {
 			
-            var image_width = this.getImagesWidth();
+			if( this.WidgetIsChromeBlocks()==true ) {
+				var image_width = 70;
+			} else { var image_width = this.getImagesWidth(); } 
+            
             var image_li_width = image_width + 8;
             var image_html = "<img src='" + link.thumbnail_url + "' style='width: " + image_width + "px !important;' />";
             var image_href;
