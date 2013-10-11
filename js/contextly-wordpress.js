@@ -1233,7 +1233,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
 
     getWidgetHTML: function()
     {
-        return "<div class='ctx_content'><ul class='ctx_sidebar_link " + ( this.hasImagesForLinks( 'previous' ) ? 'ctx_images' : '' ) + " '>"
+        return "<div class='ctx_content'><ul class='ctx_sidebar_link " + ( this.hasImagesForLinks( 'previous' ) ? 'ctx_images' : 'ctx_noimages' ) + "'>"
             + this.getLinksHTMLOfType( 'previous' )
             + "</ul></div>";
     },
