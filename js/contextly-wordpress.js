@@ -785,7 +785,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
                     div += "<span style='width: 100%'>" + this.escape( section_header ) + "</span>";
 
                     div += "<div id='ctx_linker_content_" + section_name + "' class='ctx_content'  style='display: block;'>"
-                        + "<ul class='ctx_link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : '' ) + " '>"
+                        + "<ul class='ctx_link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : 'ctx_chrome_noimages' ) + " '>"
                         + this.getLinksHTMLOfType( section_name )
                         + "</ul>"
                         + "</div>";
@@ -818,7 +818,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
                 var section_name = sections[section];
                 if ( this.isDisplaySection( section_name ) ) {
                     div += "<div id='ctx_linker_content_" + section_name + "' class='ctx_content' " + (!active_flag ? "style='display: block;'" :"") + ">"
-                        + "<ul class='ctx_link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : '' ) + " '>"
+                        + "<ul class='ctx_link " + ( this.hasImagesForLinks( section_name ) ? 'linker_images' : 'ctx_chrome_noimages' ) + " '>"
                         + this.getLinksHTMLOfType( section_name )
                         + "</ul>"
                         + "</div>";
@@ -861,16 +861,24 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
-        var item_style = "padding-bottom: 5px;";
-
-        if ( link.thumbnail_url ) {
-            item_style += "height: " + this.getImagesHeight() + "px;";
+        var item_style = "padding-bottom: 5px;";	
+		
+        if ( link.thumbnail_url ) {			
+			if( this.WidgetIsChromeBlocks()==true ) {
+				item_style += "height: 70px;";
+			} else { 
+				item_style += "height: " + this.getImagesHeight() + "px;";
+			}    			        
         }
 
         var html = "<ul class='ctx_horizontal_line' style='" + item_style + "'>";
 
         if ( link.thumbnail_url ) {
-            var image_width = this.getImagesWidth();
+			
+			if( this.WidgetIsChromeBlocks()==true ) {
+				var image_width = 70;
+			} else { var image_width = this.getImagesWidth(); } 
+            
             var image_li_width = image_width + 8;
             var image_html = "<img src='" + link.thumbnail_url + "' style='width: " + image_width + "px !important;' />";
             var image_href;
@@ -1225,7 +1233,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
 
     getWidgetHTML: function()
     {
-        return "<div class='ctx_content'><ul class='ctx_sidebar_link " + ( this.hasImagesForLinks( 'previous' ) ? 'ctx_images' : '' ) + " '>"
+        return "<div class='ctx_content'><ul class='ctx_sidebar_link " + ( this.hasImagesForLinks( 'previous' ) ? 'ctx_images' : 'ctx_noimages' ) + "'>"
             + this.getLinksHTMLOfType( 'previous' )
             + "</ul></div>";
     },
