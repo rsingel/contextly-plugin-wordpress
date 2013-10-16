@@ -559,7 +559,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     getLinkATag: function ( link, content ) {
-        return "<a target=\"_blank\" class=\"ctx_title ctx_module\" href=\"" +
+        return "<a class=\"ctx_title ctx_module\" href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" onmousedown=\"this.href='" +
             this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
@@ -861,24 +861,24 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
-        var item_style = "padding-bottom: 5px;";	
-		
-        if ( link.thumbnail_url ) {			
+        var item_style = "padding-bottom: 5px;";
+
+        if ( link.thumbnail_url ) {
 			if( this.WidgetIsChromeBlocks()==true ) {
 				item_style += "height: 70px;";
-			} else { 
+			} else {
 				item_style += "height: " + this.getImagesHeight() + "px;";
-			}    			        
+			}
         }
 
         var html = "<ul class='ctx_horizontal_line' style='" + item_style + "'>";
 
         if ( link.thumbnail_url ) {
-			
+
 			if( this.WidgetIsChromeBlocks()==true ) {
 				var image_width = 70;
-			} else { var image_width = this.getImagesWidth(); } 
-            
+			} else { var image_width = this.getImagesWidth(); }
+
             var image_li_width = image_width + 8;
             var image_html = "<img src='" + link.thumbnail_url + "' style='width: " + image_width + "px !important;' />";
             var image_href;
