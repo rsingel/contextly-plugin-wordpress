@@ -194,7 +194,9 @@
 	display: block;
 	float: right;
 	height: 12px;
-	width: auto !important
+	width: auto !important;
+	text-decoration: none !important;
+	outline: none !important
 }
 .ctx_branding {
 	height: 12px;
