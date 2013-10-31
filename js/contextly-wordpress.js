@@ -795,6 +795,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
             }
             div += "</ul>";
 		} else {
+			this.getTabsWidget().addClass('ctx_tabs_site');
             var active_flag = false;
 
             for ( var section in sections ) {
