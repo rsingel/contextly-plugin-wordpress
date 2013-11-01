@@ -795,6 +795,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
             }
             div += "</ul>";
 		} else {
+			this.getTabsWidget().addClass('ctx_tabs_site');
             var active_flag = false;
 
             for ( var section in sections ) {
@@ -861,17 +862,17 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
     },
 
     getLinkHTML: function ( link ) {
-        var item_style = "padding-bottom: 5px;";
+        var item_style='';
 
         if ( link.thumbnail_url ) {
 			if( this.WidgetIsChromeBlocks()==true ) {
-				item_style += "height: 70px;";
+				item_style += "style='height: 70px'";
 			} else {
-				item_style += "height: " + this.getImagesHeight() + "px;";
+				item_style += "style='height: " + this.getImagesHeight() + "px'";
 			}
         }
 
-        var html = "<ul class='ctx_horizontal_line' style='" + item_style + "'>";
+        var html = "<ul class='ctx_horizontal_line' " + item_style + ">";
 
         if ( link.thumbnail_url ) {
 
