@@ -43,7 +43,7 @@
 		// blocks2 widget
         var widgetType = ctxGetWidgetType();
         var getWidgetWidth = ctxGetWidget().width();
-        var resizeMinLimit = 350;
+        var resizeMinLimit = 465;
 
         if ( widgetType == 'blocks2' ) {
             if(getWidgetWidth < resizeMinLimit) {
