@@ -17,10 +17,19 @@
 		var fullClass = 'ctx_see_also ctx_text_widget ' + className;
 		$('.ctx_see_also').attr('class',fullClass);
 	}
+	
+	function is_touch_device() {
+		return 'ontouchstart' in window;
+	};
+	
+	function ctxDisplayWidth() {
+		var getwidth = $(window).width();
+		return getwidth;
+	}
 
 	// branding popup
     function ctxResponsiveResizeHandler() {
-        var screenWidth = window.innerWidth;
+        var screenWidth = ctxDisplayWidth();
         var cxt_popup_width;
         var cxt_popup_height;
 
@@ -67,25 +76,30 @@
         }
 
 		//blocks widget
-        if ( widgetType == 'blocks' ) {  
+        if ( widgetType == 'blocks' ) {  		
+			
             if( getWidgetWidth <  500 ) { 
 				ctxClassChanger('ctx_blockmobile');
             } else {
 				ctxClassChanger('ctx_blocksite'); 
 			}
-
-            $(".ctx_blocks_widget li a").on("mouseover", function(event){
-                $(this).toggleClass('ctx_blocksslider');
-                var getTextHeight = $('.ctx_blocksslider p span').height();
-                if(getTextHeight>50) {
-                    $(".ctx_blocksslider p").css("height", getTextHeight);
-                }
-            });
-
-            $(".ctx_blocks_widget li a").on("mouseout", function(event){
-                $(".ctx_blocksslider p").css("height", "46px");
-                $(this).removeClass('ctx_blocksslider');
-            });
+			
+			if( is_touch_device() || ctxDisplayWidth() <  800 ) { 
+				$(".ctx_blocks_widget li a p").css("height", "auto");
+            } else {				
+				$(".ctx_blocks_widget li a").on("mouseover", function(event){
+					$(this).toggleClass('ctx_blocksslider');
+					var getTextHeight = $('.ctx_blocksslider p span').height();
+					if(getTextHeight>50) {
+						$(".ctx_blocksslider p").css("height", getTextHeight);
+					}
+				});
+	
+				$(".ctx_blocks_widget li a").on("mouseout", function(event){
+					$(".ctx_blocksslider p").css("height", "46px");
+					$(this).removeClass('ctx_blocksslider');
+				});				
+			}            
         }
 		
 		//text widget
