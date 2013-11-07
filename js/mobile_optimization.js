@@ -18,6 +18,11 @@
 		$('.ctx_see_also').attr('class',fullClass);
 	}
 	
+	function ctxSidebarClassChanger(className) {
+		var fullClass = 'ctx_widget_hidden ctx_sidebar ctx_sidebar_left ' + className;
+		$('.ctx_sidebar_left').attr('class',fullClass);
+	}
+	
 	function is_touch_device() {
 		return 'ontouchstart' in window;
 	};
@@ -114,10 +119,9 @@
 		//sidebar
         var getLeftSidebarWidth = $('.ctx_sidebar').width();
         if(getLeftSidebarWidth < 240) {
-            $(".ctx_sidebar .ctx_horizontal_line li").css("float", "left");
-            $("ctx_horizontal_line").css("float", "left");       
+            ctxSidebarClassChanger('ctx_sidebarmobile');      
         } else {
-            $(".ctx_sidebar .ctx_horizontal_line li").css("float", "none");
+            ctxSidebarClassChanger('ctx_sidebarsite');
         }      
     }
 
