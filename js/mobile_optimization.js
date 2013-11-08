@@ -109,7 +109,7 @@
 		
 		//text widget
         if ( widgetType == 'default' ) {  		
-            if( getWidgetWidth <  400 ) { 
+            if( getWidgetWidth <  520 ) { 
 				ctxTextClassChanger('ctx_textmobile');
             } else {
 				ctxTextClassChanger('ctx_textsite'); 
@@ -117,8 +117,8 @@
         }
 		
 		//sidebar
-        var getLeftSidebarWidth = $('.ctx_sidebar').width();
-        if(getLeftSidebarWidth < 240) {
+        var getLeftSidebarWidth = $('.ctx_sidebar_link').width();
+        if(getLeftSidebarWidth < 256) {
             ctxSidebarClassChanger('ctx_sidebarmobile');      
         } else {
             ctxSidebarClassChanger('ctx_sidebarsite');
