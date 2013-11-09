@@ -349,6 +349,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         this.widget = widget;
         this.widget_type = Contextly.WidgetType.SNIPPET;
         this.widget_html_id = 'ctx_linker';
+		this.setResponsiveFunction();
     },
 
     getDisplayElement: function() {
@@ -625,8 +626,89 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
     isDisplayContextlyLogo: function() {
         return Contextly.Settings.getInstance().isDisplayBranding();
-    }
+    },
+	
+	setResponsiveFunction: function() {
+		
+		function ctxResponsiveResizeHandler() {
+			
+			function ctxGetWidget() {
+				return jQuery( '.ctx_widget' );
+			}
+		
+			function ctxGetWidgetType() {
+				return ctxGetWidget().attr( 'widget-type' );
+			}
+			
+			function is_touch_device() {
+				return 'ontouchstart' in window;
+			};
+			
+			function ctxDisplayWidth() {
+				var getwidth = jQuery(window).width();
+				return getwidth;
+			}
+			
+			function ctxWidgetWidth() {
+				var WidgetWidth = jQuery(ctxGetWidget()).width();
+				return WidgetWidth;
+			}
+			
+			function ctxClassChanger(className) {
+				var fullClass = 'ctx_around_site ' + className;
+				jQuery('.ctx_around_site').attr('class',fullClass);
+			}
+	
+			if ( ctxGetWidgetType() == 'blocks2' ) {
+				
+				var resizeMinLimit = 480;				
+				if(ctxWidgetWidth() < resizeMinLimit) {
+					ctxClassChanger('ctx_blocks2mobile');
+				} else {
+					ctxClassChanger('ctx_blocks2site');
+				}
+			}
+			
+		}
+		
+		function ctxCheckIfWidgetLoadedAndResize() {
+			//var widgetType = ctxGetWidgetType();
+			documentLoadCheckCount++;	
+			
+			ctxResponsiveResizeHandler();
+			ctxClearIfWidgetLoadedInterval();			
+	
+			if ( documentLoadCheckCount > 10 ) {
+				ctxClearIfWidgetLoadedInterval();
+			}
+		}
 
+		function ctxClearIfWidgetLoadedInterval() {
+			if ( documentLoadInterval ) {
+					clearInterval( documentLoadInterval );
+				}
+			}
+	
+		jQuery(window).resize(
+			function() {
+				ctxResponsiveResizeHandler();
+			}
+		);
+	
+		var documentLoadInterval = null;
+		var documentLoadCheckCount = 0;
+	
+		jQuery(document).ready(
+			function() {
+				documentLoadInterval = self.setInterval(
+					function () {
+						ctxCheckIfWidgetLoadedAndResize();
+					},
+					500
+				);
+			}
+		);	
+	},	
 });
 
 Contextly.CssCustomBuilder = Contextly.createClass({
@@ -1101,9 +1183,9 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
     getWidgetCssName: function () {
         return 'ctx_blocks_widget2';
     },
-
+	
     getInnerLinkHTML: function ( link, is_video ) {
-        var inner_html = "";
+        var inner_html = "";	
         if ( this.getLinkThumbnailUrl( link ) ) {
             if ( is_video ) {
                 inner_html += "<div class='playbutton-wrapper'>";
@@ -1114,8 +1196,10 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
             }
         }
         inner_html += "<p class='ctx_link'><span>" + link.title + "</span></p>";
-
+		
         return inner_html;
+		
+		
     },
 
     getLinkHTMLVideo: function ( link ) {
@@ -1124,6 +1208,8 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
 
     getCustomCssCode: function () {
         return Contextly.Blocks2WidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
+		
+		
     }
 
 });
