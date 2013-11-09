@@ -627,60 +627,60 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     isDisplayContextlyLogo: function() {
         return Contextly.Settings.getInstance().isDisplayBranding();
     },
-	
+
 	setResponsiveFunction: function() {
-		
+
 		function ctxResponsiveResizeHandler() {
-			
+
 			function ctxGetWidget() {
 				return jQuery( '.ctx_widget' );
 			}
-		
+
 			function ctxGetWidgetType() {
 				return ctxGetWidget().attr( 'widget-type' );
 			}
-			
+
 			function is_touch_device() {
 				return 'ontouchstart' in window;
 			};
-			
+
 			function ctxDisplayWidth() {
 				var getwidth = jQuery(window).width();
 				return getwidth;
 			}
-			
+
 			function ctxWidgetWidth() {
 				var WidgetWidth = jQuery(ctxGetWidget()).width();
 				return WidgetWidth;
 			}
-			
+
 			function resizeMinLimit() {
 				MinLimit = 480;
 				return MinLimit;
 			};
-			
+
 			function ctxClassChanger(className) {
 				var fullClass = 'ctx_around_site ' + className;
 				jQuery('.ctx_around_site').attr('class',fullClass);
 			}
-			
+
 			function ctxTextClassChanger(className) {
 				var fullClass = 'ctx_see_also ctx_text_widget ' + className;
 				jQuery('.ctx_see_also').attr('class',fullClass);
 			}
-			
+
 			function ctxSidebarClassChanger(className) {
 				var fullClass = 'ctx_widget_hidden ctx_sidebar ctx_sidebar_left ' + className;
 				jQuery('.ctx_sidebar_left').attr('class',fullClass);
 			}
-			
-			if(ctxDisplayWidth() > 605) { 
-				var cxt_popup_width = 552; cxt_popup_height = 292; 
+
+			if(ctxDisplayWidth() > 605) {
+				var cxt_popup_width = 552; cxt_popup_height = 292;
 			}
-			else { 
-				var cxt_popup_width = 250; cxt_popup_height = 500; 
+			else {
+				var cxt_popup_width = 250; cxt_popup_height = 500;
 			}
-	
+
 			jQuery("#ctx_branding_open").prettyPhoto({
 				theme:'light_square',
 				autoplay_slideshow: false,
@@ -689,17 +689,17 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 				social_tools: false,
 				show_title: false
 			});
-			
+
 			// blocks2 widget
-			if ( ctxGetWidgetType() == 'blocks2' ) {				
-								
+			if ( ctxGetWidgetType() == 'blocks2' ) {
+
 				if(ctxWidgetWidth() < resizeMinLimit()) {
 					ctxClassChanger('ctx_blocks2mobile');
 				} else {
 					ctxClassChanger('ctx_blocks2site');
 				}
 			}
-			
+
 			//float widget
 			if ( ctxGetWidgetType() == 'float' ) {
 				if(ctxWidgetWidth() < resizeMinLimit()) {
@@ -707,24 +707,24 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 				}
 				else if(ctxWidgetWidth() < 550 && ctxWidgetWidth() > resizeMinLimit()) {
 					ctxClassChanger('ctx_floattablet');
-				} 
-				else { 
-					ctxClassChanger('ctx_floatsite'); 
+				}
+				else {
+					ctxClassChanger('ctx_floatsite');
 				}
 			}
-			
+
 			//blocks widget
-			if ( ctxGetWidgetType() == 'blocks' ) {  		
-				
-				if( ctxWidgetWidth() <  500 ) { 
+			if ( ctxGetWidgetType() == 'blocks' ) {
+
+				if( ctxWidgetWidth() <  500 ) {
 					ctxClassChanger('ctx_blockmobile');
 				} else {
-					ctxClassChanger('ctx_blocksite'); 
+					ctxClassChanger('ctx_blocksite');
 				}
-				
-				if( is_touch_device() || ctxDisplayWidth() <  800 ) { 
+
+				if( is_touch_device() || ctxDisplayWidth() <  800 ) {
 					jQuery(".ctx_blocks_widget li a p").css("height", "auto");
-				} else {				
+				} else {
 					jQuery(".ctx_blocks_widget li a").on("mouseover", function(event){
 						jQuery(this).toggleClass('ctx_blocksslider');
 						var getTextHeight = jQuery('.ctx_blocksslider p span').height();
@@ -732,40 +732,39 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 							jQuery(".ctx_blocksslider p").css("height", getTextHeight);
 						}
 					});
-		
+
 					jQuery(".ctx_blocks_widget li a").on("mouseout", function(event){
 						jQuery(".ctx_blocksslider p").css("height", "46px");
 						jQuery(this).removeClass('ctx_blocksslider');
-					});				
-				}            
-			}
-			
-			//text widget
-			if ( ctxGetWidgetType() == 'default' ) {  		
-				if( ctxWidgetWidth() <  520 ) { 
-					ctxTextClassChanger('ctx_textmobile');
-				} else {
-					ctxTextClassChanger('ctx_textsite'); 
+					});
 				}
 			}
-			
+
+			//text widget
+			if ( ctxGetWidgetType() == 'default' ) {
+				if( ctxWidgetWidth() <  520 ) {
+					ctxTextClassChanger('ctx_textmobile');
+				} else {
+					ctxTextClassChanger('ctx_textsite');
+				}
+			}
+
 			//sidebar
 			var getLeftSidebarWidth = jQuery('.ctx_sidebar_link').width();
 			if(getLeftSidebarWidth < 256) {
-				ctxSidebarClassChanger('ctx_sidebarmobile');      
+				ctxSidebarClassChanger('ctx_sidebarmobile');
 			} else {
 				ctxSidebarClassChanger('ctx_sidebarsite');
-			} 
-			
+			}
+
 		}
-		
+
 		function ctxCheckIfWidgetLoadedAndResize() {
-			//var widgetType = ctxGetWidgetType();
-			documentLoadCheckCount++;	
-			
+			documentLoadCheckCount++;
+
 			ctxResponsiveResizeHandler();
-			ctxClearIfWidgetLoadedInterval();			
-	
+			ctxClearIfWidgetLoadedInterval();
+
 			if ( documentLoadCheckCount > 10 ) {
 				ctxClearIfWidgetLoadedInterval();
 			}
@@ -776,16 +775,16 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 					clearInterval( documentLoadInterval );
 				}
 			}
-	
+
 		jQuery(window).resize(
 			function() {
 				ctxResponsiveResizeHandler();
 			}
 		);
-	
+
 		var documentLoadInterval = null;
 		var documentLoadCheckCount = 0;
-	
+
 		jQuery(document).ready(
 			function() {
 				documentLoadInterval = self.setInterval(
@@ -795,8 +794,9 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 					500
 				);
 			}
-		);	
-	},	
+		);
+	}
+
 });
 
 Contextly.CssCustomBuilder = Contextly.createClass({
@@ -1271,9 +1271,9 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
     getWidgetCssName: function () {
         return 'ctx_blocks_widget2';
     },
-	
+
     getInnerLinkHTML: function ( link, is_video ) {
-        var inner_html = "";	
+        var inner_html = "";
         if ( this.getLinkThumbnailUrl( link ) ) {
             if ( is_video ) {
                 inner_html += "<div class='playbutton-wrapper'>";
@@ -1284,10 +1284,10 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
             }
         }
         inner_html += "<p class='ctx_link'><span>" + link.title + "</span></p>";
-		
+
         return inner_html;
-		
-		
+
+
     },
 
     getLinkHTMLVideo: function ( link ) {
@@ -1296,8 +1296,8 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
 
     getCustomCssCode: function () {
         return Contextly.Blocks2WidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
-		
-		
+
+
     }
 
 });
