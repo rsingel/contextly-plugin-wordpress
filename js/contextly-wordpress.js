@@ -654,18 +654,52 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 				return WidgetWidth;
 			}
 			
+			function resizeMinLimit() {
+				MinLimit = 480;
+				return MinLimit;
+			};
+			
 			function ctxClassChanger(className) {
 				var fullClass = 'ctx_around_site ' + className;
 				jQuery('.ctx_around_site').attr('class',fullClass);
 			}
 	
-			if ( ctxGetWidgetType() == 'blocks2' ) {
-				
-				var resizeMinLimit = 480;				
-				if(ctxWidgetWidth() < resizeMinLimit) {
+			if(ctxDisplayWidth() > 605) { 
+				var cxt_popup_width = 552; cxt_popup_height = 292; 
+			}
+			else { 
+				var cxt_popup_width = 250; cxt_popup_height = 500; 
+			}
+	
+			jQuery("#ctx_branding_open").prettyPhoto({
+				theme:'light_square',
+				autoplay_slideshow: false,
+				default_width: cxt_popup_width,
+				default_height: cxt_popup_height,
+				social_tools: false,
+				show_title: false
+			});
+			
+			// blocks2 widget
+			if ( ctxGetWidgetType() == 'blocks2' ) {				
+								
+				if(ctxWidgetWidth() < resizeMinLimit()) {
 					ctxClassChanger('ctx_blocks2mobile');
 				} else {
 					ctxClassChanger('ctx_blocks2site');
+				}
+			}
+			
+			//float widget
+			if ( ctxGetWidgetType() == 'float' ) {
+				if(ctxWidgetWidth() < resizeMinLimit()) {
+					ctxClassChanger('ctx_floatmobile');
+				}
+				else if(ctxWidgetWidth() < 550 && ctxWidgetWidth() > resizeMinLimit()) {
+					ctxClassChanger('ctx_floattablet');
+				} 
+				else { 
+					ctxClassChanger('ctx_floatsite'); 
 				}
 			}
 			
