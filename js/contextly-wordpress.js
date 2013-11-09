@@ -663,7 +663,17 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 				var fullClass = 'ctx_around_site ' + className;
 				jQuery('.ctx_around_site').attr('class',fullClass);
 			}
-	
+			
+			function ctxTextClassChanger(className) {
+				var fullClass = 'ctx_see_also ctx_text_widget ' + className;
+				jQuery('.ctx_see_also').attr('class',fullClass);
+			}
+			
+			function ctxSidebarClassChanger(className) {
+				var fullClass = 'ctx_widget_hidden ctx_sidebar ctx_sidebar_left ' + className;
+				jQuery('.ctx_sidebar_left').attr('class',fullClass);
+			}
+			
 			if(ctxDisplayWidth() > 605) { 
 				var cxt_popup_width = 552; cxt_popup_height = 292; 
 			}
@@ -702,6 +712,50 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 					ctxClassChanger('ctx_floatsite'); 
 				}
 			}
+			
+			//blocks widget
+			if ( ctxGetWidgetType() == 'blocks' ) {  		
+				
+				if( ctxWidgetWidth() <  500 ) { 
+					ctxClassChanger('ctx_blockmobile');
+				} else {
+					ctxClassChanger('ctx_blocksite'); 
+				}
+				
+				if( is_touch_device() || ctxDisplayWidth() <  800 ) { 
+					jQuery(".ctx_blocks_widget li a p").css("height", "auto");
+				} else {				
+					jQuery(".ctx_blocks_widget li a").on("mouseover", function(event){
+						jQuery(this).toggleClass('ctx_blocksslider');
+						var getTextHeight = jQuery('.ctx_blocksslider p span').height();
+						if(getTextHeight>50) {
+							jQuery(".ctx_blocksslider p").css("height", getTextHeight);
+						}
+					});
+		
+					jQuery(".ctx_blocks_widget li a").on("mouseout", function(event){
+						jQuery(".ctx_blocksslider p").css("height", "46px");
+						jQuery(this).removeClass('ctx_blocksslider');
+					});				
+				}            
+			}
+			
+			//text widget
+			if ( ctxGetWidgetType() == 'default' ) {  		
+				if( ctxWidgetWidth() <  520 ) { 
+					ctxTextClassChanger('ctx_textmobile');
+				} else {
+					ctxTextClassChanger('ctx_textsite'); 
+				}
+			}
+			
+			//sidebar
+			var getLeftSidebarWidth = jQuery('.ctx_sidebar_link').width();
+			if(getLeftSidebarWidth < 256) {
+				ctxSidebarClassChanger('ctx_sidebarmobile');      
+			} else {
+				ctxSidebarClassChanger('ctx_sidebarsite');
+			} 
 			
 		}
 		
