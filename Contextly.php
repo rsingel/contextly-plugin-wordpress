@@ -177,6 +177,13 @@ class Contextly
     public function initDefault() {
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
         add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
+
+	    // After rendered shortcodes, we can run wp formatting filter again
+	    remove_filter( 'the_content', 'wpautop' );
+	    remove_filter( 'the_excerpt', 'wpautop' );
+
+	    add_filter( 'the_content', array( $this, 'wpautop' ), 12 );
+	    add_filter( 'the_excerpt', array( $this, 'wpautop' ), 12 );
     }
 
     public function wpautop( $content ) {
