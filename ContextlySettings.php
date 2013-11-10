@@ -27,6 +27,7 @@ class ContextlySettings {
 
     private function initPluginSettingsLink() {
         add_filter( 'plugin_action_links', array( $this, 'displaySettingsLink' ), 10, 2 );
+	    add_action( 'admin_notices', array( $this, 'checkApiSettings' ) );
     }
 
     private function initWPSettings() {
@@ -70,12 +71,16 @@ class ContextlySettings {
         $this->tabs[ self::ADVANCED_SETTINGS_KEY ] = __( 'Advanced' );
     }
 
+	private function validateApiKeyRegexp( $api_key ) {
+		return preg_match( "/^[a-zA-Z0-9_]+-[a-zA-Z0-9#*;]+$/", $api_key );
+	}
+
 	public function validateApi( $input ) {
 		$input['api_key'] = sanitize_text_field($input['api_key']);
 
 		if ( !$input['api_key'] ) {
 			$this->showMessage( self::MSG_ERROR_TYPE, 'API Key can not be empty.' );
-		} elseif ( !preg_match( "/^[a-zA-Z0-9_]+-[a-zA-Z0-9#*;]+$/", $input['api_key'] ) ) {
+		} elseif ( !$this->validateApiKeyRegexp( $input['api_key'] ) ) {
 			$this->showMessage( self::MSG_ERROR_TYPE, 'Invalid characters in API Key.' );
 		} else {
 			$this->showMessage( self::MSG_SUCCESS_TYPE, self::MSG_SETTINGS_SAVED );
@@ -107,6 +112,16 @@ class ContextlySettings {
 			__( $message ),
 	        $type
 	    );
+	}
+
+	private function showAdminMessage( $message, $error = false ) {
+		if ($error) {
+			$class = 'error';
+		} else {
+			$class = 'updated';
+		}
+
+		echo '<div ' . ( $error ? 'id="contextly_warning" ' : '') . 'class="' . $class . ' fade' . '"><p>'. $message . '</p></div>';
 	}
 
 	private function getWPPluginSettingsUrl( $tab = 'contextly_options_api' ) {
@@ -229,6 +244,14 @@ class ContextlySettings {
 
         echo "<label><input name='" . self::API_SETTINGS_KEY . "[api_key]' type='text' size='40' value='{$options["api_key"]}' " . $input_style . "/></label>";
     }
+
+	public function checkApiSettings() {
+		$options = get_option( self::API_SETTINGS_KEY );
+
+		if ( !$options || !isset( $options["api_key"] ) || !$options["api_key"] || !$this->validateApiKeyRegexp( $options['api_key'] ) ) {
+			$this->showAdminMessage( sprintf( 'You must %sconfigure the plugin%s to enable Contextly for WordPress.', '<a href="' . $this->getWPPluginSettingsUrl() . '">', '</a>' ), true );
+		}
+	}
 
     public function settingsLayoutSection() {
         echo "<p>
