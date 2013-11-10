@@ -1654,35 +1654,44 @@ Contextly.PageEvents = Contextly.createClass({
     },
 
     trackLink: function ( widget_type, link_type, link_title ) {
-        if ( typeof _gaq == 'undefined' ) return;
+        var ga_object = null;
+
         if ( !widget_type || !link_type || !link_title ) return;
 
-        var label_limit = 30;
-        var category = 'ContextlyWidget';
-        var action = 'ClickedOutBound';
-        var label = link_title;
-
-        if ( widget_type == Contextly.WidgetType.SIDEBAR ) {
-            category = 'ContextlySidebar';
+        if ( typeof _gaq != 'undefined' ) {
+            ga_object = _gaq;
+        } else if ( typeof gts != 'undefined' ) {
+            ga_object = gts;
         }
 
-        if ( label.length > label_limit ) {
-            label = label.substr( 0, label_limit );
-        }
+        if ( ga_object != null ) {
+            var label_limit = 30;
+            var category = 'ContextlyWidget';
+            var action = 'ClickedOutBound';
+            var label = link_title;
 
-        if( widget_type == Contextly.WidgetType.SIDEBAR && ( link_type == Contextly.LinkType.WEB || link_type == Contextly.LinkType.PREVIOUS ) ) {
-            action = 'ClickedRecentRelated';
-        } else if ( link_type == Contextly.LinkType.PREVIOUS ) {
-            action = 'ClickedPreviousRelated';
-        } else if( link_type == Contextly.LinkType.RECENT ) {
-            action = 'ClickedRecentRelated';
-        } else if( link_type == Contextly.LinkType.PROMO ) {
-            action = 'ClickedPromoLink';
-        } else {
-            action = 'Clicked' + link_type.charAt(0).toUpperCase() + link_type.slice(1);
-        }
+            if ( widget_type == Contextly.WidgetType.SIDEBAR ) {
+                category = 'ContextlySidebar';
+            }
 
-        _gaq.push(['_trackEvent', category, action, label]);
+            if ( label.length > label_limit ) {
+                label = label.substr( 0, label_limit );
+            }
+
+            if( widget_type == Contextly.WidgetType.SIDEBAR && ( link_type == Contextly.LinkType.WEB || link_type == Contextly.LinkType.PREVIOUS ) ) {
+                action = 'ClickedRecentRelated';
+            } else if ( link_type == Contextly.LinkType.PREVIOUS ) {
+                action = 'ClickedPreviousRelated';
+            } else if( link_type == Contextly.LinkType.RECENT ) {
+                action = 'ClickedRecentRelated';
+            } else if( link_type == Contextly.LinkType.PROMO ) {
+                action = 'ClickedPromoLink';
+            } else {
+                action = 'Clicked' + link_type.charAt(0).toUpperCase() + link_type.slice(1);
+            }
+
+            ga_object.push(['_trackEvent', category, action, label]);
+        }
     }
 
 });
