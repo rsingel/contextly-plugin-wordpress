@@ -349,7 +349,6 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         this.widget = widget;
         this.widget_type = Contextly.WidgetType.SNIPPET;
         this.widget_html_id = 'ctx_linker';
-		this.setResponsiveFunction();
     },
 
     getDisplayElement: function() {
@@ -406,6 +405,8 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         if ( Contextly.Settings.getInstance().isAdmin() ) {
             this.displayAdminControls();
         }
+
+        this.setResponsiveFunction();
     },
 
     attachVideoPopups: function () {
@@ -925,11 +926,13 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
     },
 
 	getWidgetWidth: function () {
-		return this.getTabsWidget().width();
+        return this.getTabsWidget().width();
 	},
 
 	WidgetIsChromeBlocks: function () {
-		if( this.getWidgetWidth() < 400 ) {
+		var width = this.getWidgetWidth();
+
+        if( width < 400 && width > 0 ) {
 			return true;
 		} else {
             return false;
@@ -943,6 +946,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         div += "<ul class=\"ctx_tabs\">";
 
         if( this.WidgetIsChromeBlocks()==true ) {
+            this.getTabsWidget().removeClass('ctx_tabs_site');
             this.getTabsWidget().addClass('ctx_tabs_block');
             for ( var section in sections ) {
                 var section_name = sections[section];
@@ -965,7 +969,8 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
             }
             div += "</ul>";
 		} else {
-			this.getTabsWidget().addClass('ctx_tabs_site');
+            this.getTabsWidget().removeClass('ctx_tabs_block');
+            this.getTabsWidget().addClass('ctx_tabs_site');
             var active_flag = false;
 
             for ( var section in sections ) {
