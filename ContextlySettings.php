@@ -47,10 +47,9 @@ class ContextlySettings {
     }
 
     public function registerSettings() {
-        register_setting( self::GENERAL_SETTINGS_KEY, self::GENERAL_SETTINGS_KEY );
+        register_setting( self::GENERAL_SETTINGS_KEY, self::GENERAL_SETTINGS_KEY, array( $this, 'validateGeneral' ) );
         register_setting( self::API_SETTINGS_KEY, self::API_SETTINGS_KEY, array( $this, 'validateApi' ) );
         register_setting( self::ADVANCED_SETTINGS_KEY, self::ADVANCED_SETTINGS_KEY, array( $this, 'validateAdvanced' ) );
-
 
         add_settings_section( 'api_section', 'API Settings', array( $this, 'apiLayoutSection' ), self::API_SETTINGS_KEY );
         add_settings_field( 'api_key', 'API Key', array( $this, 'apiKeyInput' ), self::API_SETTINGS_KEY, 'api_section');
@@ -63,8 +62,8 @@ class ContextlySettings {
         add_settings_field( 'linker_target_id', 'CSS Element ID', array( $this, 'settingsTargetInput' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
         add_settings_field( 'linker_block_position', 'Position', array( $this, 'settingsBlockPosition' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
 
-        add_settings_section( 'display_section', 'Display Contextly Widgets For', array(), self::ADVANCED_SETTINGS_KEY );
-	    add_settings_field( 'display_control', 'Post Types:', array( $this, 'settingsDisplayFor' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
+        add_settings_section( 'display_section', 'Display Contextly Widgets For', array(), self::GENERAL_SETTINGS_KEY );
+	    add_settings_field( 'display_control', 'Post Types:', array( $this, 'settingsDisplayFor' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
 
 	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
 	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API' );
@@ -88,6 +87,10 @@ class ContextlySettings {
 	public function validateAdvanced( $input ) {
 		$input['target_id'] = trim( wp_filter_nohtml_kses( $input['target_id'] ) );
 
+		return $input;
+	}
+
+	public function validateGeneral( $input ) {
 		if ( !is_array( $input['display_type'] ) || count( $input['display_type'] ) == 0 ) {
 			$this->showMessage( self::MSG_ERROR_TYPE, 'At least one of post type need to be selected.' );
 		} else {
@@ -143,8 +146,21 @@ class ContextlySettings {
         <div class="wrap">
             <?php $this->displaySettingsTabs(); ?>
 
-            <?php if ( $tab != self::GENERAL_SETTINGS_KEY ) { ?>
-                <form action="options.php" method="post">
+	            <?php if ( $tab == self::GENERAL_SETTINGS_KEY ) { ?>
+				    <h3>
+					    Most of the controls for Contextly are hosted outside Wordpress. Press the big settings button to securely login. <br />(If that fails, you can still login via Twitter using this <a target="_blank" href="<?php echo $this->getContextlyRegistrationUrl() ?>">link</a>.)
+				    </h3>
+				    <p>
+					    <input type="button" value="Settings" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
+				    </p><br />
+				    <?php
+				    if ( is_admin() ) {
+					    $this->displaySettingsAutoloadStuff();
+				    }
+				    ?>
+			    <?php } ?>
+
+		        <form action="options.php" method="post">
                     <?php settings_fields( $tab ); ?>
                     <?php do_settings_sections( $tab ); ?>
                     <?php if ( $tab == self::API_SETTINGS_KEY ) { ?>
@@ -161,19 +177,7 @@ class ContextlySettings {
 	                    <?php submit_button( null, 'primary' ); ?>
                     <?php } ?>
                 </form>
-            <?php } else { ?>
-                <h3>
-	                Most of the controls for Contextly are hosted outside Wordpress. Press the big settings button to securely login. <br />(If that fails, you can still login via Twitter using this <a target="_blank" href="<?php echo $this->getContextlyRegistrationUrl() ?>">link</a>.)
-                </h3>
-                <p>
-                    <input type="button" value="Settings" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
-                </p>
-	            <?php
-	                if ( is_admin() ) {
-						$this->displaySettingsAutoloadStuff();
-	                }
-	            ?>
-            <?php } ?>
+
         </div>
         <?php
     }
@@ -274,7 +278,7 @@ class ContextlySettings {
 	    echo "<table cellpadding='0' cellspacing='0'>";
 	    foreach ( $post_types as $post_type ) {
 		    echo "<tr><td style='padding: 3px;'>";
-		    echo "<input id='post-type-{$post_type->name}' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( array_values( $values ) ) ) ? "checked='checked'" : "" ) . " />";
+		    echo "<input id='post-type-{$post_type->name}' name='" . self::GENERAL_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( array_values( $values ) ) ) ? "checked='checked'" : "" ) . " />";
 		    echo "</td><td style='padding: 3px;'><label for='post-type-{$post_type->name}'>";
 		    echo $post_type->labels->name;
 		    echo "</label></td></tr>";
@@ -290,7 +294,12 @@ class ContextlySettings {
     }
 
     public function getWidgetDisplayType() {
-        $options = get_option( self::ADVANCED_SETTINGS_KEY );
+        $options = get_option( self::GENERAL_SETTINGS_KEY );
+
+	    if ( !$options ) {
+		    // Old plugins support
+		    $options = get_option( self::ADVANCED_SETTINGS_KEY );
+	    }
 
 	    // Hack for previous plugin versions and selected values
 	    $values = isset( $options['display_type'] ) ? $options['display_type'] : array();
