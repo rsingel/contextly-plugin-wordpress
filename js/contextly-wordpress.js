@@ -184,12 +184,18 @@ Contextly.PageView = Contextly.createClass({
     attachPublishConfirmation: function () {
         jQuery( '#publish' ).click(
             function() {
-                if ( Contextly.Loader.getInstance().isWidgetHasLinks() ) {
-                    return true;
-                } else {
-                    Contextly.PopupHelper.getInstance().showPublishConfirmation();
-                    return false;
+                var wp_settings = Contextly.Settings.getInstance().getWPSettings();
+
+                if ( wp_settings.publish_confirmation ) {
+                    if ( Contextly.Loader.getInstance().isWidgetHasLinks() ) {
+                        return true;
+                    } else {
+                        Contextly.PopupHelper.getInstance().showPublishConfirmation();
+                        return false;
+                    }
                 }
+
+                return true;
             }
         );
     },
@@ -1576,7 +1582,7 @@ Contextly.Utils = Contextly.createClass({
             var cur_date = new Date().getTime();
 
             var diff = Math.abs( ( cur_date - post_date ) / 1000 );
-            var allowed_diff = 60 * 60 * 24 * 365; // 1 year
+            var allowed_diff = 60 * 60 * 24 * 365 * 3; // 3 years
 
             // Don't allow to update very old posts
             if ( diff <= allowed_diff ) {

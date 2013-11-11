@@ -63,8 +63,9 @@ class ContextlySettings {
         add_settings_field( 'linker_target_id', 'CSS Element ID', array( $this, 'settingsTargetInput' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
         add_settings_field( 'linker_block_position', 'Position', array( $this, 'settingsBlockPosition' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
 
-        add_settings_section( 'display_section', 'Display Contextly Widgets For', array(), self::GENERAL_SETTINGS_KEY );
-	    add_settings_field( 'display_control', 'Post Types:', array( $this, 'settingsDisplayFor' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
+        add_settings_section( 'display_section', 'Main Settings', array(), self::GENERAL_SETTINGS_KEY );
+	    add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settingsDisplayFor' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
+	    add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settingsDisplayPublishConfirmation' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
 
 	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
 	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API' );
@@ -287,11 +288,10 @@ class ContextlySettings {
     public function settingsBlockPosition() {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
         echo "
-				<select id='linker_block_position' name='" . self::ADVANCED_SETTINGS_KEY . "[block_position]'>
-					<option value='after' " . ($options["block_position"] == "after" ? "selected='selected'" : "") . ">Below</option>
-					<option value='before' " . ($options["block_position"] == "before" ? "selected='selected'" : "") . ">Above</option>
-				</select>
-			";
+			<select id='linker_block_position' name='" . self::ADVANCED_SETTINGS_KEY . "[block_position]'>
+				<option value='after' " . ($options["block_position"] == "after" ? "selected='selected'" : "") . ">Below</option>
+				<option value='before' " . ($options["block_position"] == "before" ? "selected='selected'" : "") . ">Above</option>
+			</select>";
     }
 
     public function settingsDisplayFor() {
@@ -309,11 +309,23 @@ class ContextlySettings {
 	    echo "</table>";
     }
 
-    public function getOptions() {
-        $advanced_options = get_option( self::ADVANCED_SETTINGS_KEY );
-        if ( !is_array($advanced_options) ) $advanced_options = array();
+	public function settingsDisplayPublishConfirmation() {
+		$publish_confirmation = $this->getPublishConfirmationValue();
+		$control_name = self::GENERAL_SETTINGS_KEY . "[publish_confirmation]";
 
-        return $advanced_options;
+		echo "
+		<input type='hidden' name='{$control_name}' value='0' />
+		<input name='{$control_name}' type='checkbox' value='1' " . ( $publish_confirmation ? "checked='checked'" : "" ) . " style='margin-left: 3px;'/>";
+	}
+
+    public function getPluginOptions() {
+        $options = get_option( self::ADVANCED_SETTINGS_KEY );
+        if ( !is_array( $options ) ) {
+	        $options = array();
+        }
+	    $options[ 'publish_confirmation' ] = $this->getPublishConfirmationValue();
+
+        return $options;
     }
 
     public function getWidgetDisplayType() {
@@ -341,6 +353,16 @@ class ContextlySettings {
 
         return $values;
     }
+
+	public function getPublishConfirmationValue() {
+		$options = get_option( self::GENERAL_SETTINGS_KEY );
+
+		if ( isset( $options[ 'publish_confirmation' ] ) ) {
+			return (bool)$options[ 'publish_confirmation' ];
+		}
+
+		return true;
+	}
 
     public function isPageDisplayDisabled( $page_id ) {
         $post_flag = get_post_meta( $page_id, '_contextly_display_widgets', true );

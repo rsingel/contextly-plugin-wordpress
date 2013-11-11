@@ -128,7 +128,7 @@ class Contextly
 
     private function getSettingsOptions() {
         $contextly_settings = new ContextlySettings();
-        return $contextly_settings->getOptions();
+        return $contextly_settings->getPluginOptions();
     }
 
     public function initAdmin() {
