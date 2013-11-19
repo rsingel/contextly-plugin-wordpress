@@ -1307,8 +1307,6 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
 
     getCustomCssCode: function () {
         return Contextly.Blocks2WidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
-
-
     }
 
 });
