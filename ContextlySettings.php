@@ -194,6 +194,19 @@ class ContextlySettings {
                     <?php } ?>
                 </form>
 
+	        <?php if ( $tab == self::API_SETTINGS_KEY ) { ?>
+		        <?php submit_button(
+			        'Get API Key',
+			        'primary large button-hero',
+			        'button',
+			        null,
+			        array(
+				        'style' => 'font-size: 18px; margin-top: 20px; background-color: #35b137; background-image: linear-gradient(to bottom, #36a739, #249b27); border-color: #36a739;',
+				        'onclick' => 'window.location.href="' . $this->getContextlyRegistrationUrl('tour') . '"'
+			        )
+		        ); ?>
+	        <?php } ?>
+
         </div>
         <?php
     }
