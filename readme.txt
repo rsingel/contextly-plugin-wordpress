@@ -91,10 +91,10 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 = 1.0.91 =
 
-- Improvements to the JavaScript and CSS for display options, including tweaks for mobile devices
-- CSS optimization.
 - General performance optimizations
 - Ability to turn off pre-publication notification
+- CSS optimization.
+- Improvements to the JavaScript and CSS for display options, including tweaks for mobile devices
 
 
 = 1.0.88 =
