@@ -27,6 +27,7 @@ class ContextlySettings {
 
     private function initPluginSettingsLink() {
         add_filter( 'plugin_action_links', array( $this, 'displaySettingsLink' ), 10, 2 );
+	    add_action( 'admin_notices', array( $this, 'checkApiSettings' ) );
     }
 
     private function initWPSettings() {
@@ -47,10 +48,9 @@ class ContextlySettings {
     }
 
     public function registerSettings() {
-        register_setting( self::GENERAL_SETTINGS_KEY, self::GENERAL_SETTINGS_KEY );
+        register_setting( self::GENERAL_SETTINGS_KEY, self::GENERAL_SETTINGS_KEY, array( $this, 'validateGeneral' ) );
         register_setting( self::API_SETTINGS_KEY, self::API_SETTINGS_KEY, array( $this, 'validateApi' ) );
         register_setting( self::ADVANCED_SETTINGS_KEY, self::ADVANCED_SETTINGS_KEY, array( $this, 'validateAdvanced' ) );
-
 
         add_settings_section( 'api_section', 'API Settings', array( $this, 'apiLayoutSection' ), self::API_SETTINGS_KEY );
         add_settings_field( 'api_key', 'API Key', array( $this, 'apiKeyInput' ), self::API_SETTINGS_KEY, 'api_section');
@@ -63,20 +63,25 @@ class ContextlySettings {
         add_settings_field( 'linker_target_id', 'CSS Element ID', array( $this, 'settingsTargetInput' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
         add_settings_field( 'linker_block_position', 'Position', array( $this, 'settingsBlockPosition' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
 
-        add_settings_section( 'display_section', 'Display Contextly Widgets For', array(), self::ADVANCED_SETTINGS_KEY );
-	    add_settings_field( 'display_control', 'Post Types:', array( $this, 'settingsDisplayFor' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
+        add_settings_section( 'display_section', 'Main Settings', array(), self::GENERAL_SETTINGS_KEY );
+	    add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settingsDisplayFor' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
+	    add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settingsDisplayPublishConfirmation' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
 
 	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
 	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API' );
         $this->tabs[ self::ADVANCED_SETTINGS_KEY ] = __( 'Advanced' );
     }
 
+	private function validateApiKeyRegexp( $api_key ) {
+		return preg_match( "/^[a-zA-Z0-9_]+-[a-zA-Z0-9#*;]+$/", $api_key );
+	}
+
 	public function validateApi( $input ) {
 		$input['api_key'] = sanitize_text_field($input['api_key']);
 
 		if ( !$input['api_key'] ) {
 			$this->showMessage( self::MSG_ERROR_TYPE, 'API Key can not be empty.' );
-		} elseif ( !preg_match( "/^[a-zA-Z0-9_]+-[a-zA-Z0-9#*;]+$/", $input['api_key'] ) ) {
+		} elseif ( !$this->validateApiKeyRegexp( $input['api_key'] ) ) {
 			$this->showMessage( self::MSG_ERROR_TYPE, 'Invalid characters in API Key.' );
 		} else {
 			$this->showMessage( self::MSG_SUCCESS_TYPE, self::MSG_SETTINGS_SAVED );
@@ -88,6 +93,10 @@ class ContextlySettings {
 	public function validateAdvanced( $input ) {
 		$input['target_id'] = trim( wp_filter_nohtml_kses( $input['target_id'] ) );
 
+		return $input;
+	}
+
+	public function validateGeneral( $input ) {
 		if ( !is_array( $input['display_type'] ) || count( $input['display_type'] ) == 0 ) {
 			$this->showMessage( self::MSG_ERROR_TYPE, 'At least one of post type need to be selected.' );
 		} else {
@@ -104,6 +113,16 @@ class ContextlySettings {
 			__( $message ),
 	        $type
 	    );
+	}
+
+	private function showAdminMessage( $message, $error = false ) {
+		if ($error) {
+			$class = 'error';
+		} else {
+			$class = 'updated';
+		}
+
+		echo '<div ' . ( $error ? 'id="contextly_warning" ' : '') . 'class="' . $class . ' fade' . '"><p>'. $message . '</p></div>';
 	}
 
 	private function getWPPluginSettingsUrl( $tab = 'contextly_options_api' ) {
@@ -143,8 +162,21 @@ class ContextlySettings {
         <div class="wrap">
             <?php $this->displaySettingsTabs(); ?>
 
-            <?php if ( $tab != self::GENERAL_SETTINGS_KEY ) { ?>
-                <form action="options.php" method="post">
+	            <?php if ( $tab == self::GENERAL_SETTINGS_KEY ) { ?>
+				    <h3>
+					    Most of the controls for Contextly are hosted outside Wordpress. Press the big settings button to securely login. <br />(If that fails, you can still login via Twitter using this <a target="_blank" href="<?php echo $this->getContextlyRegistrationUrl() ?>">link</a>.)
+				    </h3>
+				    <p>
+					    <input type="button" value="Settings" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
+				    </p><br />
+				    <?php
+				    if ( is_admin() ) {
+					    $this->displaySettingsAutoloadStuff();
+				    }
+				    ?>
+			    <?php } ?>
+
+		        <form action="options.php" method="post">
                     <?php settings_fields( $tab ); ?>
                     <?php do_settings_sections( $tab ); ?>
                     <?php if ( $tab == self::API_SETTINGS_KEY ) { ?>
@@ -161,19 +193,7 @@ class ContextlySettings {
 	                    <?php submit_button( null, 'primary' ); ?>
                     <?php } ?>
                 </form>
-            <?php } else { ?>
-                <h3>
-	                Click the settings button to securely login to your settings. If that fails, you can still login via Twitter using this <a target="_blank" href="<?php echo $this->getContextlyRegistrationUrl() ?>">link</a>.
-                </h3>
-                <p>
-                    <input type="button" value="Settings" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
-                </p>
-	            <?php
-	                if ( is_admin() ) {
-						$this->displaySettingsAutoloadStuff();
-	                }
-	            ?>
-            <?php } ?>
+
         </div>
         <?php
     }
@@ -226,6 +246,14 @@ class ContextlySettings {
         echo "<label><input name='" . self::API_SETTINGS_KEY . "[api_key]' type='text' size='40' value='{$options["api_key"]}' " . $input_style . "/></label>";
     }
 
+	public function checkApiSettings() {
+		$options = get_option( self::API_SETTINGS_KEY );
+
+		if ( !$options || !isset( $options["api_key"] ) || !$options["api_key"] || !$this->validateApiKeyRegexp( $options['api_key'] ) ) {
+			$this->showAdminMessage( sprintf( 'You must %sconfigure the plugin%s to enable Contextly for WordPress.', '<a href="' . $this->getWPPluginSettingsUrl() . '">', '</a>' ), true );
+		}
+	}
+
     public function settingsLayoutSection() {
         echo "<p>
 			By default, Contextly is set to show up as the very last object in your post template. For most sites, this is perfect. However, if you have other plugins that come after the body of the text, you can adjust where Contextly displays using this setting.
@@ -260,11 +288,10 @@ class ContextlySettings {
     public function settingsBlockPosition() {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
         echo "
-				<select id='linker_block_position' name='" . self::ADVANCED_SETTINGS_KEY . "[block_position]'>
-					<option value='after' " . ($options["block_position"] == "after" ? "selected='selected'" : "") . ">Below</option>
-					<option value='before' " . ($options["block_position"] == "before" ? "selected='selected'" : "") . ">Above</option>
-				</select>
-			";
+			<select id='linker_block_position' name='" . self::ADVANCED_SETTINGS_KEY . "[block_position]'>
+				<option value='after' " . ($options["block_position"] == "after" ? "selected='selected'" : "") . ">Below</option>
+				<option value='before' " . ($options["block_position"] == "before" ? "selected='selected'" : "") . ">Above</option>
+			</select>";
     }
 
     public function settingsDisplayFor() {
@@ -274,7 +301,7 @@ class ContextlySettings {
 	    echo "<table cellpadding='0' cellspacing='0'>";
 	    foreach ( $post_types as $post_type ) {
 		    echo "<tr><td style='padding: 3px;'>";
-		    echo "<input id='post-type-{$post_type->name}' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( array_values( $values ) ) ) ? "checked='checked'" : "" ) . " />";
+		    echo "<input id='post-type-{$post_type->name}' name='" . self::GENERAL_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( array_values( $values ) ) ) ? "checked='checked'" : "" ) . " />";
 		    echo "</td><td style='padding: 3px;'><label for='post-type-{$post_type->name}'>";
 		    echo $post_type->labels->name;
 		    echo "</label></td></tr>";
@@ -282,15 +309,32 @@ class ContextlySettings {
 	    echo "</table>";
     }
 
-    public function getOptions() {
-        $advanced_options = get_option( self::ADVANCED_SETTINGS_KEY );
-        if ( !is_array($advanced_options) ) $advanced_options = array();
+	public function settingsDisplayPublishConfirmation() {
+		$publish_confirmation = $this->getPublishConfirmationValue();
+		$control_name = self::GENERAL_SETTINGS_KEY . "[publish_confirmation]";
 
-        return $advanced_options;
+		echo "
+		<input type='hidden' name='{$control_name}' value='0' />
+		<input name='{$control_name}' type='checkbox' value='1' " . ( $publish_confirmation ? "checked='checked'" : "" ) . " style='margin-left: 3px;'/>";
+	}
+
+    public function getPluginOptions() {
+        $options = get_option( self::ADVANCED_SETTINGS_KEY );
+        if ( !is_array( $options ) ) {
+	        $options = array();
+        }
+	    $options[ 'publish_confirmation' ] = $this->getPublishConfirmationValue();
+
+        return $options;
     }
 
     public function getWidgetDisplayType() {
-        $options = get_option( self::ADVANCED_SETTINGS_KEY );
+        $options = get_option( self::GENERAL_SETTINGS_KEY );
+
+	    if ( !$options ) {
+		    // Old plugins support
+		    $options = get_option( self::ADVANCED_SETTINGS_KEY );
+	    }
 
 	    // Hack for previous plugin versions and selected values
 	    $values = isset( $options['display_type'] ) ? $options['display_type'] : array();
@@ -309,6 +353,16 @@ class ContextlySettings {
 
         return $values;
     }
+
+	public function getPublishConfirmationValue() {
+		$options = get_option( self::GENERAL_SETTINGS_KEY );
+
+		if ( isset( $options[ 'publish_confirmation' ] ) ) {
+			return (bool)$options[ 'publish_confirmation' ];
+		}
+
+		return true;
+	}
 
     public function isPageDisplayDisabled( $page_id ) {
         $post_flag = get_post_meta( $page_id, '_contextly_display_widgets', true );

@@ -57,6 +57,16 @@ class Urls {
 		return $prefix . '_plugin/' . CONTEXTLY_PLUGIN_VERSION . '/js/' . $js_file;
 	}
 
+	static public function getPluginCssCdnUrl( $css_file ) {
+		if ( CONTEXTLY_HTTPS ) {
+			$prefix = 'https://c713421.ssl.cf2.rackcdn.com/';
+		} else {
+			$prefix = 'http://contextlysiteimages.contextly.com/';
+		}
+
+		return $prefix . '_plugin/' . CONTEXTLY_PLUGIN_VERSION . '/css/' . $css_file;
+	}
+
 	static public function getMainJsCdnUrl( $js_file ) {
 		if ( CONTEXTLY_HTTPS ) {
 			$prefix = 'https://c714015.ssl.cf2.rackcdn.com/';

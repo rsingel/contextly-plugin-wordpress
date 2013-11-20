@@ -89,6 +89,20 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.0.91 =
+
+- General performance optimizations
+- Ability to turn off pre-publication notification
+- CSS optimization.
+- Improvements to the JavaScript and CSS for display options, including tweaks for mobile devices
+
+
+= 1.0.88 =
+
+- Added Auto-Sidebars. If you turn on this option, a sidebar shortcode will be inserted into every new post when you first create it. You can control the content or you can leave it to our related algorithms
+- Improvements to the JavaScript and CSS for display options, including tweaks for mobile devices
+
+
 = 1.0.87 =
 
 - Namespace changes to CSS.
