@@ -120,10 +120,9 @@ class Contextly
 
     private function getAuthorFullName( $post ) {
 	    if ( get_the_author_meta( "last_name", $post->post_author ) ) {
-	        $user_name = get_the_author_meta( "last_name", $post->post_author ) . ' ' . get_the_author_meta( "first_name", $post->post_author );
+	        return get_the_author_meta( "last_name", $post->post_author ) . ' ' . get_the_author_meta( "first_name", $post->post_author );
 	    }
-
-        return $user_name;
+        return null;
     }
 
 	private function getAuthorDisplayName( $post ) {
