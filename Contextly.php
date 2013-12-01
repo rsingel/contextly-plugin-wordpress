@@ -126,9 +126,11 @@ class Contextly
     }
 
 	private function getAuthorDisplayName( $post ) {
-		return get_the_author_meta( "display_name", $post->post_author );
-	}
+		$display_name = get_the_author_meta( "display_name", $post->post_author );
+		$nickname = get_the_author_meta( "nickname", $post->post_author );
 
+		return $display_name ? $display_name : $nickname;
+	}
 
     private function getSettingsOptions() {
         $contextly_settings = new ContextlySettings();
