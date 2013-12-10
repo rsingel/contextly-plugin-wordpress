@@ -89,6 +89,12 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.0.93 =
+
+- Minor performance tweaks.
+- CSS optimization.
+
+
 = 1.0.91 =
 
 - General performance optimizations

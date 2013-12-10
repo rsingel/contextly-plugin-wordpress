@@ -118,13 +118,19 @@ class Contextly
 	    return null;
     }
 
-    private function getAuthorName( $post ) {
-        // As last step we can check WP user
-        $display_name = get_the_author_meta( "display_name", $post->post_author );
-        $user_name = get_the_author_meta( "last_name", $post->post_author ) . ' ' . get_the_author_meta( "first_name", $post->post_author );
-
-        return $display_name ? $display_name : $user_name;
+    private function getAuthorFullName( $post ) {
+	    if ( get_the_author_meta( "last_name", $post->post_author ) ) {
+	        return get_the_author_meta( "last_name", $post->post_author ) . ' ' . get_the_author_meta( "first_name", $post->post_author );
+	    }
+        return null;
     }
+
+	private function getAuthorDisplayName( $post ) {
+		$display_name = get_the_author_meta( "display_name", $post->post_author );
+		$nickname = get_the_author_meta( "nickname", $post->post_author );
+
+		return $display_name ? $display_name : $nickname;
+	}
 
     private function getSettingsOptions() {
         $contextly_settings = new ContextlySettings();
@@ -177,17 +183,6 @@ class Contextly
     public function initDefault() {
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
         add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
-
-	    // After rendered shortcodes, we can run wp formatting filter again
-	    remove_filter( 'the_content', 'wpautop' );
-	    remove_filter( 'the_excerpt', 'wpautop' );
-
-	    add_filter( 'the_content', array( $this, 'wpautop' ), 12 );
-	    add_filter( 'the_excerpt', array( $this, 'wpautop' ), 12 );
-    }
-
-    public function wpautop( $content ) {
-        return wpautop( $content, false );
     }
 
     private function addEditorButtons() {
@@ -423,19 +418,20 @@ class Contextly
 					->get();
 
 				$post_data = array(
-					'post_id'           => $post->ID,
-					'post_title'        => $post->post_title,
-					'post_date'         => $post->post_date,
-					'post_modified'     => $post->post_modified,
-					'post_status'       => $post->post_status,
-					'post_type'         => $post->post_type,
-					'post_content'      => $post->post_content,
-					'url'               => get_permalink( $post->ID ),
-					'author_id'         => $post->post_author,
-					'post_author'       => $this->getAuthorName( $post ),
-					'post_tags'         => $this->getPostTagsArray( $post->ID ),
-					'post_categories'   => $this->getPostCategoriesArray( $post->ID ),
-					'post_images'       => $this->getPostImagesArray( $post->ID )
+					'post_id'                       => $post->ID,
+					'post_title'                    => $post->post_title,
+					'post_date'                     => $post->post_date,
+					'post_modified'                 => $post->post_modified,
+					'post_status'                   => $post->post_status,
+					'post_type'                     => $post->post_type,
+					'post_content'                  => $post->post_content,
+					'url'                           => get_permalink( $post->ID ),
+					'author_id'                     => $post->post_author,
+					'post_author'                   => $this->getAuthorFullName( $post ),
+					'post_author_display_name'      => $this->getAuthorDisplayName( $post ),
+					'post_tags'                     => $this->getPostTagsArray( $post->ID ),
+					'post_categories'               => $this->getPostCategoriesArray( $post->ID ),
+					'post_images'                   => $this->getPostImagesArray( $post->ID )
 				);
 
 				// Lets publish this post in our DB
