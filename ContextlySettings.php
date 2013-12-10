@@ -164,7 +164,7 @@ class ContextlySettings {
 
 	            <?php if ( $tab == self::GENERAL_SETTINGS_KEY ) { ?>
 				    <h3>
-					    Most of the controls for Contextly are hosted outside Wordpress. Press the big settings button to securely login. <br />(If that fails, you can still login via Twitter using this <a target="_blank" href="<?php echo $this->getContextlyRegistrationUrl() ?>">link</a>.)
+					    Most of the controls for Contextly are hosted outside Wordpress. Press the big settings button to securely login.
 				    </h3>
 				    <p>
 					    <input type="button" value="Settings" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
