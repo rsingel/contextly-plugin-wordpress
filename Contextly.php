@@ -334,7 +334,7 @@ class Contextly
 			$app_id = $api_options[ 'appID' ];
 			$post_id = $post->ID;
 
-			wp_enqueue_script( 'contextly-seo', Urls::getApiServerUrl() . 'seo/related-' . $app_id . '-' . $post_id . '.js', 'contextly', null );
+			wp_enqueue_script( 'contextly-seo', Urls::getApiServerUrl() . 'seo/related/' . $app_id . '/' . $post_id . '.js', 'contextly', null );
 		}
 	}
 
