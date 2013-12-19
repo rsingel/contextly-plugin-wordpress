@@ -395,7 +395,6 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         if ( this.hasWidgetData() ) {
             this.displayText( this.getWidgetHTML() );
             this.loadCss();
-            this.attachVideoPopups();
 
             // Check if we need to change snippet position on page
             if ( !Contextly.Settings.getInstance().isAdmin() ) {
@@ -406,6 +405,8 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             if ( settings && settings.display_type ) {
                 this.getDisplayElement().attr( 'widget-type', settings.display_type );
             }
+
+            this.attachVideoPopups();
         }
 
         if ( Contextly.Settings.getInstance().isAdmin() ) {

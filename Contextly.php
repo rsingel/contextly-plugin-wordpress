@@ -322,7 +322,7 @@ class Contextly
 	}
 
 	public function loadContextlyAdditionalJSScripts() {
-		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', null );
+		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'contextly', null );
 	}
 
 	private function getAjaxUrl() {
