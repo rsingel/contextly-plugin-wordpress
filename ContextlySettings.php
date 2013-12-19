@@ -170,7 +170,9 @@ class ContextlySettings {
 					    <input type="button" value="Settings" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
 				    </p><br />
 				    <?php
-				    if ( is_admin() ) {
+		            $options = get_option( self::API_SETTINGS_KEY );
+
+		            if ( is_admin() && isset( $options["api_key"] ) && $options["api_key"] ) {
 					    $this->displaySettingsAutoloadStuff();
 				    }
 				    ?>

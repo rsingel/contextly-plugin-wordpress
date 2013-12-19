@@ -2067,8 +2067,12 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
             success: function ( response ) {
                 if ( response.success && response.contextly_access_token ) {
                     jQuery( settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
+                    jQuery( settings_button_id ).removeAttr( 'disabled' );
+                } else if ( response.message ) {
+                    jQuery( settings_button_id ).parent().append(
+                        jQuery( "<p style='color: red; font-weight: bold;'>* " + response.message + "</p>" )
+                    );
                 }
-                jQuery( settings_button_id ).removeAttr( 'disabled' );
             },
             error: function () {
                 jQuery( settings_button_id ).removeAttr( 'disabled' );
