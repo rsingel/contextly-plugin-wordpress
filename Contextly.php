@@ -268,7 +268,7 @@ class Contextly
         global $post;
 
         $default_html_code = '';
-        $additional_admin_controls = '';
+        $additional_html_controls = '';
 
         if ( is_admin() ) {
             $contextly_settings = new ContextlySettings();
@@ -289,12 +289,15 @@ class Contextly
             }
 
             if ( $display_global_settings ) {
-                $additional_admin_controls = $this->getAdditionalShowHideControl();
+	            $additional_html_controls = $this->getAdditionalShowHideControl();
             }
-
         }
+	    else
+	    {
+		    $additional_html_controls = ' <a href="' . Urls::getApiServerUrl() . 'html/test.html#!related_links" style="display: none;">Related</a>';
+	    }
 
-        return "<div id='" . self::WIDGET_SNIPPET_ID . "' class='" . self::WIDGET_SNIPPET_CLASS . "'>" . $default_html_code . "</div>" . $additional_admin_controls;
+        return "<div id='" . self::WIDGET_SNIPPET_ID . "' class='" . self::WIDGET_SNIPPET_CLASS . "'>" . $default_html_code . "</div>" . $additional_html_controls;
     }
 
 	public function getPluginJs( $script_name ) {
@@ -335,7 +338,8 @@ class Contextly
 			$post_id = $post->ID;
 
 			//wp_enqueue_script( 'contextly-seo', Urls::getApiServerUrl() . 'js/seo/related/' . $app_id . '-' . $post_id . '.js', 'contextly', null, true );
-			wp_enqueue_script( 'contextly-seo', Urls::getApiServerUrl() . 'js/test-seo-boost.js', 'contextly', null, true );
+			//wp_enqueue_script( 'contextly-seo', Urls::getApiServerUrl() . 'js/test-seo-boost.js', 'contextly', null, true );
+
 		}
 	}
 
