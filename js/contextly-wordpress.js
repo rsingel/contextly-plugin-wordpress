@@ -1659,8 +1659,6 @@ Contextly.PageEvents = Contextly.createClass({
     },
 
     trackLink: function ( widget_type, link_type, link_title ) {
-        var ga_object = null;
-
         if ( !widget_type || !link_type || !link_title ) return;
 
         var label_limit = 30;
