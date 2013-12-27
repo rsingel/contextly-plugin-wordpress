@@ -294,7 +294,13 @@ class Contextly
         }
 	    else
 	    {
-		    $additional_html_controls = ' <a href="' . Urls::getApiServerUrl() . 'html/test.html#!related_links" style="display: none;">Related</a>';
+		    global $post;
+		    $api_options = $this->getAPIClientOptions();
+
+			if ( isset( $api_options[ 'appID' ] ) && $api_options[ 'appID' ] && isset( $post ) && $post->ID )
+			{
+				$additional_html_controls = sprintf( '<a href="%s" style="display: none;">Related</a>',	Urls::getApiServerSeoHtmlUrl( $api_options[ 'appID' ], $post->ID ) );
+			}
 	    }
 
         return "<div id='" . self::WIDGET_SNIPPET_ID . "' class='" . self::WIDGET_SNIPPET_CLASS . "'>" . $default_html_code . "</div>" . $additional_html_controls;
