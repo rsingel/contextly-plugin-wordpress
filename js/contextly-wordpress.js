@@ -48,34 +48,6 @@ Contextly.Loader = Contextly.createClass({
         return this.response;
     },
 
-    isWidgetHasLinks: function () {
-        var has_links = false;
-        var response = this.getLastResponse();
-
-        if ( response && response.entry ) {
-            if ( response.entry.snippets ) {
-                has_links = this.isEntryWidgetsHasLinks( response.entry.snippets );
-            }
-            if ( !has_links && response.entry.sidebars ) {
-                has_links = this.isEntryWidgetsHasLinks( response.entry.sidebars );
-            }
-            if ( !has_links && response.entry.auto_sidebars ) {
-                has_links = this.isEntryWidgetsHasLinks( response.entry.auto_sidebars );
-            }
-        }
-
-        return has_links;
-    },
-
-    isEntryWidgetsHasLinks: function ( entry_widgets ) {
-        for ( var i = 0; i < entry_widgets.length; i++ ) {
-            if ( entry_widgets[i].links ) {
-                return true;
-            }
-        }
-        return false;
-    },
-
     // Main method for load page widgets
     load: function () {
         if ( !this.isCallAvailable() ) return;
@@ -137,8 +109,6 @@ Contextly.PageView = Contextly.createClass({
         // Check if we have error on page
         if ( this.isError() && Contextly.Settings.getInstance().isAdmin() ) {
             var message = '';
-            var url = 'admin.php?page=contextly_options&tab=contextly_options_api';
-
             if ( this.error.error ) {
                 if ( this.error.error_code == Contextly.Errors.ERROR_FORBIDDEN ) {
                     message = this.error.error + " Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
@@ -153,12 +123,7 @@ Contextly.PageView = Contextly.createClass({
 
             var snippet_formatter = new Contextly.SnippetWidgetFormatter();
             snippet_formatter.displayText( message );
-
-            Contextly.PopupHelper.getInstance().initWithUrl( url );
         } else if ( this.entry ) {
-            // Init popup helper
-            Contextly.PopupHelper.getInstance().initWithWidget( this.entry );
-
             // Display widgets
             if ( this.entry.snippets && this.entry.snippets.length > 0 ) {
                 this.displayWidgets( this.entry.snippets );
@@ -175,29 +140,6 @@ Contextly.PageView = Contextly.createClass({
                 this.checkPost();
             }
         }
-
-        if ( Contextly.Settings.getInstance().isAdmin() ) {
-            this.attachPublishConfirmation();
-        }
-    },
-
-    attachPublishConfirmation: function () {
-        jQuery( '#publish' ).click(
-            function() {
-                var wp_settings = Contextly.Settings.getInstance().getWPSettings();
-
-                if ( wp_settings.publish_confirmation ) {
-                    if ( Contextly.Loader.getInstance().isWidgetHasLinks() ) {
-                        return true;
-                    } else {
-                        Contextly.PopupHelper.getInstance().showPublishConfirmation();
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        );
     },
 
     checkPost: function () {
@@ -373,17 +315,6 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         this.getDisplayElement().append( text );
     },
 
-    displayAdminControls: function () {
-        var controls = '';
-        if ( this.hasWidgetData() ) {
-            controls = "<br><input type='button' class='button action' value='Edit Related Posts' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' />";
-            this.appendText( controls );
-        } else {
-            controls = "<input type='button' class='button action' value='Choose Related Posts' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' />";
-            this.displayText( controls );
-        }
-    },
-
     isDisplaySection: function ( section ) {
         var display_section = jQuery.inArray( section, this.widget.settings.display_sections ) != -1;
         var have_to_display = this.widget.links && this.widget.links[ section ] && this.widget.links[ section ].length > 0;
@@ -407,10 +338,11 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
                 this.getDisplayElement().attr( 'widget-type', settings.display_type );
             }
         }
-
-        if ( Contextly.Settings.getInstance().isAdmin() ) {
-            this.displayAdminControls();
-        }
+				else {
+					// Hide content of the snippet placeholder (e.g. Loading...)
+					this.getDisplayElement()
+						.empty();
+				}
 
         this.setResponsiveFunction();
     },
@@ -1709,8 +1641,8 @@ Contextly.Settings = Contextly.createClass({
     getMainServerUrl: function () {
         return Contextly.main_server;
     },
-    getPopupServerUrl: function () {
-        return Contextly.popup_server;
+    getEditorUrl: function () {
+        return Contextly.editor_url;
     },
     getPluginVersion: function () {
         return Contextly.version;
@@ -1869,182 +1801,6 @@ Contextly.MainServerAjaxClient = Contextly.createClass({
                 }
             }
         );
-    }
-
-});
-
-Contextly.PopupHelper = Contextly.createClass({
-    extend: Contextly.Singleton,
-
-    construct: function() {
-        this.popup_socket   = null;
-    },
-
-    initWithWidget: function ( widget ) {
-        this.widget         = widget;
-        this.snippet        = null;
-
-        if ( widget && widget.snippets && widget.snippets.length ) {
-            var snippet = widget.snippets[0];
-
-            if ( snippet.id ) {
-                this.snippet = snippet;
-            }
-        }
-    },
-
-    initWithUrl: function ( url ) {
-        this.url = url;
-    },
-
-    snippetPopup: function () {
-        if ( this.url || !this.widget ) {
-            this.showStubPopup();
-            return;
-        }
-
-        var settings = Contextly.Settings.getInstance();
-        var popup_url = settings.getPopupServerUrl()
-            + 'sites/' + settings.getAppId() + '/'
-            + '?page_id=' + settings.getPageId()
-            + '&author=' + settings.getAuthorId()
-            + '&edit_snippet_id=' + ( this.snippet ? this.snippet.id : '' );
-
-        this.openPopupWithCallback(
-            popup_url,
-            function ( response ) {
-                Contextly.Loader.getInstance().load();
-            }
-        );
-    },
-
-    sidebarPopup: function ( snippet_id ) {
-        if ( this.url || !this.widget ) {
-            this.showStubPopup();
-            return;
-        }
-
-        var settings = Contextly.Settings.getInstance();
-        var popup_url = settings.getPopupServerUrl()
-            + 'sites/' + settings.getAppId() + '/sidebar/'
-            + '?page_id=' + settings.getPageId()
-            + '&sidebar_id=' + ( snippet_id ? snippet_id : '' );
-
-        this.openPopupWithCallback(
-            popup_url,
-            function ( response ) {
-                if ( response.status == 'ok' && response.snippet_id ) {
-                    var api_response = response.data;
-
-                    if ( api_response.entry && api_response.entry.type == Contextly.WidgetType.AUTO_SIDEBAR ) {
-                        send_to_editor( '[contextly_auto_sidebar id="' + response.snippet_id + '"]' );
-                    } else {
-                        send_to_editor( '[contextly_sidebar id="' + response.snippet_id + '"]' );
-                    }
-
-                    Contextly.Loader.getInstance().load();
-                }
-            }
-        );
-    },
-
-    linkPopup: function () {
-        if ( this.url || !this.widget ) {
-            this.showStubPopup();
-            return;
-        }
-
-        var settings = Contextly.Settings.getInstance();
-        var popup_url = settings.getPopupServerUrl()
-            + 'sites/' + settings.getAppId() + '/'
-            + '?page_id=' + settings.getPageId()
-            + '&edit_snippet_id=' + ( this.snippet ? this.snippet.id : '' )
-            + '&tinymce_link_text=' + tinymce.plugins.ContextlyPluginLink.getSelectedText();
-
-        this.openPopupWithCallback(
-            popup_url,
-            function ( response ) {
-                if ( response.status == 'ok' ) {
-                    Contextly.Loader.getInstance().load();
-                    tinymce.activeEditor.plugins.contextlylink.insertLink( response.link_url, response.link_title );
-                }
-            }
-        );
-    },
-
-    openPopupWithCallback: function ( popup_url, callback ) {
-        window.open(
-            popup_url + '#easyXDM_linker_channel_provider',
-            'contextlyapp',
-            'width=1150,height=600,resizable=1,scrollbars=1,menubar=1'
-        );
-
-        if ( callback ) {
-            if ( this.popup_socket != null ) {
-                this.popup_socket.destroy();
-            }
-
-            this.popup_socket = new easyXDM.Socket({
-                channel: 'linker_channel',
-                remote: Contextly.Settings.getInstance().getPopupServerUrl() + '/resources/html/remote.html',
-                onMessage: function( data, origin ) {
-                    if ( data ) {
-                        var json_data = easyXDM.getJSONObject().parse( data );
-                        callback( json_data );
-                    }
-                }
-            });
-        }
-    },
-
-    showStubPopup: function () {
-        this.url = this.url || 'http://contextly.com/contact-us/';
-        window.open( this.url );
-    },
-
-    showPublishConfirmation: function () {
-        var popup_id = 'contextly_publish_confirmation';
-        var contextly_add_related_links_btn = 'contextly_add_related_links_btn';
-        var contextly_publish_now_btn = 'contextly_publish_now_btn';
-
-        var popup_width = 420;
-        var popup_height = 150;
-
-        var title = 'Publish confirmation';
-        var publish_button_value = jQuery( '#publish').attr( "value" );
-        var add_related_button_value = "Choose Related Posts";
-
-        jQuery( '.button-primary' ).removeClass( 'button-primary-disabled' );
-        jQuery( 'span.spinner').hide();
-
-        jQuery( "body" ).append(
-            jQuery(
-                '<div id="' + popup_id + '" style="display:none;">' +
-                "<div style='float:left; padding:10px;'>This post doesn't have any chosen links to other posts. Would you like to do that now?<br /><br /> If you want to add a sidebar, close this window, put the cursor where you'd like the sidebar to be and click the sidebar button.</div>" +
-                '<input id="contextly_add_related_links_btn" type="button" value="' + add_related_button_value + '" class="button button-primary" />' +
-                '<input id="contextly_publish_now_btn" type="button" value="' + publish_button_value + '" class="button" style="margin-left: 20px; float: right;" />' +
-                '</div>'
-            )
-        );
-
-        jQuery( '#' + contextly_add_related_links_btn ).click(
-            function () {
-                tb_remove();
-                Contextly.PopupHelper.getInstance().snippetPopup();
-            }
-        );
-
-        jQuery( '#' + contextly_publish_now_btn ).click(
-            function () {
-                tb_remove();
-                jQuery( '#publish').unbind( 'click' );
-                jQuery( '#publish').click();
-            }
-        );
-
-        tb_show( title, "#TB_inline?height=" + popup_height + "&amp;width=" + popup_width + "&amp;inlineId=" + popup_id );
-        jQuery("#TB_window").width( popup_width + 30 );
-        jQuery("#TB_window").height( popup_height + 20 );
     }
 
 });
