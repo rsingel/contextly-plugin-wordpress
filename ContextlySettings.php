@@ -378,7 +378,7 @@ class ContextlySettings {
 			return (bool)$options[ 'publish_confirmation' ];
 		}
 
-		return true;
+		return false;
 	}
 
     public function isPageDisplayDisabled( $page_id ) {
