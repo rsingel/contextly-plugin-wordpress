@@ -334,21 +334,6 @@ class Contextly
 		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'contextly', null );
 	}
 
-	private function loadContextlySeoJSScripts() {
-		global $post;
-
-		$api_options = $this->getAPIClientOptions();
-
-		if ( isset( $api_options[ 'appID' ] ) && isset( $post ) && $post->ID ) {
-			$app_id = $api_options[ 'appID' ];
-			$post_id = $post->ID;
-
-			//wp_enqueue_script( 'contextly-seo', Urls::getApiServerUrl() . 'js/seo/related/' . $app_id . '-' . $post_id . '.js', 'contextly', null, true );
-			//wp_enqueue_script( 'contextly-seo', Urls::getApiServerUrl() . 'js/test-seo-boost.js', 'contextly', null, true );
-
-		}
-	}
-
 	private function getAjaxUrl() {
 		return admin_url( 'admin-ajax.php' );
 	}
@@ -401,8 +386,6 @@ class Contextly
 
 	        if ( $this->isAdminEditPage() ) {
 	            add_thickbox();
-	        } else {
-		        $this->loadContextlySeoJSScripts();
 	        }
         }
     }
