@@ -326,12 +326,9 @@ class Contextly
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'json2' );
 		wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', null );
+		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', null );
 		wp_enqueue_script( 'contextly-create-class', $this->getPluginJs( 'contextly-class.min.js' ), 'easy_xdm', null );
 		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', null );
-	}
-
-	public function loadContextlyAdditionalJSScripts() {
-		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'contextly', null );
 	}
 
 	private function getAjaxUrl() {
@@ -381,7 +378,6 @@ class Contextly
 
         if ( is_page() || is_single() || $this->isAdminEditPage() ) {
 	        $this->loadContextlyAjaxJSScripts();
-			$this->loadContextlyAdditionalJSScripts();
 		    $this->makeContextlyJSObject();
 
 	        if ( $this->isAdminEditPage() ) {
