@@ -89,6 +89,13 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.0.95 =
+
+- Added SEO support. Search Engines can now see and spider the related results. This boosts SEO.
+- Minor display bug fixes
+- Made the "nudge" to add related links off by default
+
+
 = 1.0.93 =
 
 - Minor performance tweaks.
