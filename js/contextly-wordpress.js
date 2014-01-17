@@ -579,7 +579,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         return "<a class=\"ctx_title ctx_module\" rel=\"ctx_video_link\" href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" " +
-            "'\" " + this.getOnclickHtml( link ) + ">" +
+            this.getOnclickHtml( link ) + ">" +
             content + "</a>" + this.getLinkATagIE7Fix();
     },
 
