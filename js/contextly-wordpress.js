@@ -394,7 +394,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     display: function () {
         if ( this.hasWidgetData() ) {
             this.displayText( this.getWidgetHTML() );
-            this.loadCss();
+            this.loadCss( 'widget-css' );
 
             // Check if we need to change snippet position on page
             if ( !Contextly.Settings.getInstance().isAdmin() ) {
@@ -430,10 +430,10 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         );
     },
 
-    loadCss: function () {
+    loadCss: function ( contextly_id ) {
         var css_url = this.getWidgetCSSUrl();
 
-        Contextly.Utils.getInstance().loadCssFile( css_url, 'widget-css' );
+        Contextly.Utils.getInstance().loadCssFile( css_url, contextly_id );
 
         if ( Contextly.Utils.getInstance().isIE7() ) {
             var css_ie7fix = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css/template-ie-fix.css";
@@ -1461,7 +1461,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
                     if ( description ) sidebar_content.prepend( "<div class='ctx_sidebar_description'>" + self.escape( description ) + "</div>" );
                     if ( title ) sidebar_content.prepend( "<div class='ctx_sidebar_title'>" + self.escape( title ) + "</div>" );
 
-                    self.loadCss();
+                    self.loadCss( 'sidebar-css' );
                 }
             }
         );

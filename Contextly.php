@@ -368,15 +368,23 @@ class Contextly
 
 	}
 
+	private function isLoadWidget()
+	{
+		global $post;
+
+		$contextly_settings = new ContextlySettings();
+		if ( $this->checkWidgetDisplayType() && !$contextly_settings->isPageDisplayDisabled( $post->ID ) )
+		{
+			return is_page() || is_single() || $this->isAdminEditPage();
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	public function loadScripts() {
-        global $post;
-
-        $contextly_settings = new ContextlySettings();
-        if ( !$this->checkWidgetDisplayType() || $contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
-	        return;
-        }
-
-        if ( is_page() || is_single() || $this->isAdminEditPage() ) {
+        if ( $this->isLoadWidget() ) {
 	        $this->loadContextlyAjaxJSScripts();
 		    $this->makeContextlyJSObject();
 
@@ -387,10 +395,13 @@ class Contextly
     }
 
 	public function loadStyles() {
-		wp_register_style( 'pretty-photo-style', $this->getPluginCss( 'prettyPhoto/style.css' ) );
-		wp_enqueue_style( 'pretty-photo-style' );
-		wp_register_style( 'contextly-branding', $this->getPluginCss( 'branding/branding.css' ) );
-		wp_enqueue_style( 'contextly-branding' );
+		if ( $this->isLoadWidget() )
+		{
+			wp_register_style( 'pretty-photo-style', $this->getPluginCss( 'prettyPhoto/style.css' ) );
+			wp_enqueue_style( 'pretty-photo-style' );
+			wp_register_style( 'contextly-branding', $this->getPluginCss( 'branding/branding.css' ) );
+			wp_enqueue_style( 'contextly-branding' );
+		}
 	}
 
 	public function ajaxPublishPostCallback() {
