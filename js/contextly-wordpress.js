@@ -433,11 +433,11 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     loadCss: function () {
         var css_url = this.getWidgetCSSUrl();
 
-        Contextly.Utils.getInstance().loadCssFile( css_url );
+        Contextly.Utils.getInstance().loadCssFile( css_url, 'widget-css' );
 
         if ( Contextly.Utils.getInstance().isIE7() ) {
             var css_ie7fix = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css/template-ie-fix.css";
-            Contextly.Utils.getInstance().loadCssFile( css_ie7fix );
+            Contextly.Utils.getInstance().loadCssFile( css_ie7fix, 'widget-ie-fix' );
         }
 
         // Make needed css rules and load custom widget css
@@ -1601,14 +1601,20 @@ Contextly.Utils = Contextly.createClass({
         return false;
     },
 
-    loadCssFile: function ( css_url ) {
+    loadCssFile: function ( css_url, contextly_id ) {
+        if ( contextly_id ) {
+            // Remove previously loaded script
+            jQuery( 'link[contextly_id="' + contextly_id + '"]').remove();
+        }
+
         jQuery( "head" ).append( "<link>" );
         var css_node = jQuery( "head" ).children( ":last" );
         css_node.attr({
             rel:    "stylesheet",
             media:  "screen",
             type:   "text/css",
-            href:   css_url
+            href:   css_url,
+            contextly_id:   contextly_id
         });
     },
 
