@@ -31,7 +31,7 @@ class Contextly
 	        add_filter( 'default_content', array( $this, 'addAutosidebarCodeFilter' ), 10, 2 );
         } else {
             add_action( 'init', array( $this, 'initDefault' ), 1 );
-            add_action('the_content', array( $this, 'addSnippetWidgetToContent' ) );
+	        add_action( 'the_content', array( $this, 'addSnippetWidgetToContent' ) );
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
@@ -294,13 +294,15 @@ class Contextly
         }
 	    else
 	    {
-		    global $post;
-		    $api_options = $this->getAPIClientOptions();
+		    if ( $this->isLoadWidget() )
+		    {
 
-			if ( isset( $api_options[ 'appID' ] ) && $api_options[ 'appID' ] && isset( $post ) && $post->ID )
-			{
-				$additional_html_controls = sprintf( '<a href="%s" style="display: none;">Related</a>',	Urls::getApiServerSeoHtmlUrl( $api_options[ 'appID' ], $post->ID ) );
-			}
+			    $api_options = $this->getAPIClientOptions();
+				if ( isset( $api_options[ 'appID' ] ) && $api_options[ 'appID' ] && isset( $post ) && $post->ID )
+				{
+					$additional_html_controls = sprintf( '<a href="%s" style="display: none;">Related</a>',	Urls::getApiServerSeoHtmlUrl( $api_options[ 'appID' ], $post->ID ) );
+				}
+		    }
 	    }
 
         return "<div id='" . self::WIDGET_SNIPPET_ID . "' class='" . self::WIDGET_SNIPPET_CLASS . "'>" . $default_html_code . "</div>" . $additional_html_controls;
