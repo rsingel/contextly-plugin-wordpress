@@ -361,6 +361,11 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         return jQuery( '#' + this.widget_html_id );
     },
 
+    getMainWidgetShortCodeId: function ()
+    {
+        return '#ctx_widget_short_code';
+    },
+
     hasWidgetData: function () {
         return this.widget && this.widget.links;
     },
@@ -466,18 +471,27 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     fixSnippetPagePosition: function () {
-        // We need to be sure that our control is last in content element
-        if (!this.getDisplayElement().is(":last-child")) {
-            this.getDisplayElement().parent().append(this.getDisplayElement());
+        if ( jQuery( this.getMainWidgetShortCodeId() ).length )
+        {
+            this.getDisplayElement().appendTo(
+                this.getMainWidgetShortCodeId()
+            );
         }
+        else
+        {
+            // We need to be sure that our control is last in content element
+            if (!this.getDisplayElement().is(":last-child")) {
+                this.getDisplayElement().parent().append(this.getDisplayElement());
+            }
 
-        // Check for a custom position on page
-        var wp_settings = Contextly.Settings.getInstance().getWPSettings();
-        if (typeof wp_settings != "undefined" && typeof wp_settings.target_id != "undefined" && wp_settings.target_id) {
-            if (typeof wp_settings.block_position != "undefined" && wp_settings.block_position == "before") {
-                this.getDisplayElement().insertBefore(jQuery("#" + wp_settings.target_id));
-            } else if (wp_settings.target_id) {
-                this.getDisplayElement().insertAfter(jQuery("#" + wp_settings.target_id));
+            // Check for a custom position on page
+            var wp_settings = Contextly.Settings.getInstance().getWPSettings();
+            if (typeof wp_settings != "undefined" && typeof wp_settings.target_id != "undefined" && wp_settings.target_id) {
+                if (typeof wp_settings.block_position != "undefined" && wp_settings.block_position == "before") {
+                    this.getDisplayElement().insertBefore(jQuery("#" + wp_settings.target_id));
+                } else if (wp_settings.target_id) {
+                    this.getDisplayElement().insertAfter(jQuery("#" + wp_settings.target_id));
+                }
             }
         }
     },
