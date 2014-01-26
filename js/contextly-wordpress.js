@@ -916,7 +916,7 @@ Contextly.TextWidgetCssCustomBuilder = Contextly.createClass({
     buildCSS: function ( entry, settings ) {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '.ctx_text_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_text_widget .ctx_link" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_text_widget .ctx_link" , "font-size", settings.font_size );
         if ( settings.color_links ) {
@@ -1127,7 +1127,7 @@ Contextly.TabsWidgetCssCustomBuilder = Contextly.createClass({
     {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '.ctx_tabs_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_tabs_widget .ctx_link" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_tabs_widget .ctx_link" , "font-size", settings.font_size );
@@ -1258,7 +1258,7 @@ Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
     {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '.ctx_blocks_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget p.ctx_link" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget p.ctx_link" , "font-size", settings.font_size );
@@ -1333,7 +1333,7 @@ Contextly.Blocks2WidgetCssCustomBuilder = Contextly.createClass({
     {
         var css_code = "";
 
-        if ( settings.css_code ) css_code += '.ctx_blocks_widget2 ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget2 p.ctx_link" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget2 p.ctx_link" , "font-size", settings.font_size );
@@ -1398,7 +1398,7 @@ Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
 
     buildCSS: function ( entry, settings ) {
         var css_code = "";
-        if ( settings.css_code ) css_code += '.ctx_float_widget ' + Contextly.Utils.getInstance().escape( settings.css_code );
+        if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
 
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link" , "font-size", settings.font_size );
@@ -1506,6 +1506,7 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
 
     buildCSS: function ( entry, settings ) {
         var css_code = "";
+
         if ( settings.css_code ) {
             var site_custom_code = Contextly.Utils.getInstance().escape( settings.css_code );
             if ( site_custom_code.indexOf( entry ) == -1 ) {
