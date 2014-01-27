@@ -90,8 +90,11 @@ Contextly.Loader = Contextly.createClass({
 
                 var pageView = new Contextly.PageView( response );
                 pageView.display();
+
+                self.initCookie( response );
             }
         );
+
     },
 
     trackPageEvent: function ( setting_id, event_name, event_key ) {
@@ -102,7 +105,8 @@ Contextly.Loader = Contextly.createClass({
             'setting_id': setting_id,
             'event_name': event_name,
             'event_key' : event_key,
-            'event_date': new Date()
+            'event_date': new Date(),
+            'cookie_id' : this.getCookieId()
         };
 
         Contextly.RESTClient.getInstance().call(
@@ -112,7 +116,42 @@ Contextly.Loader = Contextly.createClass({
             function ( response ) {
             }
         );
+    },
+
+    getCookieName: function ()
+    {
+        return "contextly";
+    },
+
+    initCookie: function ( rest_response )
+    {
+        if ( rest_response && rest_response.cookie_id )
+        {
+            if ( !this.getCookieId() )
+            {
+                this.setCookieId( rest_response.cookie_id );
+            }
+        }
+    },
+
+    setCookieId: function ( cookie_id )
+    {
+        jQuery.cookie( this.getCookieName(), {id: cookie_id}, { expires: 1, path: '/' } );
+    },
+
+    getCookieId: function ()
+    {
+        jQuery.cookie.json = true;
+        var cookie = jQuery.cookie( this.getCookieName() );
+
+        if ( cookie && cookie.id )
+        {
+            return cookie.id;
+        }
+
+        return null;
     }
+
 });
 
 Contextly.PageView = Contextly.createClass({
@@ -1826,7 +1865,8 @@ Contextly.RESTClient = Contextly.createClass({
                 version:    contextly_settings.getPluginVersion(),
                 site_path:  contextly_settings.getAppId(),
                 admin:      contextly_settings.isAdmin(),
-                page_id:    contextly_settings.getPageId()
+                page_id:    contextly_settings.getPageId(),
+                cookie_id:  Contextly.Loader.getInstance().getCookieId()
             }
         );
 

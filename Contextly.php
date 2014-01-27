@@ -333,6 +333,7 @@ class Contextly
 		wp_enqueue_script( 'json2' );
 		wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', null );
 		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', null );
+		wp_enqueue_script( 'jquery_cookie', $this->getPluginJs( 'jquery.cookie.js' ), 'jquery', null );
 		wp_enqueue_script( 'contextly-create-class', $this->getPluginJs( 'contextly-class.min.js' ), 'easy_xdm', null );
 		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', null );
 	}
