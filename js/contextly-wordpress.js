@@ -144,7 +144,7 @@ Contextly.Loader = Contextly.createClass({
         jQuery.cookie.json = true;
         var cookie = jQuery.cookie( this.getCookieName() );
 
-        if ( cookie && cookie.id )
+        if ( cookie && cookie.id && cookie.id != 'null' )
         {
             return cookie.id;
         }
