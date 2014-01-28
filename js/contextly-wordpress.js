@@ -402,7 +402,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
     getMainWidgetShortCodeId: function ()
     {
-        return '#ctx_widget_short_code';
+        return '#ctx_main_module_short_code';
     },
 
     hasWidgetData: function () {
