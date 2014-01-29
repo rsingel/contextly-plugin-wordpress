@@ -2139,7 +2139,7 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
                     jQuery( settings_button_id ).removeAttr( 'disabled' );
                 } else if ( response.message ) {
                     jQuery( settings_button_id ).parent().append(
-                        jQuery( "<p style='color: red; font-weight: bold;'>* " + response.message + "</p>" )
+                        jQuery( "<p style='color: red; font-weight: bold;'>* You need a valid API key. Click the API tab above to get one.</p>" )
                     );
                 }
             },
