@@ -2067,7 +2067,7 @@ Contextly.PopupHelper = Contextly.createClass({
     },
 
     showStubPopup: function () {
-        this.url = this.url || 'http://contextly.com/contact-us/';
+        this.url = this.url || 'http://contextly.com/contact-us/?type=undefined&key=' + Contextly.Settings.getInstance().getAppId();
         window.open( this.url );
     },
 
