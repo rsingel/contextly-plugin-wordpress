@@ -89,6 +89,13 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.0.97 =
+
+- Updated to include cookies to better track recommendation performance
+- Post-story module now movable via shortcode
+- Minor display bug fixes
+
+
 = 1.0.96 =
 
 - Minor display bug fixes
