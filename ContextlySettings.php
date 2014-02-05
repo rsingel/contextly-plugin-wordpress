@@ -63,9 +63,9 @@ class ContextlySettings {
         add_settings_field( 'linker_target_id', 'CSS Element ID', array( $this, 'settingsTargetInput' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
         add_settings_field( 'linker_block_position', 'Position', array( $this, 'settingsBlockPosition' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
 
-        add_settings_section( 'display_section', 'Main Settings', array(), self::GENERAL_SETTINGS_KEY );
-	    add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settingsDisplayFor' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
-	    add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settingsDisplayPublishConfirmation' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
+        add_settings_section( 'display_section', 'Main Settings', array(), self::ADVANCED_SETTINGS_KEY );
+	    add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settingsDisplayFor' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
+	    add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settingsDisplayPublishConfirmation' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 
 	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
 	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API' );
@@ -191,7 +191,7 @@ class ContextlySettings {
 			                    'style' => 'font-size: 18px; margin-top: 20px;'
 		                    )
 	                    ); ?>
-	                <?php } else { ?>
+	                <?php } elseif ( $tab == self::ADVANCED_SETTINGS_KEY ) { ?>
 	                    <?php submit_button( null, 'primary' ); ?>
                     <?php } ?>
                 </form>
@@ -317,7 +317,7 @@ class ContextlySettings {
 	    foreach ( $post_types as $post_type ) {
 		    if ( $post_type->public ) {
 			    echo "<tr><td style='padding: 3px;'>";
-			    echo "<input id='post-type-{$post_type->name}' name='" . self::GENERAL_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( array_values( $values ) ) ) ? "checked='checked'" : "" ) . " />";
+			    echo "<input id='post-type-{$post_type->name}' name='" . self::ADVANCED_SETTINGS_KEY . "[display_type][]' type='checkbox' value='{$post_type->name}' " . (in_array( $post_type->name, ( array_values( $values ) ) ) ? "checked='checked'" : "" ) . " />";
 			    echo "</td><td style='padding: 3px;'><label for='post-type-{$post_type->name}'>";
 			    echo $post_type->labels->name;
 			    echo "</label></td></tr>";
@@ -328,7 +328,7 @@ class ContextlySettings {
 
 	public function settingsDisplayPublishConfirmation() {
 		$publish_confirmation = $this->getPublishConfirmationValue();
-		$control_name = self::GENERAL_SETTINGS_KEY . "[publish_confirmation]";
+		$control_name = self::ADVANCED_SETTINGS_KEY . "[publish_confirmation]";
 
 		echo "
 		<input type='hidden' name='{$control_name}' value='0' />
@@ -346,12 +346,7 @@ class ContextlySettings {
     }
 
     public function getWidgetDisplayType() {
-        $options = get_option( self::GENERAL_SETTINGS_KEY );
-
-	    if ( !$options ) {
-		    // Old plugins support
-		    $options = get_option( self::ADVANCED_SETTINGS_KEY );
-	    }
+	    $options = get_option( self::ADVANCED_SETTINGS_KEY );
 
 	    // Hack for previous plugin versions and selected values
 	    $values = isset( $options['display_type'] ) ? $options['display_type'] : array();
@@ -372,7 +367,7 @@ class ContextlySettings {
     }
 
 	public function getPublishConfirmationValue() {
-		$options = get_option( self::GENERAL_SETTINGS_KEY );
+		$options = get_option( self::ADVANCED_SETTINGS_KEY );
 
 		if ( isset( $options[ 'publish_confirmation' ] ) ) {
 			return (bool)$options[ 'publish_confirmation' ];
