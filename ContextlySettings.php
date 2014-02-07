@@ -253,9 +253,15 @@ class ContextlySettings {
 	    $options = get_option( self::API_SETTINGS_KEY );
 	    $input_style = "";
 
-	    if ( isset( $_GET[ 'api_key' ] ) && ( !isset( $options["api_key"] ) || !$options["api_key"] ) ) {
-		    $options["api_key"] = sanitize_text_field( urldecode( $_GET[ 'api_key' ] ) );
-		    $input_style = " style='background-color: #FFEBE8; border-color: #CC0000;'";
+	    if ( isset( $_GET[ 'api_key' ] ) )
+	    {
+			$get_api_key = urldecode( $_GET[ 'api_key' ] );
+
+		    if ( !isset( $options["api_key"] ) || $options["api_key"] != $get_api_key )
+		    {
+			    $options["api_key"] = sanitize_text_field( $get_api_key );
+			    $input_style = " style='background-color: #FFEBE8; border-color: #CC0000;'";
+		    }
 	    }
 
         echo "<label><input name='" . self::API_SETTINGS_KEY . "[api_key]' type='text' size='40' value='{$options["api_key"]}' " . $input_style . "/></label>";
