@@ -43,6 +43,7 @@ class Contextly
         add_action( 'admin_enqueue_scripts', array( $this, 'loadScripts' ) );
 
         add_action( 'publish_post', array( $this, 'publishPost'), 10, 2 );
+        add_action( 'save_post', array( $this, 'publishPost'), 10, 2 );
 
 	    $this->attachAjaxActions();
     }
