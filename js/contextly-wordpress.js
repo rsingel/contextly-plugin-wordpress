@@ -393,7 +393,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     construct: function( widget ) {
         this.widget = widget;
         this.widget_type = Contextly.WidgetType.SNIPPET;
-        this.widget_html_id = 'ctx_linker';
+        this.widget_html_id = 'ctx-module';
     },
 
     getDisplayElement: function() {
@@ -506,7 +506,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     getCustomCssCode: function () {
-        return Contextly.CssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
+        return Contextly.CssCustomBuilder.getInstance().buildCSS( '.ctx-module-container', this.getSettings() );
     },
 
     fixSnippetPagePosition: function () {
@@ -621,7 +621,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     getLinkATag: function ( link, content ) {
-        return "<a class=\"ctx_title ctx_module\" href=\"" +
+        return "<a href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" onmousedown=\"this.href='" +
             this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
@@ -629,7 +629,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     getVideoLinkATag: function ( link, content ) {
-        return "<a class=\"ctx_title ctx_module\" rel=\"ctx_video_link\" href=\"" +
+        return "<a rel=\"ctx_video_link\" href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" " +
             this.getOnclickHtml( link ) + ">" +
@@ -668,156 +668,250 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         return "<li>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</li>";
     },
 
-    getBrandingHtml: function() {
-        var html = "<a href='#ctx_branding_content' id='ctx_branding_open' class=\"ctx_pluginauthor ctx_modal_open\"><span>Powered by</span></a>";
-        html += "<div id='ctx_branding_content' style=\"display:none;margin:1em;\"><div id=\"ctx_modal\" class=\"ctx_well\">";
-        html += "<div id='ctx_popupcontainer'>";
-        html += "<span id=\"ctx_poplogo\"></span><span id='ctx_popupperbg'></span><div id='ctx_poptext'>";
-        html += "Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>";
-        html += "Publishers or advertisers who would like to learn more about Contextly can contact us&nbsp;";
-        html += "<a href=\"http://contextly.com/sign-up/publishers/\" target=\"_blank\">here</a>.<br><br>";
-        html += "We respect ";
-        html += "<a href=\"http://contextly.com/privacy/\" target=\"_blank\">readers' privacy </a>.&nbsp;";
-        html += "</div></div>";
-        html += "<span id='ctx_popsymbol'></span>";
-        html += "</div></div>";
-
-        return html;
-    },
-
     isDisplayContextlyLogo: function() {
         return Contextly.Settings.getInstance().isDisplayBranding();
     },
 
 	setResponsiveFunction: function() {
 
-		function ctxResponsiveResizeHandler() {
-
-			function ctxGetWidget() {
-				return jQuery( '.ctx_widget' );
+		function ctxResponsiveResizeHandler() {				
+					
+			// Blocks2
+			var mobileModule = 400;
+			var normalModule = 650;
+			var wideModule = 790;
+			
+			// Float
+			var mobileModuleFl = 240;
+			var mediumModuleFl = 400;
+			var normalModuleFl = 700;
+			
+			// Blocks
+			var mobileModuleBl = 200;
+			var tabletModuleBl = 450;
+			var normalModuleBl = 650;
+			var wideModuleBl = 790;			
+			
+			// Text
+			var mobileModuleTx = 450;
+			
+			// Sidebar
+			var mobileModuleSb = 200;
+			
+			// Branding
+			var mobileModuleSb = 200;
+			
+			function getBlocks2Width() {
+				var width = jQuery(".ctx-content-block2").width();
+				return width;
 			}
-
-			function ctxGetWidgetType() {
-				return ctxGetWidget().attr( 'widget-type' );
+			
+			function getFloatWidth() {
+				var width = jQuery(".ctx-content-float").width();
+				return width;
+			}		
+			
+			function getTextWidth() {
+				var width = jQuery(".ctx-content-text").width();
+				return width;
 			}
-
-			function is_touch_device() {
-				return 'ontouchstart' in window;
-			};
-
-			function ctxDisplayWidth() {
+			
+			function getSidebarWidth() {
+				var width = jQuery(".ctx-sidebar-container").width();
+				return width;
+			}
+			
+			function getScreenWidth() {
 				var getwidth = jQuery(window).width();
 				return getwidth;
 			}
-
-			function ctxWidgetWidth() {
-				var WidgetWidth = jQuery(ctxGetWidget()).width();
-				return WidgetWidth;
+			
+			function addExtraLink1() {
+				jQuery(".ctx-extra-link1").css("display", "block");
 			}
-
-			function resizeMinLimit() {
-				MinLimit = 480;
-				return MinLimit;
-			};
-
-			function ctxClassChanger(className) {
-				var fullClass = 'ctx_around_site ' + className;
-				jQuery('.ctx_around_site').attr('class',fullClass);
+			
+			function addExtraLink2() {
+				jQuery(".ctx-extra-link2").css("display", "block");
 			}
-
-			function ctxTextClassChanger(className) {
-				var fullClass = 'ctx_see_also ctx_text_widget ' + className;
-				jQuery('.ctx_see_also').attr('class',fullClass);
+			
+			function moduleClassBl2(classname) {
+				jQuery(".ctx-content-block2").addClass(classname);
 			}
-
-			function ctxSidebarClassChanger(className) {
-				var fullClass = 'ctx_widget_hidden ctx_sidebar ctx_sidebar_left ' + className;
-				jQuery('.ctx_sidebar_left').attr('class',fullClass);
+			
+			function moduleClassFl(classname) {
+				jQuery(".ctx-content-float").addClass(classname);
 			}
-
-			if(ctxDisplayWidth() > 605) {
-				var cxt_popup_width = 552; cxt_popup_height = 292;
+			
+			function moduleClassBl(classname) {
+				jQuery(".ctx-content-block").addClass(classname);
 			}
-			else {
-				var cxt_popup_width = 250; cxt_popup_height = 500;
+			
+			function moduleClassTx(classname) {
+				jQuery(".ctx-content-text").addClass(classname);
 			}
+			
+			function moduleClassSb(classname) {
+				jQuery(".ctx-sidebar-container").addClass(classname);
+			}			
+			
+			// Blocks2
+			if(getBlocks2Width() < mobileModule) {
+				moduleClassBl2("ctx-module-mobile");
+			} else if(getBlocks2Width() <= normalModule && getBlocks2Width() >= mobileModule) {
+				moduleClassBl2("ctx-module-default");
+			} else if(getBlocks2Width() > normalModule && getBlocks2Width() <= wideModule) {
+				addExtraLink1();
+				moduleClassBl2("ctx-module-sec5");
+			} else if(getBlocks2Width() > wideModule) {
+				addExtraLink1();
+				addExtraLink2();
+				moduleClassBl2("ctx-module-sec6");
+			}
+			
+			// Float
+			if(getFloatWidth() < mobileModuleFl) {
+				moduleClassFl("ctx-module-mobile");
+			} else if(getFloatWidth() <= mediumModuleFl && getFloatWidth() >= mobileModuleFl) {
+				moduleClassFl("ctx-module-medium");
+			} else if(getFloatWidth() > mediumModuleFl && getFloatWidth() <= normalModuleFl) {
+				moduleClassFl("ctx-module-normal");
+			} else if(getFloatWidth() > normalModuleFl) {
+				addExtraLink1();
+				moduleClassFl("ctx-module-wide");
+			}
+			
+			// Blocks
+			if(getBlocksWidth() < mobileModuleBl) {
+				moduleClassBl("ctx-module-mobile");
+			} else if(getBlocksWidth() <= tabletModuleBl && getBlocksWidth() >= mobileModuleBl) {
+				moduleClassBl("ctx-module-tablet");
+			} else if(getBlocksWidth() <= normalModuleBl && getBlocksWidth() >= tabletModuleBl) {
+				moduleClassBl("ctx-module-default");
+				//blocksSliding();
+			} else if(getBlocksWidth() > normalModuleBl && getBlocksWidth() <= wideModuleBl) {
+				addExtraLink1();
+				moduleClassBl("ctx-module-sec5");
+				//blocksSliding();
+			} else if(getBlocksWidth() > wideModuleBl) {
+				addExtraLink1();
+				addExtraLink2();				
+				moduleClassBl("ctx-module-sec6");
+				//blocksSliding();		
+			}
+			
+			// Text
+			if(getTextWidth() < mobileModuleTx) {
+				moduleClassTx("ctx-module-mobile");
+			} else if(getTextWidth() >= mobileModuleTx) {
+				moduleClassTx("ctx-module-default");
+			}
+			
+			// Sidebar
+			if(getSidebarWidth() < mobileModuleSb) {
+				moduleClassSb("ctx-sidebar-mobile");
+			} else if(getSidebarWidth() >= mobileModuleSb) {
+				moduleClassSb("ctx-sidebar-default");
+			}
+			
+		}
+		
+		var slideMinHeightBl = 54;
+		
+		function getSliderContentBl(classname) {
+			return jQuery(".ctx-link .ctx-link-title");
+		}
+		
+		function getBlocksWidth() {
+			var width = jQuery(".ctx-content-block").width();
+			return width;
+		}
 
-			jQuery("#ctx_branding_open").prettyPhoto({
-				theme:'light_square',
-				autoplay_slideshow: false,
-				default_width: cxt_popup_width,
-				default_height: cxt_popup_height,
-				social_tools: false,
-				show_title: false
+		if(getBlocksWidth() >= 450) {
+			getSliderContentBl().css("height", slideMinHeightBl);
+			
+			jQuery('.ctx-links-content .ctx-link a').hover(
+			   function(){ 
+					jQuery(this).addClass('ctx-blocks-slider');
+					var getTextHeight = jQuery(".ctx-blocks-slider .ctx-link-title p").height();
+					if(getTextHeight>59) {					
+						jQuery( ".ctx-blocks-slider .ctx-link-title" ).stop(true,true).animate({
+							height: getTextHeight + 10,
+						}, 200 );
+					}
+			   },
+			   function(){
+					jQuery( ".ctx-blocks-slider .ctx-link-title" ).stop(true,true).animate({
+						height: slideMinHeightBl,
+					}, 200 );
+					jQuery(this).removeClass('ctx-blocks-slider');				
+			   }
+			)
+		}
+		
+		function getDocument() {
+			var wdocument = jQuery(window);
+			return wdocument;
+		}
+		
+		function getBrdPopup() {
+			var getpopup = jQuery( ".ctx-show-popup" );
+			return getpopup;
+		}
+		
+		function getBrdOnlyPopup() {
+			var getpopup = jQuery( "#ctx-branding-content" );
+			return getpopup;
+		}
+		
+		function showBrdPopup() {
+			getBrdPopup().fadeIn("fast");
+		}
+			
+		function closeBrdPopup() {
+			getBrdPopup().fadeOut("fast", function() {
+				jQuery( this ).remove();
 			});
-
-			// blocks2 widget
-			if ( ctxGetWidgetType() == 'blocks2' ) {
-
-				if(ctxWidgetWidth() < resizeMinLimit()) {
-					ctxClassChanger('ctx_blocks2mobile');
-				} else {
-					ctxClassChanger('ctx_blocks2site');
+		}
+		
+		/* Branding Popup */
+		jQuery( "#ctx-branding-link" ).click( function( event ) {
+			event.preventDefault();
+			jQuery( "body" ).append( getBrandingHtml() );
+			showBrdPopup();
+			
+			jQuery( "#ctx-brd-close" ).click( function( event ) {
+				event.preventDefault();
+				closeBrdPopup();
+			});
+			
+			getDocument().mouseup(function (e)
+			{
+				if (!getBrdOnlyPopup().is(e.target) && getBrdOnlyPopup().has(e.target).length == 0) 
+				{
+					closeBrdPopup();
 				}
-			}
-
-			//float widget
-			if ( ctxGetWidgetType() == 'float' ) {
-				if(ctxWidgetWidth() < resizeMinLimit()) {
-					ctxClassChanger('ctx_floatmobile');
-				}
-				else if(ctxWidgetWidth() < 550 && ctxWidgetWidth() > resizeMinLimit()) {
-					ctxClassChanger('ctx_floattablet');
-				}
-				else {
-					ctxClassChanger('ctx_floatsite');
-				}
-			}
-
-			//blocks widget
-			if ( ctxGetWidgetType() == 'blocks' ) {
-
-				if( ctxWidgetWidth() <  500 ) {
-					ctxClassChanger('ctx_blockmobile');
-				} else {
-					ctxClassChanger('ctx_blocksite');
-				}
-
-				if( is_touch_device() || ctxDisplayWidth() <  800 ) {
-					jQuery(".ctx_blocks_widget li a p").css("height", "auto");
-				} else {
-					jQuery(".ctx_blocks_widget li a").on("mouseover", function(event){
-						jQuery(this).toggleClass('ctx_blocksslider');
-						var getTextHeight = jQuery('.ctx_blocksslider p span').height();
-						if(getTextHeight>50) {
-							jQuery(".ctx_blocksslider p").css("height", getTextHeight);
-						}
-					});
-
-					jQuery(".ctx_blocks_widget li a").on("mouseout", function(event){
-						jQuery(".ctx_blocksslider p").css("height", "46px");
-						jQuery(this).removeClass('ctx_blocksslider');
-					});
-				}
-			}
-
-			//text widget
-			if ( ctxGetWidgetType() == 'default' ) {
-				if( ctxWidgetWidth() <  520 ) {
-					ctxTextClassChanger('ctx_textmobile');
-				} else {
-					ctxTextClassChanger('ctx_textsite');
-				}
-			}
-
-			//sidebar
-			var getLeftSidebarWidth = jQuery('.ctx_sidebar_link').width();
-			if(getLeftSidebarWidth < 256) {
-				ctxSidebarClassChanger('ctx_sidebarmobile');
-			} else {
-				ctxSidebarClassChanger('ctx_sidebarsite');
-			}
-
+			});
+			
+			getDocument().keyup(function(e) {
+				if (e.keyCode == 27) { closeBrdPopup() }  
+			});
+		});
+		
+		function getBrandingHtml() {
+			var content = '<div class="ctx-brd-overlay ctx-show-popup" style="display:none"></div>';
+			content += '<div id="ctx-branding-content" class="ctx-show-popup" style="display:none">';		
+			content += '<div id="ctx-brd-modal">';
+				content += '<div id="ctx-brd-left-content">';			
+					content += '<div id="ctx-brd-logo"></div>';
+					content += '<div id="ctx-brd-text-head"></div>';
+					content += '<div id="ctx-brd-text"><p>Contextly recommends interesting and related stories using a unique combination of algorithms and editorial choices.<br><br>Publishers or advertisers who would like to learn more about Contextly can contact us&nbsp;<a href="http://contextly.com/sign-up/publishers/" target="_blank">here</a>.<br><br>We respect <a href="http://contextly.com/privacy/" target="_blank">readers&#8217; privacy </a>.&nbsp;</p></div>';			
+				content += '</div>';
+				content += '<div id="ctx-brd-right-content"></div>';		
+			content += '</div>';		
+			content += '<a href="#" id="ctx-brd-close">X</a>';
+			content += '</div>';
+			
+			return content;
 		}
 
 		function ctxCheckIfWidgetLoadedAndResize() {
@@ -1226,17 +1320,17 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     getWidgetCssName: function () {
-        return 'ctx_blocks_widget';
+        return 'ctx-content-block';
     },
 
     getWidgetHTML: function () {
         var div = "";
 
-        div += "<div class='ctx_see_also " + this.getWidgetCssName() +"'>";
+        div += "<div class='" + this.getWidgetCssName() + " ctx-nodefs'>";
 
         var sections = this.widget.settings.display_sections;
 
-        div += "<div class='ctx_around_site'>";
+        div += "<div class='ctx-sections-container ctx-nomar'>";
         for ( var section in sections ) {
             var section_name = sections[section];
 
@@ -1244,16 +1338,22 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
                 var section_key = section_name + '_subhead';
                 var section_header = this.widget.settings[ section_key ];
 
-                div += "<div class='ctx_previous'>";
-                div += "<div class='ctx_subhead'><span class='ctx_subhead_title'>" + this.escape( section_header ) + "</span></div>";
-                div += "<ul class='ctx_link'>" + this.getLinksHTMLOfType( section_name ) + "</ul>";
+                div += "<div class='ctx-section ctx-clearfix'>";
+                div += "<div class='ctx-links-header ctx-clearfix'><p class='ctx-nodefs'>" + this.escape( section_header ) + "</p></div>";
+				
+				div += "<div class='ctx-links-content ctx-nodefs ctx-clearfix'>";
+				div += this.getLinksHTMLOfType( section_name );
+                div += "</div>";
+				
                 div += "</div>";
             }
         }
         div += "</div>";
 
         if ( this.isDisplayContextlyLogo() ) {
-            div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
+            div += "<div class='ctx-branding ctx-clearfix'>";
+			div += "<a href='#' id='ctx-branding-link' class='ctx-nodefs'>Powered by</a>";
+			div += "</div>";
         }
 
         return div;
@@ -1268,24 +1368,24 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     },
 
     getInnerLinkHTML: function ( link ) {
-        var inner_html = "<p class='ctx_link'><span>" + link.title + "</span></p>";
+        var inner_html = "<div class='ctx-link-title'><p class='ctx-nodefs'>" + link.title + "</div>";
         if ( this.getLinkThumbnailUrl( link ) ) {
-            inner_html += "<img src='" + link.thumbnail_url + "' />";
+            inner_html += "<div class='ctx-link-image ctx-nodefs'><img src='" + link.thumbnail_url + "' /></div>";
         }
 
         return inner_html;
     },
 
     getLinkHTMLVideo: function ( link ) {
-        return "<li>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link ) ) + "</li>";
+        return "<div class='ctx-link'>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
     },
 
     getLinkHTMLNormal: function ( link ) {
-        return "<li>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</li>";
+        return "<div class='ctx-link'>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
     },
 
     getCustomCssCode: function () {
-        return Contextly.BlocksWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
+        return Contextly.BlocksWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx-module-container', this.getSettings() );
     }
 
 });
@@ -1299,15 +1399,15 @@ Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
 
         if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
 
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget p.ctx_link" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_blocks_widget p.ctx_link" , "font-size", settings.font_size );
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx-content-block .ctx-link-title p" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx-content-block .ctx-link-title p" , "font-size", settings.font_size );
 
         if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx_blocks_widget .ctx_link span" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-content-block .ctx-link-title p" , "color", settings.color_links );
         }
 
         if ( settings.color_background ) {
-            css_code += this.buildCSSRule( entry, ".ctx_blocks_widget .ctx_subhead" , "background-color", settings.color_background );
+            css_code += this.buildCSSRule( entry, ".ctx-content-block .ctx-links-header" , "background-color", settings.color_background );
         }
 
         if ( settings.color_border ) {
@@ -1319,7 +1419,7 @@ Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
                 var g = rgb[1];
                 var b = rgb[2];
 
-                css_code += this.buildCSSRule( entry, ".ctx_blocks_widget li p" , "background", "rgba("+r+","+g+","+b+",0.5)" );
+                css_code += this.buildCSSRule( entry, ".ctx-content-block .ctx-link .ctx-link-title" , "background", "rgba("+r+","+g+","+b+",0.5)" );
             }
         }
 
