@@ -38,6 +38,9 @@ class ContextlyWpKit extends ContextlyKit {
 		$config->appID = $options['appID'];
 		$config->appSecret = $options['appSecret'];
 
+		$settings = new ContextlySettings();
+		$config->cdn = $settings->getKitCdnValue();
+
 		return $config;
 	}
 
@@ -153,15 +156,30 @@ class ContextlyWpAssetsRenderer extends ContextlyKitAssetsRenderer {
 		return 'contextly-kit-' . str_replace( '/', '-', $key );
 	}
 
+	/**
+	 * Returns "version" parameter suitable for wp_enqueue_style() and
+	 * wp_enqueue_script().
+	 */
+	protected function getAssetsVersion() {
+		if ($this->kit->isCdnEnabled()) {
+			return NULL;
+		}
+		else {
+			return $this->kit->version();
+		}
+	}
+
 	public function renderCss() {
+		$version = $this->getAssetsVersion();
 		foreach ($this->assets->buildCssUrls() as $key => $url) {
-			wp_enqueue_style( $this->resourceHandle( $key ), $url);
+			wp_enqueue_style($this->resourceHandle( $key ), $url, array(), $version);
 		}
 	}
 
 	public function renderJs() {
-		foreach ( $this->assets->buildJsUrls() as $key => $url ) {
-			wp_enqueue_script( $this->resourceHandle( $key ), $url );
+		$version = $this->getAssetsVersion();
+		foreach ($this->assets->buildJsUrls() as $key => $url) {
+			wp_enqueue_script($this->resourceHandle( $key ), $url, array(), $version);
 		}
 	}
 
