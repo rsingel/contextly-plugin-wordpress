@@ -1497,7 +1497,7 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetBlocksFormatter,
 
     getWidgetCssName: function () {
-        return 'ctx_float_widget';
+        return 'ctx-content-float';
     },
 
     getNumberOfLinksPerSection: function () {
@@ -1510,24 +1510,23 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
             if ( is_video ) {
                 inner_html += "<div class='playbutton-wrapper'>";
             }
-            inner_html += "<img src='" + link.thumbnail_url + "' />";
+            inner_html += "<div class='ctx-link-image ctx-nodefs'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
             if ( is_video ) {
                 inner_html += "</div>";
             }
         }
 
-        var text_width = this.getImagesWidth() + 10;
-        inner_html += "<p class='ctx_link' style='width: " + text_width + "px;'><span>" + link.title + "</span></p>";
+        inner_html += "<div class='ctx-link-title'><p class='ctx-nodefs'>" + link.title + "</p></div>";
 
         return inner_html;
     },
 
     getLinkHTMLVideo: function ( link ) {
-        return "<li>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</li>";
+        return "<div>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</div>";
     },
 
     getCustomCssCode: function () {
-        return Contextly.FloatWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
+        return Contextly.FloatWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx-module-container', this.getSettings() );
     }
 
 });
@@ -1539,15 +1538,15 @@ Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
         var css_code = "";
         if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
 
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link" , "font-size", settings.font_size );
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx-content-float .ctx-link-title p" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx-content-float .ctx-link-title p" , "font-size", settings.font_size );
 
         if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_link span" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-content-float .ctx-link-title p" , "color", settings.color_links );
         }
 
         if ( settings.color_background ) {
-            css_code += this.buildCSSRule( entry, ".ctx_float_widget .ctx_subhead" , "background-color", settings.color_background );
+            css_code += this.buildCSSRule( entry, ".ctx-content-float .ctx-links-header" , "background-color", settings.color_background );
         }
 
         return css_code;
