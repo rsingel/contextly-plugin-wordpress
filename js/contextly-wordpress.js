@@ -623,13 +623,13 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     getLinkATag: function ( link, content ) {
         return "<a href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
-            this.escape( link.title ) + "\" onmousedown=\"this.href='" +
+            this.escape( link.title ) + "\" class='ctx-clearfix' onmousedown=\"this.href='" +
             this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
             content + "</a>" + this.getLinkATagIE7Fix();
     },
 
     getVideoLinkATag: function ( link, content ) {
-        return "<a rel=\"ctx_video_link\" href=\"" +
+        return "<a rel=\"ctx_video_link\" class='ctx-clearfix' href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" " +
             this.getOnclickHtml( link ) + ">" +
@@ -661,11 +661,11 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     },
 
     getLinkHTMLVideo: function ( link ) {
-        return "<li>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link ) ) + "</li>";
+        return "<div class='ctx-link'>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
     },
 
     getLinkHTMLNormal: function ( link ) {
-        return "<li>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</li>";
+        return "<div class='ctx-link'><div class='ctx-link-title'>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div></div>";
     },
 
     isDisplayContextlyLogo: function() {
@@ -989,13 +989,14 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetFormatter,
 
     getWidgetCssName: function () {
-        return 'ctx_text_widget';
+        return 'ctx-content-text';
     },
 
     getWidgetHTML: function () {
         var div = "";
 
-        div += "<div class='ctx_see_also " + this.getWidgetCssName() + "'>";
+        div += "<div class='" + this.getWidgetCssName() + " ctx-nodefs'>";		
+		div += "<div class='ctx-sections-container ctx-nomar ctx-clearfix'>";
 
         var sections = this.widget.settings.display_sections;
 
@@ -1005,16 +1006,21 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
                 var section_key = section_name + '_subhead';
                 var section_header = this.widget.settings[ section_key ];
 
-                div += "<div class='ctx_previous'>";
-                div += "<div class='ctx_subhead'><span class='ctx_subhead_title'>" + this.escape( section_header ) + "</span></div>";
-                div += "<ul class='ctx_link'>" + this.getLinksHTMLOfType( section_name ) + "</ul>";
+                div += "<div class='ctx-section ctx-clearfix'>";
+				
+                div += "<div class='ctx-links-header ctx-clearfix'><p class='ctx-nodefs'>" + this.escape( section_header ) + "</p></div>";
+				
+                div += "<div class='ctx-links-content ctx-nodefs ctx-clearfix'>" + this.getLinksHTMLOfType( section_name ) + "</div>";
                 div += "</div>";
             }
         }
         div += "</div>";
+		div += "</div>";
 
 		if ( this.isDisplayContextlyLogo() ) {
-            div += "<div class='ctx_branding'>" + this.getBrandingHtml() + "</div>";
+            div += "<div class='ctx-branding ctx-clearfix'>";
+			div += "<a href='#' id='ctx-branding-link' class='ctx-nodefs'>Powered by</a>";
+			div += "</div>";
         }
 
         return div;
@@ -1038,7 +1044,7 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
     },
 
     getCustomCssCode: function () {
-        return Contextly.TextWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_widget', this.getSettings() );
+        return Contextly.TextWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx-module-container', this.getSettings() );
     }
 
 });
@@ -1050,13 +1056,13 @@ Contextly.TextWidgetCssCustomBuilder = Contextly.createClass({
         var css_code = "";
 
         if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx_text_widget .ctx_link" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx_text_widget .ctx_link" , "font-size", settings.font_size );
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-link-title a" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-link-title a" , "font-size", settings.font_size );
         if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx_text_widget a.ctx_title" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-link-title a" , "color", settings.color_links );
         }
         if ( settings.color_background ) {
-            css_code += this.buildCSSRule( entry, ".ctx_text_widget .ctx_subhead" , "background-color", settings.color_background );
+            css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-header" , "background-color", settings.color_background );
         }
 
         return css_code;
