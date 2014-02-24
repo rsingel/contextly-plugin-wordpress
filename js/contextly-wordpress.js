@@ -625,7 +625,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" class='ctx-clearfix' onmousedown=\"this.href='" +
             this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
-            content + "</a>" + this.getLinkATagIE7Fix();
+            content + "</a>";
     },
 
     getVideoLinkATag: function ( link, content ) {
@@ -633,7 +633,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" " +
             this.getOnclickHtml( link ) + ">" +
-            content + "</a>" + this.getLinkATagIE7Fix();
+            content + "</a>";
     },
 
     getTrackLinkJSHtml: function ( link ) {
@@ -642,10 +642,6 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         var link_title = this.escape( link.title );
 
         return this.escape( "Contextly.PageEvents.getInstance().trackLink('" + widget_type + "','" + link_type + "','" + link_title + "');" );
-    },
-
-    getLinkATagIE7Fix: function () {
-        return "<!--[if lte ie 7]><b></b><![endif]-->";
     },
 
     getLinkHTML: function ( link ) {
@@ -697,10 +693,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 			
 			// Sidebar
 			var mobileModuleSb = 200;
-			
-			// Branding
-			var mobileModuleSb = 200;
-			
+					
 			function getBlocks2Width() {
 				var width = jQuery(".ctx-content-block2").width();
 				return width;
@@ -717,7 +710,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 			}
 			
 			function getSidebarWidth() {
-				var width = jQuery(".ctx-sidebar-container").width();
+				var width = jQuery(".ctx-sidebar").width();
 				return width;
 			}
 			
@@ -751,7 +744,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 			}
 			
 			function moduleClassSb(classname) {
-				jQuery(".ctx-sidebar-container").addClass(classname);
+				jQuery(".ctx-sidebar").addClass(classname);
 			}			
 			
 			// Blocks2
@@ -1194,55 +1187,7 @@ Contextly.SnippetWidgetTabsFormatter = Contextly.createClass({
         }
 
         return html;
-    },
-
-    getLinkHTML: function ( link ) {
-        var item_style='';
-
-        if ( link.thumbnail_url ) {
-			if( this.WidgetIsChromeBlocks()==true ) {
-				item_style += "style='height: 70px'";
-			} else {
-				item_style += "style='height: " + this.getImagesHeight() + "px'";
-			}
-        }
-
-        var html = "<ul class='ctx_horizontal_line' " + item_style + ">";
-
-        if ( link.thumbnail_url ) {
-
-			if( this.WidgetIsChromeBlocks()==true ) {
-				var image_width = 70;
-			} else { var image_width = this.getImagesWidth(); }
-
-            var image_li_width = image_width + 8;
-            var image_html = "<img src='" + link.thumbnail_url + "' style='width: " + image_width + "px !important;' />";
-            var image_href;
-
-            if ( link.video ) {
-                image_href = this.getVideoLinkATag( link, image_html );
-            } else {
-                image_href = this.getLinkATag( link, image_html );
-            }
-
-            html += "<li style='width: " + image_li_width + "px;'>" + image_href + "</li>";
-        }
-
-        if ( link.video ) {
-            html += "<li>" + this.getVideoLinkATag( link, link.title ) + "</a>";
-        } else {
-            html += "<li>" + this.getLinkATag( link, link.title ) + "</a>";
-        }
-
-        if ( this.widget.settings.display_link_dates && link.publish_date ) {
-            html += " <span class='link-pub-date'>" + Contextly.Utils.getInstance().dateTextDiff( link.publish_date ) + "</span>";
-        }
-
-        html += this.getLinkATagIE7Fix() + "</li>";
-        html += "</ul>";
-
-        return html;
-    },
+    },   
 
     hasImagesForLinks: function( type ) {
         var img_count = 0;
@@ -1576,10 +1521,46 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
 
     getWidgetHTML: function()
     {
-        return "<div class='ctx_content'><ul class='ctx_sidebar_link " + ( this.hasImagesForLinks( 'previous' ) ? 'ctx_images' : 'ctx_noimages' ) + "'>"
+		return "<div class='ctx-content-sidebar'><div class='ctx-sb-content'>"
             + this.getLinksHTMLOfType( 'previous' )
-            + "</ul></div>";
+            + "</div></div>";
     },
+	
+	getLinkHTML: function ( link ) {
+        var item_style='';
+
+        var html = "<div class='ctx-sb-fotmater'>";
+
+        if ( link.thumbnail_url ) {
+
+            var image_html = "<img src='" + link.thumbnail_url + "' />";
+            var image_href;
+
+            if ( link.video ) {
+                image_href = this.getVideoLinkATag( link, image_html );
+            } else {
+                image_href = this.getLinkATag( link, image_html );
+            }
+
+            html += "<div class='ctx-sb-img'>" + image_href + "</div>";
+        }
+
+        if ( link.video ) {
+            html += "<div class='ctx-sb-text'><p>" + this.getVideoLinkATag( link, link.title ) + "</p></a>";
+        } else {
+            html += "<div class='ctx-sb-text'><p>" + this.getLinkATag( link, link.title ) + "</p></a>";
+        }
+
+        if ( this.widget.settings.display_link_dates && link.publish_date ) {
+            html += " <span class='link-pub-date'>" + Contextly.Utils.getInstance().dateTextDiff( link.publish_date ) + "</span>";
+        }
+
+        html += "</div>";
+        html += "</div>";
+
+        return html;
+    },
+	
     getLinksHTMLOfType: function( type )
     {
         var html = "";
@@ -1588,7 +1569,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
                 var link = this.widget.links[ type ][ link_idx ];
 
                 if ( link.id && link.title ) {
-                    html += "<li>" + this.getLinkHTML( link ) + "</li>";
+                    html += "<div class='ctx-sb-link'>" + this.getLinkHTML( link ) + "</div>";
                 }
             }
         }
@@ -1607,17 +1588,18 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
                     self.displayText( html );
 
                     // Do some sidebar modifications
-                    self.getDisplayElement().removeClass( 'ctx_sidebar_hidden' )
-                        .addClass( 'ctx_sidebar' )
-                        .addClass( 'ctx_sidebar_' + self.widget.layout );
+                    self.getDisplayElement().removeClass( 'ctx-sidebar-container' )
+                        .addClass( 'ctx-sidebar' )
+                        .addClass( 'ctx-sidebar-' + self.widget.layout )
+						.addClass( 'ctx-sb-clearfix' );
 
-                    // Check if we need to add sidebar title and description
+                    // Check if we need to add sidebar title and description 
                     var title = self.widget.name;
                     var description = self.widget.description;
-                    var sidebar_content = self.getDisplayElement().find( '.ctx_content' );
+                    var sidebar_content = self.getDisplayElement().find( '.ctx-content-sidebar' );
 
-                    if ( description ) sidebar_content.prepend( "<div class='ctx_sidebar_description'>" + self.escape( description ) + "</div>" );
-                    if ( title ) sidebar_content.prepend( "<div class='ctx_sidebar_title'>" + self.escape( title ) + "</div>" );
+                    if ( description ) sidebar_content.prepend( "<div class='ctx-sb-description'><p>" + self.escape( description ) + "</p></div>" );
+                    if ( title ) sidebar_content.prepend( "<div class='ctx-sb-title'><p>" + self.escape( title ) + "</p></div>" );
 
                     self.loadCss( 'sidebar-css' );
                 }
@@ -1640,7 +1622,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
     },
 
     getCustomCssCode: function () {
-        return Contextly.SidebarWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx_sidebar', this.getSettings() );
+        return Contextly.SidebarWidgetCssCustomBuilder.getInstance().buildCSS( '.ctx-sidebar', this.getSettings() );
     }
 
 });
@@ -1661,32 +1643,30 @@ Contextly.SidebarWidgetCssCustomBuilder = Contextly.createClass({
         }
 
         if ( settings.font_family ) {
-            css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-family", settings.font_family );
-            css_code += this.buildCSSRule( entry, ".ctx_sidebar_title" , "font-family", settings.font_family );
-            css_code += this.buildCSSRule( entry, ".ctx_sidebar_description" , "font-family", settings.font_family );
+            css_code += this.buildCSSRule( entry, ".ctx-sb-link a" , "font-family", settings.font_family );
+            css_code += this.buildCSSRule( entry, ".ctx-sb-description p" , "font-family", settings.font_family );
+            css_code += this.buildCSSRule( entry, ".ctx-sb-title p" , "font-family", settings.font_family );
         }
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, "a.ctx_title" , "font-size", settings.font_size );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx-sb-link a" , "font-size", settings.font_size );
 
         if ( settings.color_background ) {
-            css_code += this.buildCSSRule( entry, ".ctx_content" , "background-color", settings.color_background );
-            css_code += this.buildCSSRule( entry, ".ctx_images img" , "border-color", settings.color_background );
+            css_code += this.buildCSSRule( entry, ".ctx-content-sidebar" , "background-color", settings.color_background );            
         }
 
         if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx_content .ctx_title" , "color", settings.color_links );
-            css_code += this.buildCSSRule( entry, ".ctx_content span" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-sb-link a" , "color", settings.color_links );
         }
 
         if ( settings.color_border ) {
-            css_code += this.buildCSSRule( entry, ".ctx_content" , "border-color", settings.color_border + " !important;" );
+            css_code += this.buildCSSRule( entry, ".ctx-content-sidebar" , "border-color", settings.color_border + " !important;" );
         }
 
         if ( settings.title_font_size ) {
-            css_code += this.buildCSSRule( entry, ".ctx_sidebar_title" , "font-size", settings.title_font_size );
+            css_code += this.buildCSSRule( entry, ".ctx-sb-title p" , "font-size", settings.title_font_size );
         }
 
         if ( settings.description_font_size ) {
-            css_code += this.buildCSSRule( entry, ".ctx_sidebar_description" , "font-size", settings.description_font_size );
+            css_code += this.buildCSSRule( entry, ".ctx-sb-description p" , "font-size", settings.description_font_size );
         }
 
         return css_code;
