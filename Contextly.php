@@ -181,7 +181,7 @@ class Contextly
 
     public function echoAdminPublishMetaboxForPage() {
 	    echo '<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee; margin-bottom: 5px;">';
-	    echo 'Contextly: <input type="button" value="Choose Related Posts" class="button action button-primary" onclick="Contextly.PopupHelper.getInstance().snippetPopup();" style="float: right;"/>';
+	    echo 'Contextly: <input type="button" value="Choose Related Posts" class="button action button-primary" onclick="Contextly.PopupHelper.getInstance().snippetPopup();" style="float: right;" id="ctx-choose-related-main-btn" />';
 	    echo '</div>';
     }
 

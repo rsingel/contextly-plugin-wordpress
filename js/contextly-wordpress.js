@@ -81,6 +81,14 @@ Contextly.Loader = Contextly.createClass({
         if ( !this.isCallAvailable() ) return;
 
         var self = this;
+
+        jQuery(document).ready(
+            function ()
+            {
+                Contextly.Utils.getInstance().disableAdminButtons();
+            }
+        );
+
         Contextly.RESTClient.getInstance().call(
             'pagewidgets',
             'get',
@@ -217,6 +225,7 @@ Contextly.PageView = Contextly.createClass({
 
         if ( Contextly.Settings.getInstance().isAdmin() ) {
             this.attachPublishConfirmation();
+            Contextly.Utils.getInstance().enableAdminButtons();
         }
     },
 
@@ -420,10 +429,10 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     displayAdminControls: function () {
         var controls = '';
         if ( this.hasWidgetData() ) {
-            controls = "<br><input type='button' class='button action' value='Edit Related Posts' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' />";
+            controls = "<br><input type='button' class='button action' value='Edit Related Posts' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' disabled='disabled' id='ctx-choose-related-btn' />";
             this.appendText( controls );
         } else {
-            controls = "<input type='button' class='button action' value='Choose Related Posts' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' />";
+            controls = "<input type='button' class='button action' value='Choose Related Posts' onclick='Contextly.PopupHelper.getInstance().snippetPopup();' disabled='disabled' id='ctx-choose-related-btn' />";
             this.displayText( controls );
         }
     },
@@ -1693,6 +1702,27 @@ Contextly.Utils = Contextly.createClass({
 
 
         return '';
+    },
+
+    enableAdminButtons: function ()
+    {
+        jQuery('#ctx-choose-related-main-btn').removeAttr( 'disabled' );
+        jQuery('#ctx-choose-related-btn').removeAttr( 'disabled' );
+    },
+
+    disableAdminButtons: function ()
+    {
+        jQuery('#ctx-choose-related-main-btn').attr( 'disabled', 'disabled' );
+        jQuery('#ctx-choose-related-btn').attr( 'disabled', 'disabled' );
+
+        jQuery(document).ready(
+            function () {
+                // todo: fix problem
+                //console.log(tinymce.activeEditor.plugins.contextlylink);
+
+            }
+        );
+
     }
 
 });
