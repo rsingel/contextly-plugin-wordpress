@@ -1708,21 +1708,23 @@ Contextly.Utils = Contextly.createClass({
     {
         jQuery('#ctx-choose-related-main-btn').removeAttr( 'disabled' );
         jQuery('#ctx-choose-related-btn').removeAttr( 'disabled' );
+        this.toggleAdminEditorButtons(false);
     },
 
     disableAdminButtons: function ()
     {
         jQuery('#ctx-choose-related-main-btn').attr( 'disabled', 'disabled' );
         jQuery('#ctx-choose-related-btn').attr( 'disabled', 'disabled' );
+        this.toggleAdminEditorButtons(true);
+    },
 
-        jQuery(document).ready(
-            function () {
-                // todo: fix problem
-                //console.log(tinymce.activeEditor.plugins.contextlylink);
-
-            }
-        );
-
+    toggleAdminEditorButtons: function (state)
+    {
+        if ( tinymce && tinymce.activeEditor )
+        {
+            tinymce.activeEditor.controlManager.setDisabled('contextlylink', state);
+            tinymce.activeEditor.controlManager.setDisabled('contextlysidebar', state);
+        }
     }
 
 });

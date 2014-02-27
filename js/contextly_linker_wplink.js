@@ -43,7 +43,14 @@
 					cmd : 'WP_Contextly_Link'
 				});
 
-				ed.onNodeChange.add(function(ed, cm, n, co) {
+                ed.onInit.add(
+                    function (e)
+                    {
+                        tinymce.activeEditor.controlManager.setDisabled('contextlylink', true);
+                    }
+                );
+
+                ed.onNodeChange.add(function(ed, cm, n, co) {
 					disabled = co && n.nodeName != 'A';
                     var selected_text = ed.selection.getContent({format : 'text'});
 

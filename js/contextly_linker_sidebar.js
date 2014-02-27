@@ -13,6 +13,13 @@ tinymce.create('tinymce.plugins.ContextlyPluginSidebar', {
             }
         });
 
+        ed.onInit.add(
+            function (e)
+            {
+                tinymce.activeEditor.controlManager.setDisabled('contextlysidebar', true);
+            }
+        );
+
         ed.onNodeChange.add(function(ed, cm, n, co) {
             sidebar_id = null;
 
