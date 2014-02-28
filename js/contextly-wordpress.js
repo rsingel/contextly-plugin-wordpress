@@ -725,87 +725,67 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 			
 			function addExtraLink2() {
 				jQuery(".ctx-extra-link2").css("display", "block");
-			}
+			}	
+						
+			function respClassChanger( respClass, baseClass ) {
+				jQuery( "." + baseClass ).attr("class", baseClass + " ctx-nodefs " + respClass);
+			}          
 			
-			function moduleClassBl2(classname) {
-				jQuery(".ctx-content-block2").addClass(classname);
-			}
-			
-			function moduleClassFl(classname) {
-				jQuery(".ctx-content-float").addClass(classname);
-			}
-			
-			function moduleClassBl(classname) {
-				jQuery(".ctx-content-block").addClass(classname);
-			}
-			
-			function moduleClassTx(classname) {
-				jQuery(".ctx-content-text").addClass(classname);
-			}
-			
-			function moduleClassSb(classname) {
-				jQuery(".ctx-sidebar").addClass(classname);
+			// Blocks
+			if(getBlocksWidth() < mobileModuleBl) {
+				respClassChanger( "ctx-module-mobile", "ctx-content-block" );
+			} else if(getBlocksWidth() <= tabletModuleBl && getBlocksWidth() >= mobileModuleBl) {
+				respClassChanger( "ctx-module-tablet", "ctx-content-block" );
+			} else if(getBlocksWidth() <= normalModuleBl && getBlocksWidth() >= tabletModuleBl) {
+				respClassChanger( "ctx-module-default", "ctx-content-block" );
+			} else if(getBlocksWidth() > normalModuleBl && getBlocksWidth() <= wideModuleBl) {
+				addExtraLink1();
+				respClassChanger( "ctx-module-sec5", "ctx-content-block" );
+			} else if(getBlocksWidth() > wideModuleBl) {
+				addExtraLink1();
+				addExtraLink2();				
+				respClassChanger( "ctx-module-sec6", "ctx-content-block" );		
 			}			
 			
 			// Blocks2
 			if(getBlocks2Width() < mobileModule) {
-				moduleClassBl2("ctx-module-mobile");
+				respClassChanger( "ctx-module-mobile", "ctx-content-block2" );	
 			} else if(getBlocks2Width() <= normalModule && getBlocks2Width() >= mobileModule) {
-				moduleClassBl2("ctx-module-default");
+				respClassChanger( "ctx-module-default", "ctx-content-block2" );
 			} else if(getBlocks2Width() > normalModule && getBlocks2Width() <= wideModule) {
 				addExtraLink1();
-				moduleClassBl2("ctx-module-sec5");
+				respClassChanger( "ctx-module-sec5", "ctx-content-block2" );
 			} else if(getBlocks2Width() > wideModule) {
 				addExtraLink1();
 				addExtraLink2();
-				moduleClassBl2("ctx-module-sec6");
+				respClassChanger( "ctx-module-sec6", "ctx-content-block2" );
 			}
 			
 			// Float
 			if(getFloatWidth() < mobileModuleFl) {
-				moduleClassFl("ctx-module-mobile");
+				respClassChanger( "ctx-module-mobile", "ctx-content-float" );
 			} else if(getFloatWidth() <= mediumModuleFl && getFloatWidth() >= mobileModuleFl) {
-				moduleClassFl("ctx-module-medium");
+				respClassChanger( "ctx-module-medium", "ctx-content-float" );
 			} else if(getFloatWidth() > mediumModuleFl && getFloatWidth() <= normalModuleFl) {
-				moduleClassFl("ctx-module-normal");
+				respClassChanger( "ctx-module-normal", "ctx-content-float" );
 			} else if(getFloatWidth() > normalModuleFl) {
 				addExtraLink1();
-				moduleClassFl("ctx-module-wide");
-			}
-			
-			// Blocks
-			if(getBlocksWidth() < mobileModuleBl) {
-				moduleClassBl("ctx-module-mobile");
-			} else if(getBlocksWidth() <= tabletModuleBl && getBlocksWidth() >= mobileModuleBl) {
-				moduleClassBl("ctx-module-tablet");
-			} else if(getBlocksWidth() <= normalModuleBl && getBlocksWidth() >= tabletModuleBl) {
-				moduleClassBl("ctx-module-default");
-				//blocksSliding();
-			} else if(getBlocksWidth() > normalModuleBl && getBlocksWidth() <= wideModuleBl) {
-				addExtraLink1();
-				moduleClassBl("ctx-module-sec5");
-				//blocksSliding();
-			} else if(getBlocksWidth() > wideModuleBl) {
-				addExtraLink1();
-				addExtraLink2();				
-				moduleClassBl("ctx-module-sec6");
-				//blocksSliding();		
-			}
+				respClassChanger( "ctx-module-wide", "ctx-content-float" );
+			}			
 			
 			// Text
 			if(getTextWidth() < mobileModuleTx) {
-				moduleClassTx("ctx-module-mobile");
+				respClassChanger( "ctx-module-mobile", "ctx-content-text" );
 			} else if(getTextWidth() >= mobileModuleTx) {
-				moduleClassTx("ctx-module-default");
+				respClassChanger( "ctx-module-default", "ctx-content-text" );
 			}
 			
 			// Sidebar
 			if(getSidebarWidth() < mobileModuleSb) {
-				moduleClassSb("ctx-sidebar-mobile");
+				respClassChanger( "ctx-sidebar-mobile", "ctx-sidebar" );
 			} else if(getSidebarWidth() >= mobileModuleSb) {
-				moduleClassSb("ctx-sidebar-default");
+				respClassChanger( "ctx-sidebar-default", "ctx-sidebar" );
 			}
-			
 		}
 		
 		var slideMinHeightBl = 54;
