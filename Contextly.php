@@ -11,12 +11,12 @@ class Contextly
     const API_SETTINGS_KEY = 'contextly_options_api';
     const ADVANCED_SETTINGS_KEY = 'contextly_options_advanced';
 
-    const WIDGET_SNIPPET_ID = 'ctx_linker';
-    const WIDGET_SNIPPET_CLASS = 'ctx_widget';
+    const WIDGET_SNIPPET_ID = 'ctx-module';
+    const WIDGET_SNIPPET_CLASS = 'ctx-module-container ctx-clearfix';
     const WIDGET_SNIPPET_META_BOX_TITLE = 'Contextly Related Links';
     const WIDGET_SOCIALER_META_BOX_TITLE = 'Contextly Socialer';
 
-    const WIDGET_SIDEBAR_CLASS = 'ctx_widget_hidden';
+    const WIDGET_SIDEBAR_CLASS = 'ctx-sidebar-container';
     const WIDGET_SIDEBAR_PREFIX = 'contextly-';
 	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar id="%HASH%"]';
 
