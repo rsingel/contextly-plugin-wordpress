@@ -82,12 +82,15 @@ Contextly.Loader = Contextly.createClass({
 
         var self = this;
 
-        jQuery(document).ready(
-            function ()
-            {
-                Contextly.Utils.getInstance().disableAdminButtons();
-            }
-        );
+        if ( Contextly.Settings.getInstance().isAdmin() )
+        {
+            jQuery(document).ready(
+                function ()
+                {
+                    Contextly.Utils.getInstance().disableAdminButtons();
+                }
+            );
+        }
 
         Contextly.RESTClient.getInstance().call(
             'pagewidgets',
