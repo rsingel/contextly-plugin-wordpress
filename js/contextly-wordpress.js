@@ -1057,10 +1057,10 @@ Contextly.TextWidgetCssCustomBuilder = Contextly.createClass({
         var css_code = "";
 
         if ( settings.css_code ) css_code += Contextly.Utils.getInstance().escape( settings.css_code );
-        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-link-title a" , "font-family", settings.font_family );
-        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-link-title a" , "font-size", settings.font_size );
+        if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-content a" , "font-family", settings.font_family );
+        if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-content a" , "font-size", settings.font_size );
         if ( settings.color_links ) {
-            css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-link-title a" , "color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-content a" , "color", settings.color_links );
         }
         if ( settings.color_background ) {
             css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-header" , "background-color", settings.color_background );
