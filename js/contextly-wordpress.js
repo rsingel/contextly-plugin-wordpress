@@ -720,6 +720,11 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 				return getwidth;
 			}
 			
+			function getWidgetType() {
+				var widgetType = jQuery( "#ctx-module" ).attr( "widget-type" );
+				return widgetType;
+			}
+			
 			function removeExtraLink1() {
 				jQuery(".ctx-link-additional-5").remove();
 			}
@@ -733,37 +738,43 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 			}          
 			
 			// Blocks
-			if(getBlocksWidth() < mobileModuleBl) {
-				respClassChanger( "ctx-module-mobile", "ctx-content-block" );
-				removeExtraLink1();
-				removeExtraLink2();
-			} else if(getBlocksWidth() <= tabletModuleBl && getBlocksWidth() >= mobileModuleBl) {
-				respClassChanger( "ctx-module-tablet", "ctx-content-block" );
-				removeExtraLink1();
-				removeExtraLink2();
-			} else if(getBlocksWidth() <= normalModuleBl && getBlocksWidth() >= tabletModuleBl) {
-				removeExtraLink1();
-				removeExtraLink2();
-				respClassChanger( "ctx-module-default", "ctx-content-block" );
-			} else if(getBlocksWidth() > normalModuleBl && getBlocksWidth() <= wideModuleBl) {
-				respClassChanger( "ctx-module-sec5", "ctx-content-block" );
-				removeExtraLink2();
-			} else if(getBlocksWidth() > wideModuleBl) {				
-				respClassChanger( "ctx-module-sec6", "ctx-content-block" );		
-			}			
+			if(getWidgetType() == 'blocks' ) {
+				if(getBlocksWidth() < mobileModuleBl) {
+					respClassChanger( "ctx-module-mobile", "ctx-content-block" );
+					removeExtraLink1();
+					removeExtraLink2();
+				} else if(getBlocksWidth() <= tabletModuleBl && getBlocksWidth() >= mobileModuleBl) {
+					respClassChanger( "ctx-module-tablet", "ctx-content-block" );
+					removeExtraLink1();
+					removeExtraLink2();
+				} else if(getBlocksWidth() <= normalModuleBl && getBlocksWidth() >= tabletModuleBl) {
+					removeExtraLink1();
+					removeExtraLink2();
+					respClassChanger( "ctx-module-default", "ctx-content-block" );
+				} else if(getBlocksWidth() > normalModuleBl && getBlocksWidth() <= wideModuleBl) {
+					respClassChanger( "ctx-module-sec5", "ctx-content-block" );
+					removeExtraLink2();
+				} else if(getBlocksWidth() > wideModuleBl) {				
+					respClassChanger( "ctx-module-sec6", "ctx-content-block" );		
+				}
+			}
 			
 			// Blocks2
-			if(getBlocks2Width() < mobileModule) {
-				respClassChanger( "ctx-module-mobile", "ctx-content-block2" );	
-			} else if(getBlocks2Width() <= normalModule && getBlocks2Width() >= mobileModule) {
-				respClassChanger( "ctx-module-default", "ctx-content-block2" );
-			} else if(getBlocks2Width() > normalModule && getBlocks2Width() <= wideModule) {
-				addExtraLink1();
-				respClassChanger( "ctx-module-sec5", "ctx-content-block2" );
-			} else if(getBlocks2Width() > wideModule) {
-				addExtraLink1();
-				addExtraLink2();
-				respClassChanger( "ctx-module-sec6", "ctx-content-block2" );
+			if(getWidgetType() == 'blocks2' ) {
+				if(getBlocks2Width() < mobileModule) {
+					removeExtraLink1();
+					removeExtraLink2();
+					respClassChanger( "ctx-module-mobile", "ctx-content-block2" );	
+				} else if(getBlocks2Width() <= normalModule && getBlocks2Width() >= mobileModule) {
+					removeExtraLink1();
+					removeExtraLink2();
+					respClassChanger( "ctx-module-default", "ctx-content-block2" );
+				} else if(getBlocks2Width() > normalModule && getBlocks2Width() <= wideModule) {
+					removeExtraLink2();
+					respClassChanger( "ctx-module-sec5", "ctx-content-block2" );
+				} else if(getBlocks2Width() > wideModule) {
+					respClassChanger( "ctx-module-sec6", "ctx-content-block2" );
+				}
 			}
 			
 			// Float
@@ -795,15 +806,15 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 		
 		var slideMinHeightBl = 54;
 		
-		function getSliderContentBl(classname) {
-			return jQuery(".ctx-link .ctx-link-title");
-		}
-		
 		function getBlocksWidth() {
 			var width = jQuery(".ctx-content-block").width();
 			return width;
 		}
-
+			
+		function getSliderContentBl(classname) {
+			return jQuery(".ctx-link .ctx-link-title");
+		}
+		
 		if(getBlocksWidth() >= 450) {
 			getSliderContentBl().css("height", slideMinHeightBl);
 			
