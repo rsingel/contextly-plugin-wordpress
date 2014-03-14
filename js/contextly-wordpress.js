@@ -725,13 +725,19 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 				return widgetType;
 			}
 			
+			function removeExtraLinks() {
+				jQuery(".ctx-link-additional-4").remove();
+				jQuery(".ctx-link-additional-5").remove();
+				jQuery(".ctx-link-additional-6").remove();
+			}
+			
 			function removeExtraLink1() {
 				jQuery(".ctx-link-additional-5").remove();
 			}
 			
 			function removeExtraLink2() {
 				jQuery(".ctx-link-additional-6").remove();
-			} //ctx-link-additional
+			}
 						
 			function respClassChanger( respClass, baseClass ) {
 				jQuery( "." + baseClass ).attr("class", baseClass + " ctx-nodefs " + respClass);
@@ -778,16 +784,22 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 			}
 			
 			// Float
-			if(getFloatWidth() < mobileModuleFl) {
-				respClassChanger( "ctx-module-mobile", "ctx-content-float" );
-			} else if(getFloatWidth() <= mediumModuleFl && getFloatWidth() >= mobileModuleFl) {
-				respClassChanger( "ctx-module-medium", "ctx-content-float" );
-			} else if(getFloatWidth() > mediumModuleFl && getFloatWidth() <= normalModuleFl) {
-				respClassChanger( "ctx-module-normal", "ctx-content-float" );
-			} else if(getFloatWidth() > normalModuleFl) {
-				addExtraLink1();
-				respClassChanger( "ctx-module-wide", "ctx-content-float" );
-			}			
+			if(getWidgetType() == 'float' ) {
+				if(getFloatWidth() < mobileModuleFl) {
+					removeExtraLinks();
+					respClassChanger( "ctx-module-mobile", "ctx-content-float" );					
+				} else if(getFloatWidth() <= mediumModuleFl && getFloatWidth() >= mobileModuleFl) {
+					removeExtraLinks();
+					respClassChanger( "ctx-module-medium", "ctx-content-float" );
+				} else if(getFloatWidth() > mediumModuleFl && getFloatWidth() <= normalModuleFl) {
+					removeExtraLinks();
+					respClassChanger( "ctx-module-normal", "ctx-content-float" );
+				} else if(getFloatWidth() > normalModuleFl) {
+					removeExtraLink1();
+					removeExtraLink2();
+					respClassChanger( "ctx-module-wide", "ctx-content-float" );
+				}	
+			}
 			
 			// Text
 			if(getTextWidth() < mobileModuleTx) {
@@ -1329,7 +1341,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 
     getLinkHTMLNormal: function ( link, linkCounter ) {
 		var linkClass = "";
-		if( linkCounter > 4 ) { linkClass = " ctx-link-additional-" + linkCounter; }
+		if( linkCounter > 3 ) { linkClass = " ctx-link-additional-" + linkCounter; }
         return "<div class='ctx-link" + linkClass + "'>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
     },
 
