@@ -1304,7 +1304,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 				
 				div += "<div class='ctx-links-content ctx-nodefs ctx-clearfix'>";
 				div += this.getLinksHTMLOfType( section_name );
-                div += "</div>";
+                div += "</div></div>";
             }
         }
         div += "</div>";
@@ -1314,6 +1314,8 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 			div += "<a href='#' id='ctx-branding-link' class='ctx-nodefs'>Powered by</a>";
 			div += "</div>";
         }
+		
+		div += "</div>";
 
         return div;
     },
