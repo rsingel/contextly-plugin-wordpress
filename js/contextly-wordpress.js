@@ -1322,7 +1322,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 
     getLinkHTML: function ( link, linkCounter ) {
         if ( link.video ) {
-            return this.getLinkHTMLVideo( link );
+            return this.getLinkHTMLVideo( link, linkCounter );
         } else {
             return this.getLinkHTMLNormal( link, linkCounter );
         }
@@ -1337,8 +1337,10 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         return inner_html;
     },
 
-    getLinkHTMLVideo: function ( link ) {
-        return "<div class='ctx-link'>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
+    getLinkHTMLVideo: function ( link, linkCounter ) {
+		var linkClass = "";
+		if( linkCounter > 3 ) { linkClass = " ctx-link-additional-" + linkCounter; }
+        return "<div class='ctx-link" + linkClass + "'>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
     },
 
     getLinkHTMLNormal: function ( link, linkCounter ) {
@@ -1403,23 +1405,17 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
     getInnerLinkHTML: function ( link, is_video ) {
         var inner_html = "";
         if ( this.getLinkThumbnailUrl( link ) ) {
-            if ( is_video ) {
-                inner_html += "<div class='playbutton-wrapper'>";
-            }
             inner_html += "<div class='ctx-link-image ctx-nodefs'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
-            if ( is_video ) {
-                inner_html += "</div>";
-            }
         }
         inner_html += "<div class='ctx-link-title'><p class='ctx-nodefs'>" + link.title + "</p></div>";
 
         return inner_html;
-
-
     },
 
-    getLinkHTMLVideo: function ( link ) {
-        return "<div>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</div>";
+    getLinkHTMLVideo: function ( link, linkCounter ) {
+		var linkClass = "";
+		if( linkCounter > 3 ) { linkClass = " ctx-link-additional-" + linkCounter; }
+        return "<div class='ctx-link" + linkClass + "'>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</div>";
     },
 
     getCustomCssCode: function () {
@@ -1470,13 +1466,7 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
     getInnerLinkHTML: function ( link, is_video ) {
         var inner_html = "";
         if ( this.getLinkThumbnailUrl( link ) ) {
-            if ( is_video ) {
-                inner_html += "<div class='playbutton-wrapper'>";
-            }
             inner_html += "<div class='ctx-link-image ctx-nodefs'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
-            if ( is_video ) {
-                inner_html += "</div>";
-            }
         }
 
         inner_html += "<div class='ctx-link-title'><p class='ctx-nodefs'>" + link.title + "</p></div>";
@@ -1484,8 +1474,10 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
         return inner_html;
     },
 
-    getLinkHTMLVideo: function ( link ) {
-        return "<div>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</div>";
+    getLinkHTMLVideo: function ( link, linkCounter ) {
+		var linkClass = "";
+		if( linkCounter > 3 ) { linkClass = " ctx-link-additional-" + linkCounter; }
+        return "<div class='ctx-link" + linkClass + "'>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link, true ) ) + "</div>";
     },
 
     getCustomCssCode: function () {
