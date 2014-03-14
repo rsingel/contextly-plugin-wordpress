@@ -81,6 +81,7 @@ Contextly.Loader = Contextly.createClass({
         if ( !this.isCallAvailable() ) return;
 
         var self = this;
+
         Contextly.RESTClient.getInstance().call(
             'pagewidgets',
             'get',
@@ -719,13 +720,13 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 				return getwidth;
 			}
 			
-			function addExtraLink1() {
-				jQuery(".ctx-extra-link1").css("display", "block");
+			function removeExtraLink1() {
+				jQuery(".ctx-link-additional-5").remove();
 			}
 			
-			function addExtraLink2() {
-				jQuery(".ctx-extra-link2").css("display", "block");
-			}	
+			function removeExtraLink2() {
+				jQuery(".ctx-link-additional-6").remove();
+			} //ctx-link-additional
 						
 			function respClassChanger( respClass, baseClass ) {
 				jQuery( "." + baseClass ).attr("class", baseClass + " ctx-nodefs " + respClass);
@@ -734,16 +735,20 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 			// Blocks
 			if(getBlocksWidth() < mobileModuleBl) {
 				respClassChanger( "ctx-module-mobile", "ctx-content-block" );
+				removeExtraLink1();
+				removeExtraLink2();
 			} else if(getBlocksWidth() <= tabletModuleBl && getBlocksWidth() >= mobileModuleBl) {
 				respClassChanger( "ctx-module-tablet", "ctx-content-block" );
+				removeExtraLink1();
+				removeExtraLink2();
 			} else if(getBlocksWidth() <= normalModuleBl && getBlocksWidth() >= tabletModuleBl) {
+				removeExtraLink1();
+				removeExtraLink2();
 				respClassChanger( "ctx-module-default", "ctx-content-block" );
 			} else if(getBlocksWidth() > normalModuleBl && getBlocksWidth() <= wideModuleBl) {
-				addExtraLink1();
 				respClassChanger( "ctx-module-sec5", "ctx-content-block" );
-			} else if(getBlocksWidth() > wideModuleBl) {
-				addExtraLink1();
-				addExtraLink2();				
+				removeExtraLink2();
+			} else if(getBlocksWidth() > wideModuleBl) {				
 				respClassChanger( "ctx-module-sec6", "ctx-content-block" );		
 			}			
 			
@@ -1227,22 +1232,24 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     extend: Contextly.SnippetWidgetTextFormatter,
 
     getNumberOfLinksPerSection: function () {
-        return 4;
+        return 6;
     },
 
     getLinksHTMLOfType: function( type ) {
         var html = "";
+		var linkCounter = 0;
         var widget = this.widget;
         var links_limit = this.getNumberOfLinksPerSection();
-
+		
         if ( widget.links && widget.links[ type ] ) {
             for ( var link_idx in widget.links[ type ] ) {
+				linkCounter++;
                 if ( link_idx >= links_limit ) break;
 
                 var link = widget.links[ type ][ link_idx ];
 
                 if ( link.id && link.title ) {
-                    html += this.getLinkHTML( link );
+                    html += this.getLinkHTML( link, linkCounter );
                 }
             }
         }
@@ -1275,8 +1282,6 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
 				div += "<div class='ctx-links-content ctx-nodefs ctx-clearfix'>";
 				div += this.getLinksHTMLOfType( section_name );
                 div += "</div>";
-				
-                div += "</div>";
             }
         }
         div += "</div>";
@@ -1290,11 +1295,11 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         return div;
     },
 
-    getLinkHTML: function ( link ) {
+    getLinkHTML: function ( link, linkCounter ) {
         if ( link.video ) {
             return this.getLinkHTMLVideo( link );
         } else {
-            return this.getLinkHTMLNormal( link );
+            return this.getLinkHTMLNormal( link, linkCounter );
         }
     },
 
@@ -1311,8 +1316,10 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
         return "<div class='ctx-link'>" + this.getVideoLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
     },
 
-    getLinkHTMLNormal: function ( link ) {
-        return "<div class='ctx-link'>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
+    getLinkHTMLNormal: function ( link, linkCounter ) {
+		var linkClass = "";
+		if( linkCounter > 4 ) { linkClass = " ctx-link-additional-" + linkCounter; }
+        return "<div class='ctx-link" + linkClass + "'>" + this.getLinkATag( link, this.getInnerLinkHTML( link ) ) + "</div>";
     },
 
     getCustomCssCode: function () {
@@ -1758,8 +1765,7 @@ Contextly.Utils = Contextly.createClass({
 
 
         return '';
-    }
-
+    },
 });
 
 Contextly.PageEvents = Contextly.createClass({
