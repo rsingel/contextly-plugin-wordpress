@@ -622,13 +622,13 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     getLinkATag: function ( link, content ) {
         return "<a href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
-            this.escape( link.title ) + "\" class='ctx-clearfix' onmousedown=\"this.href='" +
+            this.escape( link.title ) + "\" class='ctx-clearfix ctx-nodefs' onmousedown=\"this.href='" +
             this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
             content + "</a>";
     },
 
     getVideoLinkATag: function ( link, content ) {
-        return "<a rel=\"ctx_video_link\" class='ctx-clearfix' href=\"" +
+        return "<a rel=\"ctx_video_link\" class='ctx-clearfix ctx-nodefs' href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" " +
             this.getOnclickHtml( link ) + ">" +
@@ -995,7 +995,7 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
         var div = "";
 
         div += "<div class='" + this.getWidgetCssName() + " ctx-nodefs'>";		
-		div += "<div class='ctx-sections-container ctx-nomar ctx-clearfix'>";
+		div += "<div class='ctx-sections-container ctx-clearfix'>";
 
         var sections = this.widget.settings.display_sections;
 
@@ -1005,11 +1005,11 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
                 var section_key = section_name + '_subhead';
                 var section_header = this.widget.settings[ section_key ];
 
-                div += "<div class='ctx-section ctx-clearfix'>";
+                div += "<div class='ctx-section'>";
 				
-                div += "<div class='ctx-links-header ctx-clearfix'><p class='ctx-nodefs'>" + this.escape( section_header ) + "</p></div>";
+                div += "<div class='ctx-links-header'><p class='ctx-nodefs'>" + this.escape( section_header ) + "</p></div>";
 				
-                div += "<div class='ctx-links-content ctx-nodefs ctx-clearfix'>" + this.getLinksHTMLOfType( section_name ) + "</div>";
+                div += "<div class='ctx-links-content'>" + this.getLinksHTMLOfType( section_name ) + "</div>";
                 div += "</div>";
             }
         }
