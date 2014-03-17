@@ -1152,7 +1152,7 @@ Contextly.SnippetWidgetBlocksFormatter = Contextly.createClass({
     getInnerLinkHTML: function ( link ) {
         var inner_html = "<div class='ctx-link-title'><p class='ctx-nodefs'>" + link.title + "</div>";
         if ( this.getLinkThumbnailUrl( link ) ) {
-            inner_html += "<div class='ctx-link-image ctx-nodefs'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
+            inner_html += "<div class='ctx-link-image'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
         }
 
         return inner_html;
@@ -1226,7 +1226,7 @@ Contextly.SnippetWidgetBlocks2Formatter = Contextly.createClass({
     getInnerLinkHTML: function ( link, is_video ) {
         var inner_html = "";
         if ( this.getLinkThumbnailUrl( link ) ) {
-            inner_html += "<div class='ctx-link-image ctx-nodefs'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
+            inner_html += "<div class='ctx-link-image'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
         }
         inner_html += "<div class='ctx-link-title'><p class='ctx-nodefs'>" + link.title + "</p></div>";
 
@@ -1287,7 +1287,7 @@ Contextly.SnippetWidgetFloatFormatter = Contextly.createClass({
     getInnerLinkHTML: function ( link, is_video ) {
         var inner_html = "";
         if ( this.getLinkThumbnailUrl( link ) ) {
-            inner_html += "<div class='ctx-link-image ctx-nodefs'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
+            inner_html += "<div class='ctx-link-image'><img src='" + link.thumbnail_url + "' class='ctx-nodefs' /></div>";
         }
 
         inner_html += "<div class='ctx-link-title'><p class='ctx-nodefs'>" + link.title + "</p></div>";
