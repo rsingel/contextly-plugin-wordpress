@@ -1334,7 +1334,7 @@ Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
 //                   Sidebar Widget                         //
 //////////////////////////////////////////////////////////////
 Contextly.SidebarWidgetFormatter = Contextly.createClass({
-    extend: Contextly.SnippetWidgetTabsFormatter,
+    extend: Contextly.SnippetWidgetFormatter,
 
     construct: function( widget ) {
         if ( widget ) {
