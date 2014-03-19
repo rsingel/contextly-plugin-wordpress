@@ -739,6 +739,10 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 						
 			function respClassChanger( respClass, baseClass ) {
 				jQuery( "." + baseClass ).attr("class", baseClass + " ctx-nodefs " + respClass);
+			} 
+			
+			function respSbClassChanger( respClass, baseClass ) {
+				jQuery( "." + baseClass ).attr("class", baseClass + " ctx-sb-clearfix " + respClass);
 			}          
 			
 			// Blocks
@@ -808,9 +812,9 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 			
 			// Sidebar
 			if(getSidebarWidth() < mobileModuleSb) {
-				respClassChanger( "ctx-sidebar-mobile", "ctx-sidebar" );
+				respSbClassChanger( "ctx-sidebar-mobile", "ctx-sidebar" );
 			} else if(getSidebarWidth() >= mobileModuleSb) {
-				respClassChanger( "ctx-sidebar-default", "ctx-sidebar" );
+				respSbClassChanger( "ctx-sidebar-default", "ctx-sidebar" );
 			}
 		}
 		
