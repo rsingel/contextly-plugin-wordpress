@@ -1612,30 +1612,6 @@ Contextly.Utils = Contextly.createClass({
 
 Contextly.PageEvents = Contextly.createClass({
     extend: Contextly.Singleton,
-
-    switchTab: function ( setting_id, tab ) {
-        jQuery("#ctx_linker_content_previous,#ctx_linker_content_web,#ctx_linker_content_interesting,#ctx_linker_content_custom").hide();
-        jQuery("#ctx_linker_tab_previous,#ctx_linker_tab_web,#ctx_linker_tab_interesting,#ctx_linker_tab_custom").attr( "class", "" );
-        jQuery("#ctx_linker_content_" + tab).show();
-        jQuery("#ctx_linker_tab_" + tab).attr( "class", "active" );
-
-        Contextly.Loader.getInstance().trackPageEvent( setting_id, "switch_tab", tab );
-    },
-
-    showMore: function ( setting_id, tab ) {
-        jQuery( '.li' + tab ).toggleClass( "show" );
-        var pmore = jQuery( '#pmore' + tab );
-        pmore.toggleClass("show");
-
-        if (pmore.hasClass('show')) {
-            pmore.find('a').text('Show Fewer');
-        } else {
-            pmore.find('a').text('Show More');
-        }
-
-        Contextly.Loader.getInstance().trackPageEvent( setting_id, "show_more", tab );
-    },
-
     trackLink: function ( widget_type, link_type, link_title ) {
         if ( !widget_type || !link_type || !link_title ) return;
 
