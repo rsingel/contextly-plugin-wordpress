@@ -197,7 +197,7 @@ class Contextly
 
         // Add only in Rich Editor mode
         if ( get_user_option('rich_editing') == 'true') {
-            add_filter("mce_external_plugins", array( $this, 'addMceButtons' ) );
+	        add_filter("mce_external_plugins", array( $this, 'addMceButtons' ) );
             add_filter('mce_buttons', array( $this, 'registerMceButtons' ) );
         }
     }
