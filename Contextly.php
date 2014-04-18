@@ -316,7 +316,7 @@ class Contextly
 
 	public function getPluginJs( $script_name ) {
 		if ( CONTEXTLY_MODE == 'production' ) {
-			return Urls::getPluginJsCdnUrl( $script_name );
+			return Urls::getPluginCdnUrl( $script_name, 'js' );
 		} else {
 		    return plugins_url( 'js/' . $script_name , __FILE__ );
         }
@@ -324,7 +324,7 @@ class Contextly
 
 	public function getPluginCss( $css_name ) {
 		if ( CONTEXTLY_MODE == 'production' ) {
-			return Urls::getPluginCssCdnUrl( $css_name );
+			return Urls::getPluginCdnUrl( $css_name, 'css' );
 		} else {
 			return plugins_url( 'css/' . $css_name , __FILE__ );
 		}
@@ -419,6 +419,7 @@ class Contextly
 
 		$page_id = $_REQUEST[ 'page_id' ];
 		$post = get_post( $page_id );
+
 		if ( $post ) {
 			$contextly = new Contextly();
 			$result = $contextly->publishPost( $page_id, $post );
@@ -472,9 +473,11 @@ class Contextly
 			} catch ( Exception $e ) {
 	            return $e;
             }
+
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	/**

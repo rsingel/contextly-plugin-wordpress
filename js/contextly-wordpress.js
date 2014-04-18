@@ -510,8 +510,9 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
 			css_url = "http://dev.contextly.com/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
         } else {
-            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "wp_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
         }
+
         return css_url;
     },
 
@@ -1454,8 +1455,9 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
 			css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
         } else {
-            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/sidebar/template-" + settings.theme + ".css";
+            css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "wp_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/sidebar/template-" + settings.theme + ".css";
         }
+
         return css_url;
     },
 
@@ -1734,9 +1736,9 @@ Contextly.Settings = Contextly.createClass({
     },
     getCdnCssUrl: function () {
         if ( this.isHttps() ) {
-            return 'https://c713421.ssl.cf2.rackcdn.com/';
+            return 'https://c714015.ssl.cf2.rackcdn.com/';
         } else {
-            return 'http://contextlysiteimages.contextly.com/';
+            return 'http://contextlysitescripts.contextly.com/';
         }
     },
     isReadyToLoad: function() {

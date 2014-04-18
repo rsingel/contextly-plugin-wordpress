@@ -47,24 +47,14 @@ class Urls {
 		}
 	}
 
-	static public function getPluginJsCdnUrl( $js_file ) {
+	static public function getPluginCdnUrl( $file, $type = 'js' ) {
 		if ( CONTEXTLY_HTTPS ) {
-			$prefix = 'https://c713421.ssl.cf2.rackcdn.com/';
+			$prefix = 'https://c714015.ssl.cf2.rackcdn.com/';
 		} else {
-			$prefix = 'http://contextlysiteimages.contextly.com/';
+			$prefix = 'http://contextlysitescripts.contextly.com/';
 		}
 
-		return $prefix . '_plugin/' . CONTEXTLY_PLUGIN_VERSION . '/js/' . $js_file;
-	}
-
-	static public function getPluginCssCdnUrl( $css_file ) {
-		if ( CONTEXTLY_HTTPS ) {
-			$prefix = 'https://c713421.ssl.cf2.rackcdn.com/';
-		} else {
-			$prefix = 'http://contextlysiteimages.contextly.com/';
-		}
-
-		return $prefix . '_plugin/' . CONTEXTLY_PLUGIN_VERSION . '/css/' . $css_file;
+		return $prefix . 'wp_plugin/' . CONTEXTLY_PLUGIN_VERSION . '/' . $type . '/' . $file;
 	}
 
 	static public function getMainJsCdnUrl( $js_file ) {
