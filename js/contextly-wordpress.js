@@ -1714,19 +1714,23 @@ Contextly.Settings = Contextly.createClass({
         return Contextly.admin;
     },
     getPageId: function () {
-        return Contextly.post.post_id;
+        var post_data = this.getPostData();
+        return post_data.post_id;
     },
     getMode: function () {
         return Contextly.mode;
     },
     getPostModifiedDate: function () {
-        return Contextly.post.post_modified;
+        var post_data = this.getPostData();
+        return post_data.mod_date;
     },
     getPostCreatedDate: function () {
-        return Contextly.post.post_date;
+        var post_data = this.getPostData();
+        return post_data.pub_date;
     },
     getAuthorId: function () {
-        return Contextly.post.author;
+        var post_data = this.getPostData();
+        return post_data.author_id;
     },
     getWPSettings: function () {
         return Contextly.settings;
@@ -1758,6 +1762,12 @@ Contextly.Settings = Contextly.createClass({
     },
     isDisplayBranding: function () {
         return !this.isAdmin();
+    },
+    getPostData: function () {
+        var data = jQuery("meta[name='contextly-page']").attr("content");
+        var json = jQuery.parseJSON(data);
+
+        return json;
     }
 });
 

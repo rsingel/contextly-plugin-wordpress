@@ -33,9 +33,11 @@ class Contextly
             add_action( 'admin_enqueue_scripts', array( $this, 'initAdmin' ), 1 );
             add_action( 'save_post', array( $this, 'publishBoxControlSavePostHook' ) );
 	        add_filter( 'default_content', array( $this, 'addAutosidebarCodeFilter' ), 10, 2 );
+	        add_action( 'admin_head', array( $this, 'insertMetatags' ) );
         } else {
             add_action( 'init', array( $this, 'initDefault' ), 1 );
 	        add_action( 'the_content', array( $this, 'addSnippetWidgetToContent' ) );
+	        add_action( 'wp_head', array( $this, 'insertMetatags' ) );
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
@@ -105,22 +107,6 @@ class Contextly
         }
 
         return $client_options;
-    }
-
-    private function getPostData() {
-        global $post;
-
-	    if ( isset( $post ) && $post->ID ) {
-	        return array(
-	            'post_id'       => $post->ID,
-	            'post_date'     => $post->post_date,
-	            'post_modified' => $post->post_modified,
-	            'author'        => $post->post_author,
-	            'type'          => $post->post_type,
-	        );
-	    }
-
-	    return null;
     }
 
     private function getAuthorFullName( $post ) {
@@ -333,11 +319,11 @@ class Contextly
 	public function loadContextlyAjaxJSScripts() {
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'json2' );
-		wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', null );
-		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', null );
-		wp_enqueue_script( 'jquery_cookie', $this->getPluginJs( 'jquery.cookie.js' ), 'jquery', null );
-		wp_enqueue_script( 'contextly-create-class', $this->getPluginJs( 'contextly-class.min.js' ), 'easy_xdm', null );
-		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', null );
+		wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', null, true );
+		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', null, true );
+		wp_enqueue_script( 'jquery_cookie', $this->getPluginJs( 'jquery.cookie.js' ), 'jquery', null, true );
+		wp_enqueue_script( 'contextly-create-class', $this->getPluginJs( 'contextly-class.min.js' ), 'easy_xdm', null, true );
+		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', null, true );
 	}
 
 	private function getAjaxUrl() {
@@ -354,7 +340,6 @@ class Contextly
 			'popup_server'  => Urls::getPopupServerUrl(),
 			'app_id'        => $api_options[ 'appID' ],
 			'settings'      => $this->getSettingsOptions(),
-			'post'          => $this->getPostData(),
 			'admin'         => (boolean)is_admin(),
 			'mode'          => CONTEXTLY_MODE,
 			'https'         => CONTEXTLY_HTTPS,
@@ -519,19 +504,29 @@ class Contextly
 
 	/**
 	 * @param $post_id
+	 * @return array|bool
+	 */
+	private function getPostImages($post_id)
+	{
+		$attachment_images = get_children(
+			array(
+				'post_parent'    => $post_id,
+				'post_type'      => 'attachment',
+				'numberposts'    => 0,
+				'post_mime_type' => 'image'
+			)
+		);
+		return $attachment_images;
+	}
+
+	/**
+	 * @param $post_id
 	 * @return array
 	 */
 	private function getPostImagesArray( $post_id ) {
 		$images_array = array();
 
-		$attachment_images = get_children(
-			array(
-				'post_parent' => $post_id,
-				'post_type' => 'attachment',
-				'numberposts' => 0,
-				'post_mime_type' => 'image'
-			)
-		);
+		$attachment_images = $this->getPostImages($post_id);
 
 		if ($attachment_images && is_array($attachment_images)) {
 			foreach($attachment_images as $image) {
@@ -541,6 +536,48 @@ class Contextly
 		}
 
 		return $images_array;
+	}
+
+	/**
+	 * @param $post_id
+	 * @return mixed|null
+	 */
+	private function getPostFeaturedImage( $post_id )
+	{
+		if ( has_post_thumbnail( $post_id ) ) {
+			$image_url = wp_get_attachment_image_src(get_post_thumbnail_id( $post_id ));
+			return $image_url[0];
+		}
+		else
+		{
+			$post_images = $this->getPostImages( $post_id );
+
+			if ( count( $post_images ) > 0 )
+			{
+				$sorted_images = array();
+				foreach ( $post_images as $image )
+				{
+					list($url, $width, $height) = wp_get_attachment_image_src( $image->ID, 'full' );
+
+					$image_rank = $width + $height;
+
+					if ( !isset( $sorted_images[$image_rank] ) )
+					{
+						$sorted_images[$image_rank] = array($url);
+					}
+					else
+					{
+						$sorted_images[$image_rank][] = $url;
+					}
+				}
+
+				krsort( $sorted_images );
+
+				return reset($sorted_images);
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -649,5 +686,41 @@ class Contextly
 		return sprintf( "<div class='%s' id='%s'></div>", self::MAIN_MODULE_SHORT_CODE_CLASS, self::MAIN_MODULE_SHORT_CODE_ID );
 	}
 
+	/**
+	 *
+	 */
+	public function insertMetatags()
+	{
+		if ( $this->isLoadWidget() )
+		{
+			global $post;
+			$json_data = null;
+
+			if ( isset( $post ) )
+			{
+				$json_data = array(
+					'title'                    => $post->post_title,
+					'url'                      => get_permalink( $post->ID ),
+					'pub_date'                 => $post->post_date,
+					'mod_date'                 => $post->post_modified,
+					'type'                     => $post->post_type,
+					'post_id'                  => $post->ID,
+					'author_id'                => $post->post_author,
+					'author_name'              => $this->getAuthorFullName( $post ),
+					'author_display_name'      => $this->getAuthorDisplayName( $post ),
+					'tags'                     => $this->getPostTagsArray( $post->ID ),
+					'categories'               => $this->getPostCategoriesArray( $post->ID ),
+					'image'                    => $this->getPostFeaturedImage( $post->ID )
+				);
+			}
+
+			if ( $json_data !== null )
+			{
+				?>
+<meta name='contextly-page' id='contextly-page' content='<?php echo json_encode( $json_data ); ?>' />
+<?php
+			}
+		}
+	}
 
 }
