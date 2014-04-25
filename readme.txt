@@ -89,6 +89,17 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.1 =
+
+- Better display support for wide sites
+- Removed the Chrome tabbed display option as the tabs were never almost never clicked and the information density was low.
+- Improved ease of adjusting the placement of the main recommendation module now controlled by a short code rather than CSS elements: [contextly_main_module]
+- Reduced reliance on a WP API to learn story metadata
+- Improved the way Contextly detects featured images for a post
+- More reliable detection of deleted/trashed photos
+- New CSS/HTML for displays to make them easier to customize
+
+
 = 1.0.97 =
 
 - Updated to include cookies to better track recommendation performance
