@@ -105,7 +105,6 @@ Contextly.Loader = Contextly.createClass({
                 self.initCookie( response );
             }
         );
-
     },
 
     trackPageEvent: function ( setting_id, event_name, event_key ) {
@@ -272,6 +271,8 @@ Contextly.PageView = Contextly.createClass({
     },
 
     updatePost: function () {
+        var self = this;
+
         var data = {
             action: 'contextly_publish_post',
             page_id: Contextly.Settings.getInstance().getPageId(),
@@ -283,8 +284,29 @@ Contextly.PageView = Contextly.createClass({
             type: 'post',
             dataType: 'json',
             data: data,
-            success: function() {}
+            success: function(response) {
+               if ( response != true )
+               {
+                   self.updatePostWithRest();
+               }
+            },
+            error: function ()
+            {
+                self.updatePostWithRest();
+            }
         });
+    },
+
+    updatePostWithRest: function () {
+        Contextly.RESTClient.getInstance().call(
+            'postsimport',
+            'put',
+            {
+                url: Contextly.Settings.getInstance().getPageUrl()
+            },
+            function ( response ) {
+            }
+        );
     },
 
     displayWidgets: function ( widgets ) {
@@ -847,13 +869,13 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 					var getTextHeight = jQuery(".ctx-blocks-slider .ctx-link-title p").height();
 					if(getTextHeight>59) {
 						jQuery( ".ctx-blocks-slider .ctx-link-title" ).stop(true,true).animate({
-							height: getTextHeight + 10,
+							height: getTextHeight + 10
 						}, 200 );
 					}
 			   },
 			   function(){
 					jQuery( ".ctx-blocks-slider .ctx-link-title" ).stop(true,true).animate({
-						height: slideMinHeightBl,
+						height: slideMinHeightBl
 					}, 200 );
 					jQuery(this).removeClass('ctx-blocks-slider');
 			   }
@@ -1728,6 +1750,10 @@ Contextly.Settings = Contextly.createClass({
     getAuthorId: function () {
         var post_data = this.getPostData();
         return post_data.author_id;
+    },
+    getPageUrl: function () {
+        var post_data = this.getPostData();
+        return post_data.url;
     },
     getWPSettings: function () {
         return Contextly.settings;
