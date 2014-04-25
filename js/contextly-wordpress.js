@@ -369,6 +369,10 @@ Contextly.SnippetWidgetFormatterFactory = Contextly.createClass({
     getFormatter: function( widget ) {
         var type = widget.settings.display_type;
 
+        if ( type == 'tabs' ){
+            type = 'blocks';
+        }
+
         if ( type == 'default' ) {
             return new Contextly.SnippetWidgetTextFormatter( widget );
         } else if ( type == 'blocks' ) {
@@ -532,16 +536,6 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             // We need to be sure that our control is last in content element
             if (!this.getDisplayElement().is(":last-child")) {
                 this.getDisplayElement().parent().append(this.getDisplayElement());
-            }
-
-            // Check for a custom position on page
-            var wp_settings = Contextly.Settings.getInstance().getWPSettings();
-            if (typeof wp_settings != "undefined" && typeof wp_settings.target_id != "undefined" && wp_settings.target_id) {
-                if (typeof wp_settings.block_position != "undefined" && wp_settings.block_position == "before") {
-                    this.getDisplayElement().insertBefore(jQuery("#" + wp_settings.target_id));
-                } else if (wp_settings.target_id) {
-                    this.getDisplayElement().insertAfter(jQuery("#" + wp_settings.target_id));
-                }
             }
         }
     },

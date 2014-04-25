@@ -60,8 +60,6 @@ class ContextlySettings {
         add_settings_field( 'link_type_default', 'Default', array( $this, 'settingsDefault' ), self::ADVANCED_SETTINGS_KEY, 'main_section' );
 
         add_settings_section( 'advanced_section', 'Layout Settings', array( $this, 'settingsLayoutSection' ), self::ADVANCED_SETTINGS_KEY );
-        add_settings_field( 'linker_target_id', 'CSS Element ID', array( $this, 'settingsTargetInput' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
-        add_settings_field( 'linker_block_position', 'Position', array( $this, 'settingsBlockPosition' ), self::ADVANCED_SETTINGS_KEY, 'advanced_section' );
 
         add_settings_section( 'display_section', 'Main Settings', array(), self::ADVANCED_SETTINGS_KEY );
 	    add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settingsDisplayFor' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
@@ -277,10 +275,10 @@ class ContextlySettings {
 
     public function settingsLayoutSection() {
         echo "<p>
-			By default, Contextly is set to show up as the very last object in your post template. For most sites, this is perfect. However, if you have other plugins that come after the body of the text, you can adjust where Contextly displays using this setting.
+			By default, Contextly's main recommendation module is set to show up as the very last object in your post template. For most sites, this is perfect. However, if you have other plugins that come after the body of the text, you can adjust where the main module displays.
 			</p>
 			<p>
-			To set the placement of Contextly related links relative to other elements, simply provide the other item's CSS element ID, and whether you prefer to be above or below that element.
+			To set the placement of Contextly main module, simply edit your templates by placing this shortcode where you would like the module to display: [contextly_main_module]
 			</p>";
     }
 
@@ -299,20 +297,6 @@ class ContextlySettings {
         echo "<input id='link_type_default' name='" . self::ADVANCED_SETTINGS_KEY . "[link_type]' type='radio' value='' " . (!$options['link_type'] ? "checked='checked'" : "") . "/>";
         echo " With this setting, WordPress's single link button in the Visual editor works as it normally does. The Visual editor bar gets an additional single link button so you can add links to the body of your post using Contextly.";
         echo "</label>";
-    }
-
-    public function settingsTargetInput() {
-        $options = get_option( self::ADVANCED_SETTINGS_KEY );
-        echo "<input id='linker_target_id' name='" . self::ADVANCED_SETTINGS_KEY . "[target_id]' type='text' size='30' value='{$options["target_id"]}' />";
-    }
-
-    public function settingsBlockPosition() {
-        $options = get_option( self::ADVANCED_SETTINGS_KEY );
-        echo "
-			<select id='linker_block_position' name='" . self::ADVANCED_SETTINGS_KEY . "[block_position]'>
-				<option value='after' " . ($options["block_position"] == "after" ? "selected='selected'" : "") . ">Below</option>
-				<option value='before' " . ($options["block_position"] == "before" ? "selected='selected'" : "") . ">Above</option>
-			</select>";
     }
 
     public function settingsDisplayFor() {
