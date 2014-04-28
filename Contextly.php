@@ -567,7 +567,7 @@ class Contextly
 
 			krsort( $sorted_images );
 
-			return reset($sorted_images);
+			return current(reset($sorted_images));
 		}
 
 		return null;
