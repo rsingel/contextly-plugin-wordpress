@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories
 Requires at least: 2.0.2
-Tested up to: 3.6
+Tested up to: 3.8
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -88,6 +88,37 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 
 == Changelog ==
+
+= 1.1 =
+
+- Better display support for sites with wide text columns
+- Removed the Chrome tabbed display option as the tabs were never almost never clicked and the information density was low.
+- Improved ease of adjusting the placement of the main recommendation module. It's now controlled by a shortcode rather than CSS elements: [contextly_main_module]
+- Reduced reliance on a WP API to learn story metadata
+- Improved the way Contextly detects featured images for a post
+- More reliable detection of deleted/trashed posts
+- New CSS/HTML for displays to make them easier to customize
+- Entirely new recommendation system
+
+
+= 1.0.97 =
+
+- Updated to include cookies to better track recommendation performance
+- Post-story module now movable via shortcode
+- Minor display bug fixes
+
+
+= 1.0.96 =
+
+- Minor display bug fixes
+
+
+= 1.0.95 =
+
+- Added SEO support. Search Engines can now see and spider the related results. This boosts SEO.
+- Minor display bug fixes
+- Made the "nudge" to add related links off by default
+
 
 = 1.0.93 =
 
