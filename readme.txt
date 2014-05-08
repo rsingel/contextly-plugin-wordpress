@@ -89,6 +89,11 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.1.1 =
+
+- Fixed a bug where pots with quote marks in the title would not have a recommendation display
+
+
 = 1.1 =
 
 - Better display support for sites with wide text columns

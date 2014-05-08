@@ -111,7 +111,9 @@ class Contextly
 
     private function getAuthorFullName( $post ) {
 	    if ( get_the_author_meta( "last_name", $post->post_author ) ) {
-	        return get_the_author_meta( "last_name", $post->post_author ) . ' ' . get_the_author_meta( "first_name", $post->post_author );
+	        $name = get_the_author_meta( "last_name", $post->post_author ) . ' ' . get_the_author_meta( "first_name", $post->post_author );
+
+		    return htmlspecialchars( $name, ENT_QUOTES & ~ENT_COMPAT, 'utf-8' );
 	    }
         return null;
     }
@@ -119,8 +121,9 @@ class Contextly
 	private function getAuthorDisplayName( $post ) {
 		$display_name = get_the_author_meta( "display_name", $post->post_author );
 		$nickname = get_the_author_meta( "nickname", $post->post_author );
+		$name = $display_name ? $display_name : $nickname;
 
-		return $display_name ? $display_name : $nickname;
+		return htmlspecialchars( $name, ENT_QUOTES & ~ENT_COMPAT, 'utf-8' );
 	}
 
     private function getSettingsOptions() {
@@ -692,13 +695,13 @@ class Contextly
 			if ( isset( $post ) )
 			{
 				$json_data = array(
-					'title'                    => $post->post_title,
+					'title'                    => htmlspecialchars( $post->post_title, ENT_QUOTES & ~ENT_COMPAT, 'utf-8' ),
 					'url'                      => get_permalink( $post->ID ),
 					'pub_date'                 => $post->post_date,
 					'mod_date'                 => $post->post_modified,
 					'type'                     => $post->post_type,
 					'post_id'                  => $post->ID,
-					'author_id'                => $post->post_author,
+					'author_id'                => htmlspecialchars( $post->post_author, ENT_QUOTES & ~ENT_COMPAT, 'utf-8' ),
 					'author_name'              => $this->getAuthorFullName( $post ),
 					'author_display_name'      => $this->getAuthorDisplayName( $post ),
 					'tags'                     => $this->getPostTagsArray( $post->ID ),
