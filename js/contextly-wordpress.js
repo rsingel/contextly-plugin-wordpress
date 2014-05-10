@@ -1381,12 +1381,12 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
 
     getWidgetHTML: function()
     {
-		return "<div class='ctx-content-sidebar'><div class='ctx-sb-content'>"
+        return "<div class='ctx-content-sidebar'><div class='ctx-sb-content'>"
             + this.getLinksHTMLOfType( 'previous' )
             + "</div></div>";
     },
 
-	getLinkHTML: function ( link ) {
+    getLinkHTML: function ( link ) {
         var html = "<div class='ctx-sb-fotmater'>";
 
         if ( link.thumbnail_url ) {
@@ -1435,6 +1435,15 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
         return html;
     },
 
+    getLinkATag: function ( link, content ) {
+
+        return "<a href=\"" +
+            this.escape( link.native_url ) + "\" title=\"" +
+            this.escape( link.title ) + "\" class='ctx-clearfix ctx-nodefs ctx-no-images' onmousedown=\"this.href='" +
+            this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
+            "<i class='fa fa-angle-double-right'></i>" + " " + content + "</a>";
+    },
+
     display: function () {
         var self = this;
 
@@ -1449,7 +1458,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
                     self.getDisplayElement().removeClass( 'ctx-sidebar-container' )
                         .addClass( 'ctx-sidebar' )
                         .addClass( 'ctx-sidebar-' + self.widget.layout )
-						.addClass( 'ctx-sb-clearfix' );
+                        .addClass( 'ctx-sb-clearfix' );
 
                     // Check if we need to add sidebar title and description
                     var title = self.widget.name;
@@ -1472,7 +1481,7 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
         if ( Contextly.Settings.getInstance().getMode() == 'local' ) {
             css_url = "http://linker.site/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
         } else if ( Contextly.Settings.getInstance().getMode() == 'dev' ) {
-			css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
+            css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
         } else {
             css_url = Contextly.Settings.getInstance().getCdnCssUrl() + "wp_plugin/"  + Contextly.Settings.getInstance().getPluginVersion() +  "/css-api/sidebar/template-" + settings.theme + ".css";
         }
