@@ -110,10 +110,10 @@ class Contextly
     }
 
     private function getAuthorFullName( $post ) {
-	    if ( get_the_author_meta( "last_name", $post->post_author ) ) {
-	        $name = get_the_author_meta( "last_name", $post->post_author ) . ' ' . get_the_author_meta( "first_name", $post->post_author );
-
-		    return htmlspecialchars( $name, ENT_QUOTES & ~ENT_COMPAT, 'utf-8' );
+	    if ( get_the_author_meta( "first_name", $post->post_author ) || get_the_author_meta( "last_name", $post->post_author ) )
+	    {
+	        $name = get_the_author_meta( "first_name", $post->post_author ) . ' ' . get_the_author_meta( "last_name", $post->post_author );
+		    return $this->escape( trim( $name ) );
 	    }
         return null;
     }
@@ -123,7 +123,7 @@ class Contextly
 		$nickname = get_the_author_meta( "nickname", $post->post_author );
 		$name = $display_name ? $display_name : $nickname;
 
-		return htmlspecialchars( $name, ENT_QUOTES & ~ENT_COMPAT, 'utf-8' );
+		return $this->escape( $name );
 	}
 
     private function getSettingsOptions() {
@@ -480,7 +480,7 @@ class Contextly
 		$post_tags = get_the_tags( $post_id );
 		if (is_array($post_tags) && count($post_tags) > 0) {
 			foreach (array_slice($post_tags, 0, $tags_num_limit) as $post_tag) {
-				$tags_array[] = $post_tag->name;
+				$tags_array[] = $this->escape( $post_tag->name );
 			}
 		}
 
@@ -499,7 +499,7 @@ class Contextly
 			foreach ( array_slice($post_categories, 0, $categories_num_limit) as $category_id ) {
 				$category = get_category( $category_id );
 				if ( $category && strtolower( $category->name ) != "uncategorized" ) {
-					$categories_array[] = $category->name;
+					$categories_array[] = $this->escape( $category->name );
 				}
 			}
 		}
@@ -697,13 +697,13 @@ class Contextly
 			if ( isset( $post ) )
 			{
 				$json_data = array(
-					'title'                    => htmlspecialchars( $post->post_title, ENT_QUOTES & ~ENT_COMPAT, 'utf-8' ),
+					'title'                    => $this->escape( $post->post_title ),
 					'url'                      => get_permalink( $post->ID ),
 					'pub_date'                 => $post->post_date,
 					'mod_date'                 => $post->post_modified,
 					'type'                     => $post->post_type,
 					'post_id'                  => $post->ID,
-					'author_id'                => htmlspecialchars( $post->post_author, ENT_QUOTES & ~ENT_COMPAT, 'utf-8' ),
+					'author_id'                => $this->escape( $post->post_author ),
 					'author_name'              => $this->getAuthorFullName( $post ),
 					'author_display_name'      => $this->getAuthorDisplayName( $post ),
 					'tags'                     => $this->getPostTagsArray( $post->ID ),
@@ -719,6 +719,15 @@ class Contextly
 <?php
 			}
 		}
+	}
+
+	/**
+	 * @param $text
+	 * @return string
+	 */
+	private function escape($text)
+	{
+		return htmlspecialchars($text, ENT_QUOTES & ~ENT_COMPAT, 'utf-8');
 	}
 
 }
