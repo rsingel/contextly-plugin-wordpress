@@ -398,6 +398,8 @@ class Contextly
 			wp_enqueue_style( 'pretty-photo-style' );
 			wp_register_style( 'contextly-branding', $this->getPluginCss( 'branding/branding.css' ) );
 			wp_enqueue_style( 'contextly-branding' );
+            wp_register_style( 'font-awesome-style', $this->getPluginCss( 'font-awesome/font-awesome.css' ) );
+            wp_enqueue_style( 'font-awesome-style' );
 		}
 	}
 
