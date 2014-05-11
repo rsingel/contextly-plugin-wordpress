@@ -71,7 +71,8 @@
 	line-height: 1.3 !important;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	color: #404040 !important;
-	font-size: 13px !important
+	font-size: 13px !important;
+    text-align: left !important;
 }
 #ctx-brd-text p a {
 	text-decoration: none !important;
