@@ -970,42 +970,22 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             return content;
         }
 
-        function ctxCheckIfWidgetLoadedAndResize() {
-            documentLoadCheckCount++;
-
+        jQuery(window).resize(function() {
             ctxResponsiveResizeHandler();
-            ctxClearIfWidgetLoadedInterval();
-
-            if ( documentLoadCheckCount > 10 ) {
-                ctxClearIfWidgetLoadedInterval();
-            }
-        }
-
-        function ctxClearIfWidgetLoadedInterval() {
-            if ( documentLoadInterval ) {
-                clearInterval( documentLoadInterval );
-            }
-        }
-
-        jQuery(window).resize(
-            function() {
-                ctxResponsiveResizeHandler();
-            }
-        );
+        });
 
         var documentLoadInterval = null;
         var documentLoadCheckCount = 0;
 
-        jQuery(document).ready(
-            function() {
-                documentLoadInterval = self.setInterval(
-                    function () {
-                        ctxCheckIfWidgetLoadedAndResize();
-                    },
-                    500
-                );
+        documentLoadInterval = self.setInterval(function () {
+            documentLoadCheckCount++;
+
+            ctxResponsiveResizeHandler();
+
+            if ( documentLoadCheckCount > 5 ) {
+                clearInterval( documentLoadInterval );
             }
-        );
+        }, 500 );
     }
 
 });
