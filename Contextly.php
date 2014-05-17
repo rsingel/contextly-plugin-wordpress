@@ -323,7 +323,6 @@ class Contextly
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'json2' );
 		wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', null, true );
-		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', null, true );
 		wp_enqueue_script( 'jquery_cookie', $this->getPluginJs( 'jquery.cookie.js' ), 'jquery', null, true );
 		wp_enqueue_script( 'contextly-create-class', $this->getPluginJs( 'contextly-class.min.js' ), 'easy_xdm', null, true );
 		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', null, true );
@@ -394,8 +393,8 @@ class Contextly
 	public function loadStyles() {
 		if ( $this->isLoadWidget() )
 		{
-			wp_register_style( 'pretty-photo-style', $this->getPluginCss( 'prettyPhoto/style.css' ) );
-			wp_enqueue_style( 'pretty-photo-style' );
+			wp_register_style( 'video-modal', $this->getPluginCss( 'video-modal/reveal.css' ) );
+			wp_enqueue_style( 'video-modal' );
 			wp_register_style( 'contextly-branding', $this->getPluginCss( 'branding/branding.css' ) );
 			wp_enqueue_style( 'contextly-branding' );
             wp_register_style( 'font-awesome-style', $this->getPluginCss( 'font-awesome/font-awesome.css' ) );
