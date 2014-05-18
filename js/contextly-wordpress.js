@@ -1051,10 +1051,16 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
     getWidgetHTML: function () {
         var div = "";
 
+        var sections = this.widget.settings.display_sections;
+
+        if( sections.length == 1 ) {
+            this.addColumnCounterClass( "ctx-text-column-one" );
+        } else {
+            this.addColumnCounterClass( "ctx-text-column-multiple" );
+        }
+
         div += "<div class='" + this.getWidgetCssName() + " ctx-nodefs'>";
         div += "<div class='ctx-sections-container ctx-clearfix'>";
-
-        var sections = this.widget.settings.display_sections;
 
         for ( var section in sections ) {
             var section_name = sections[section];
@@ -1080,6 +1086,11 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
         }
 
         return div;
+    },
+
+    addColumnCounterClass: function( className ) {
+        var getModuleId = this.widget_html_id;
+        jQuery( "#" + getModuleId).addClass( className );
     },
 
     getLinksHTMLOfType: function( type ) {

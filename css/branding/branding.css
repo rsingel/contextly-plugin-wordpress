@@ -7,7 +7,7 @@
 	display: block !important;
 	width: 110px !important;
 	height: 12px !important;
-	float: right !important;
+	float: right;
 	line-height: 1.4 !important;
 	background: url(images/brandedlogo.png) no-repeat right -12px !important;
 	text-decoration: none;
@@ -16,6 +16,12 @@
 	color: #7e7e81;
 	transition: initial;
 	-webkit-transition: initial
+}
+.ctx-text-column-one #ctx-branding-link {
+    float: left !important;
+}
+.ctx-text-column-multiple #ctx-branding-link {
+    float: right !important;
 }
 #ctx-branding-link:hover {
 	background: url(images/brandedlogo.png) no-repeat right 0px !important;
