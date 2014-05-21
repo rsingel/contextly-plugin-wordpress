@@ -970,6 +970,8 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             return content;
         }
 
+        ctxResponsiveResizeHandler();
+
         jQuery(window).resize(function() {
             ctxResponsiveResizeHandler();
         });
