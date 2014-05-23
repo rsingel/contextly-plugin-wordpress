@@ -1226,6 +1226,8 @@ Contextly.TextWidgetCssCustomBuilder = Contextly.createClass({
             css_code += this.buildCSSRule( entry, ".ctx-link .ctx-video-icon:after" , "border-left-color", getOppositeColor );
 
             css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-content a" , "color", settings.color_links );
+
+            css_code += this.buildCSSRule( entry, ".ctx-links-content .ctx-link:before" , "background-color", settings.color_links );
         }
         if ( settings.color_background ) {
             css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-header" , "background-color", settings.color_background );
