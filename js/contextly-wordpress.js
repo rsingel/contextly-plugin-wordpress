@@ -486,7 +486,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
                 this.getDisplayElement().attr( 'widget-type', settings.display_type );
             }
 
-            this.attachVideoPopups();
+            this.attachVideoLinkPopups();
         }
 
         if ( Contextly.Settings.getInstance().isAdmin() ) {
@@ -496,18 +496,117 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
         this.setResponsiveFunction();
     },
 
-    attachVideoPopups: function () {
-        jQuery("a[rel='ctx_video_link']").each(
-            function () {
-                jQuery( this ).prettyPhoto({animation_speed:'fast',slideshow:10000, hideflash: true});
-                jQuery( this ).click(
-                    function () {
-                        var contextly_url = jQuery( this).attr( 'contextly-url' );
-                        Contextly.MainServerAjaxClient.getInstance().call( contextly_url );
-                    }
-                );
+    attachVideoLinkPopups: function () {
+        jQuery( "a[rel='ctx-video-dataurl']" ).click(function(e) {
+            e.preventDefault();
+            var self = jQuery( this );
+            var videoUrl = getVideoUrl( self );
+            var videoTitle = getVideoTitle( self );
+            openVideoPopup( videoUrl, videoTitle);
+
+            var contextly_url = getContextlyUrl( self );
+            Contextly.MainServerAjaxClient.getInstance().call( contextly_url );
+        });
+
+        function getVideoClass() {
+            return "ctx-video-modal";
+        }
+        function videoOverlay() {
+            return "ctx-video-overlay";
+        }
+        function getCloseClass() {
+            return "ctx-video-close";
+        }
+        function getVideoUrl( getEvent) {
+            return getEvent.attr('href');
+        }
+        function getContextlyUrl( getEvent) {
+            return getEvent.attr('contextly-url');
+        }
+        function getVideoTitle( getEvent) {
+            return getEvent.attr('title');
+        }
+        function openVideoPopup( ctxVideoUrl, videoTitle ) {
+            jQuery('body').append( createVideoTmp( ctxVideoUrl, videoTitle ) );
+            showVideoPopup();
+        }
+        function showVideoPopup() {
+            modalFadeIn( getVideoClass() );
+            modalFadeIn( videoOverlay() );
+            modalClose();
+        }
+        function modalFadeIn( elClass ) {
+            jQuery( "." + elClass ).fadeIn("fast");
+        }
+        function modalClose() {
+            closeVideoEvent();
+            closeModalEsc();
+            closeModalBg();
+        }
+        function createVideoTmp( ctxVideoUrl, videoTitle ) {
+            var videoLink = getEmbedLink( ctxVideoUrl );
+            var videoId = linkFormatter( 'v',ctxVideoUrl );
+            var videoClass = getVideoClass();
+            var videotmp = '<div class="' + videoClass + '">' +
+                '<iframe src="' + videoLink + '" frameborder="no" class="ctx-video-frame"></iframe>' +
+                '<div class="ctx-video-loading" ></div>' +
+                '<p class="ctx-video-title">' + videoTitle + '</p>' +
+                '<a  href="#" class="ctx-video-close">&#215;</a>' +
+                '<div class="ctx-modal-social">' + facebookLike( ctxVideoUrl )+ twitterIframe( videoId, videoTitle ) + '</div>' +
+                '</div>' +
+                '<div class="' + videoOverlay() + '" /></div>';
+            return videotmp;
+        }
+        function facebookLike( ctxVideoUrl ) {
+            var script = '<iframe src="//www.facebook.com/plugins/like.php?href=' + ctxVideoUrl +
+                '&amp;width=100&amp;layout=button&amp;action=like&amp;show_faces=true&amp;share=true&amp;height=20" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:20px;" allowTransparency="true"></iframe>';
+            return script;
+        }
+        function twitterIframe( videoId, videoTitle ) {
+            var script = "<iframe allowtransparency='true' frameborder='0' scrolling='no' src='http://platform.twitter.com/widgets/tweet_button.html?text=" + videoTitle + "&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D" + videoId + "' style='width:98px; height:20px;'></iframe>";
+            return script;
+        }
+        function getEmbedLink( ctxVideoUrl ) {
+            return formattedYoutubeLink( ctxVideoUrl );
+        }
+        function formattedYoutubeLink( videoUrl ) {
+            videoId = linkFormatter('v',videoUrl);
+            fullLink = 'http://www.youtube.com/embed/' + videoId + "?rel=1&autoplay=1";
+            return fullLink;
+        }
+        function linkFormatter(name,url){
+            name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+            var regexS = "[\\?&]"+name+"=([^&#]*)";
+            var regex = new RegExp( regexS );
+            var results = regex.exec( url );
+            return ( results == null ) ? "" : results[1];
+        }
+        function closeVideoModal( ) {
+            modalFadeOut( getVideoClass() );
+            modalFadeOut( videoOverlay() );
+        }
+        function modalFadeOut( elClass ) {
+            var removeEle = function() {
+                jQuery(this).remove();
             }
-        );
+            jQuery( "." + elClass ).fadeOut( "fast", removeEle);
+        }
+        function closeVideoEvent() {
+            jQuery( "." + getCloseClass() ).click(function(e) {
+                e.preventDefault();
+                closeVideoModal();
+            });
+        }
+        function closeModalEsc() {
+            jQuery('body').keyup(function(e) {
+                if(e.which===27){ closeVideoModal(); }
+            });
+        }
+        function closeModalBg() {
+            jQuery( "." + videoOverlay() ).click(function(e) {
+                closeVideoModal();
+            });
+        }
     },
 
     loadCss: function ( contextly_id ) {
@@ -678,7 +777,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
             var videoIcon = "";
         }
 
-        return "<a rel=\"ctx_video_link\" class='ctx-clearfix ctx-nodefs' href=\"" +
+        return "<a rel=\"ctx-video-dataurl\" class='ctx-clearfix ctx-nodefs' href=\"" +
             this.escape( link.native_url ) + "\" title=\"" +
             this.escape( link.title ) + "\" contextly-url=\"" + link.url + "\" " +
             this.getOnclickHtml( link ) + ">" +
