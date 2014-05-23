@@ -1454,6 +1454,15 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
         return html;
     },
 
+    getLinkATag: function ( link, content ) {
+
+        return "<a href=\"" +
+            this.escape( link.native_url ) + "\" title=\"" +
+            this.escape( link.title ) + "\" class='ctx-clearfix ctx-nodefs ctx-no-images' onmousedown=\"this.href='" +
+            this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
+            "<i class='fa fa-angle-double-right'></i>" + " " + content + "</a>";
+    },
+
     display: function () {
         var self = this;
 
