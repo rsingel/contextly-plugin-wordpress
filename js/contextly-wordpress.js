@@ -738,7 +738,7 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
 
     getVideoIcon: function ( is_video ) {
         if ( is_video ) {
-            var videoIcon='<i class="fa fa-youtube-play"></i>';
+            var videoIcon='<span class="ctx-video-icon"></span>';
         } else {
             var videoIcon = "";
         }
@@ -819,7 +819,6 @@ Contextly.SnippetWidgetFormatter = Contextly.createClass({
     setResponsiveFunction: function() {
 
         function ctxResponsiveResizeHandler() {
-
             // Blocks2
             var mobileModule = 400;
             var normalModule = 650;
@@ -1115,7 +1114,19 @@ Contextly.CssCustomBuilder = Contextly.createClass({
         }
 
         return(value);
-    }
+    },
+
+    oppositeColorGenerator: function( hexTripletColor ) {
+        var color = hexTripletColor;
+        color = color.substring(1);
+        color = parseInt(color, 16);
+        color = 0xFFFFFF ^ color;
+        color = color.toString(16);
+        color = ("000000" + color).slice(-6);
+        color = "#" + color;
+        return color;
+    },
+
 });
 
 //////////////////////////////////////////////////////////////
@@ -1142,6 +1153,8 @@ Contextly.SnippetWidgetTextFormatter = Contextly.createClass({
 
         div += "<div class='" + this.getWidgetCssName() + " ctx-nodefs'>";
         div += "<div class='ctx-sections-container ctx-clearfix'>";
+
+        var sections = this.widget.settings.display_sections;
 
         for ( var section in sections ) {
             var section_name = sections[section];
@@ -1207,6 +1220,11 @@ Contextly.TextWidgetCssCustomBuilder = Contextly.createClass({
         if ( settings.font_family ) css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-content a" , "font-family", settings.font_family );
         if ( settings.font_size ) css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-content a" , "font-size", settings.font_size );
         if ( settings.color_links ) {
+
+            var getOppositeColor = this.oppositeColorGenerator(settings.color_links);
+            css_code += this.buildCSSRule( entry, ".ctx-link .ctx-video-icon" , "background-color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-link .ctx-video-icon:after" , "border-left-color", getOppositeColor );
+
             css_code += this.buildCSSRule( entry, ".ctx-content-text .ctx-links-content a" , "color", settings.color_links );
         }
         if ( settings.color_background ) {
@@ -1340,6 +1358,10 @@ Contextly.BlocksWidgetCssCustomBuilder = Contextly.createClass({
 
         if ( settings.color_links ) {
             css_code += this.buildCSSRule( entry, ".ctx-content-block .ctx-link-title p" , "color", settings.color_links );
+
+            var getOppositeColor = this.oppositeColorGenerator(settings.color_links);
+            css_code += this.buildCSSRule( entry, ".ctx-link-title .ctx-video-icon" , "background-color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-link-title .ctx-video-icon:after" , "border-left-color", getOppositeColor );
         }
 
         if ( settings.color_background ) {
@@ -1411,6 +1433,10 @@ Contextly.Blocks2WidgetCssCustomBuilder = Contextly.createClass({
 
         if ( settings.color_links ) {
             css_code += this.buildCSSRule( entry, ".ctx-content-block2 .ctx-link-title p" , "color", settings.color_links );
+
+            var getOppositeColor = this.oppositeColorGenerator(settings.color_links);
+            css_code += this.buildCSSRule( entry, ".ctx-link-title .ctx-video-icon" , "background-color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-link-title .ctx-video-icon:after" , "border-left-color", getOppositeColor );
         }
 
         if ( settings.color_background ) {
@@ -1472,6 +1498,10 @@ Contextly.FloatWidgetCssCustomBuilder = Contextly.createClass({
 
         if ( settings.color_links ) {
             css_code += this.buildCSSRule( entry, ".ctx-content-float .ctx-link-title p" , "color", settings.color_links );
+
+            var getOppositeColor = this.oppositeColorGenerator(settings.color_links);
+            css_code += this.buildCSSRule( entry, ".ctx-link-title .ctx-video-icon" , "background-color", settings.color_links );
+            css_code += this.buildCSSRule( entry, ".ctx-link-title .ctx-video-icon:after" , "border-left-color", getOppositeColor );
         }
 
         if ( settings.color_background ) {
@@ -1502,6 +1532,15 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
         return "<div class='ctx-content-sidebar'><div class='ctx-sb-content'>"
             + this.getLinksHTMLOfType( 'previous' )
             + "</div></div>";
+    },
+
+    getLinkATag: function ( link, content ) {
+
+        return "<a href=\"" +
+            this.escape( link.native_url ) + "\" title=\"" +
+            this.escape( link.title ) + "\" class='ctx-clearfix ctx-nodefs ctx-no-images' onmousedown=\"this.href='" +
+            this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
+            "<i class='fa fa-angle-double-right'></i>" + " " + content + "</a>";
     },
 
     getLinkHTML: function ( link ) {
@@ -1551,15 +1590,6 @@ Contextly.SidebarWidgetFormatter = Contextly.createClass({
         }
 
         return html;
-    },
-
-    getLinkATag: function ( link, content ) {
-
-        return "<a href=\"" +
-            this.escape( link.native_url ) + "\" title=\"" +
-            this.escape( link.title ) + "\" class='ctx-clearfix ctx-nodefs ctx-no-images' onmousedown=\"this.href='" +
-            this.escape( link.url ) + "'\" " + this.getOnclickHtml( link ) + ">" +
-            "<i class='fa fa-angle-double-right'></i>" + " " + content + "</a>";
     },
 
     display: function () {
