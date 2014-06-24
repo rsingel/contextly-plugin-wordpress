@@ -66,6 +66,7 @@ class ContextlySettings {
         add_settings_section( 'display_section', 'Main Settings', array(), self::GENERAL_SETTINGS_KEY );
 	    add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settingsDisplayFor' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
 	    add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settingsDisplayPublishConfirmation' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
+	    add_settings_field( 'kit_cdn', 'Load Kit resources from CDN:', array( $this, 'settingsDisplayKitCdn' ), self::GENERAL_SETTINGS_KEY, 'display_section' );
 
 	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
 	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API' );
@@ -333,6 +334,15 @@ class ContextlySettings {
 		<input name='{$control_name}' type='checkbox' value='1' " . ( $publish_confirmation ? "checked='checked'" : "" ) . " style='margin-left: 3px;'/>";
 	}
 
+	public function settingsDisplayKitCdn() {
+		$kit_cdn = $this->getKitCdnValue();
+		$control_name = self::GENERAL_SETTINGS_KEY . "[kit_cdn]";
+
+		echo "
+		<input type='hidden' name='{$control_name}' value='0' />
+		<input name='{$control_name}' type='checkbox' value='1' " . ( $kit_cdn ? "checked='checked'" : "" ) . " style='margin-left: 3px;'/>";
+	}
+
     public function getPluginOptions() {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
         if ( !is_array( $options ) ) {
@@ -374,6 +384,16 @@ class ContextlySettings {
 
 		if ( isset( $options[ 'publish_confirmation' ] ) ) {
 			return (bool)$options[ 'publish_confirmation' ];
+		}
+
+		return true;
+	}
+
+	public function getKitCdnValue() {
+		$options = get_option( self::GENERAL_SETTINGS_KEY );
+
+		if ( isset( $options[ 'kit_cdn' ] ) ) {
+			return (bool) $options[ 'kit_cdn' ];
 		}
 
 		return true;

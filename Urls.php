@@ -5,6 +5,7 @@
  * Time: 1:59 PM
  */
 
+// TODO Use kit for most of URL types.
 class Urls {
 
 	protected static $_instance;
@@ -24,16 +25,6 @@ class Urls {
 			return 'https://dev.contextly.com/';
 		} else {
 			return 'http://linker.site/';
-		}
-	}
-
-	static public function getPopupServerUrl() {
-		if ( CONTEXTLY_MODE == self::MODE_LIVE ) {
-			return 'https://app.contextly.com/';
-		} elseif ( CONTEXTLY_MODE == self::MODE_DEV ) {
-			return 'http://devapi.contextly.com/';
-		} else {
-			return 'http://linker.local/';
 		}
 	}
 

@@ -11,7 +11,10 @@ define ( "CONTEXTLY_PLUGIN_VERSION", '1.0.93' );
 define ( "CONTEXTLY_MODE", 'local' );
 define ( "CONTEXTLY_HTTPS", is_ssl() );
 
-require_once ( "Api.php" );
+require_once ( "kit/server/Kit.php" );
+ContextlyKit::registerAutoload();
+
+require_once ( "Kit.php" );
 require_once ( "Urls.php" );
 require_once ( "Contextly.php" );
 require_once ( "ContextlySettings.php" );
