@@ -11,14 +11,18 @@ class Contextly
     const API_SETTINGS_KEY = 'contextly_options_api';
     const ADVANCED_SETTINGS_KEY = 'contextly_options_advanced';
 
-    const WIDGET_SNIPPET_ID = 'ctx_linker';
-    const WIDGET_SNIPPET_CLASS = 'ctx_widget';
+    const WIDGET_SNIPPET_ID = 'ctx-module';
+    const WIDGET_SNIPPET_CLASS = 'ctx-module-container ctx-clearfix';
     const WIDGET_SNIPPET_META_BOX_TITLE = 'Contextly Related Links';
     const WIDGET_SOCIALER_META_BOX_TITLE = 'Contextly Socialer';
 
-    const WIDGET_SIDEBAR_CLASS = 'ctx_widget_hidden';
+    const WIDGET_SIDEBAR_CLASS = 'ctx-sidebar-container';
     const WIDGET_SIDEBAR_PREFIX = 'contextly-';
 	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar id="%HASH%"]';
+
+	const MAIN_MODULE_SHORT_CODE = 'contextly_main_module';
+	const MAIN_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
+	const MAIN_MODULE_SHORT_CODE_ID = 'ctx_main_module_short_code';
 
 	/**
 	 * @var ContextlyKitApi
@@ -27,8 +31,7 @@ class Contextly
 
 	protected function api() {
 		if (!isset($this->api)) {
-			$this->api = ContextlyWpKit::getInstance()
-					->newApi();
+			$this->api = ContextlyWpKit::getInstance()->newApi();
 		}
 
 		return $this->api;
@@ -39,14 +42,16 @@ class Contextly
             add_action( 'admin_enqueue_scripts', array( $this, 'initAdmin' ), 1 );
             add_action( 'save_post', array( $this, 'publishBoxControlSavePostHook' ) );
 	        add_filter( 'default_content', array( $this, 'addAutosidebarCodeFilter' ), 10, 2 );
+			add_action( 'admin_head', array( $this, 'insertMetatags' ) );
 
-					// Register overlay dialog page.
-					ContextlyWpKit::getInstance()
-							->newWpOverlayPage()
-							->addMenuAction();
+			// Register overlay dialog page.
+			ContextlyWpKit::getInstance()
+					->newWpOverlayPage()
+					->addMenuAction();
         } else {
             add_action( 'init', array( $this, 'initDefault' ), 1 );
             add_action('the_content', array( $this, 'addSnippetWidgetToContent' ) );
+			add_action( 'wp_head', array( $this, 'insertMetatags' ) );
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
@@ -54,6 +59,7 @@ class Contextly
         add_action( 'admin_enqueue_scripts', array( $this, 'loadScripts' ) );
 
         add_action( 'publish_post', array( $this, 'publishPost'), 10, 2 );
+        add_action( 'save_post', array( $this, 'publishPost'), 10, 2 );
 
 	    $this->attachAjaxActions();
     }
@@ -119,25 +125,11 @@ class Contextly
         return $client_options;
     }
 
-    private function getPostData() {
-        global $post;
-
-	    if ( isset( $post ) && $post->ID ) {
-	        return array(
-	            'post_id'       => $post->ID,
-	            'post_date'     => $post->post_date,
-	            'post_modified' => $post->post_modified,
-	            'author'        => $post->post_author,
-	            'type'          => $post->post_type,
-	        );
-	    }
-
-	    return null;
-    }
-
     private function getAuthorFullName( $post ) {
-	    if ( get_the_author_meta( "last_name", $post->post_author ) ) {
-	        return get_the_author_meta( "last_name", $post->post_author ) . ' ' . get_the_author_meta( "first_name", $post->post_author );
+	    if ( get_the_author_meta( "first_name", $post->post_author ) || get_the_author_meta( "last_name", $post->post_author ) )
+	    {
+	        $name = get_the_author_meta( "first_name", $post->post_author ) . ' ' . get_the_author_meta( "last_name", $post->post_author );
+		    return $this->escape( trim( $name ) );
 	    }
         return null;
     }
@@ -145,8 +137,9 @@ class Contextly
 	private function getAuthorDisplayName( $post ) {
 		$display_name = get_the_author_meta( "display_name", $post->post_author );
 		$nickname = get_the_author_meta( "nickname", $post->post_author );
+		$name = $display_name ? $display_name : $nickname;
 
-		return $display_name ? $display_name : $nickname;
+		return $this->escape( $name );
 	}
 
     private function getSettingsOptions() {
@@ -161,11 +154,11 @@ class Contextly
 
 	        foreach ( $display_types as $display_type ) {
 		        $this->addAdminMetaboxForPage( $display_type );
+				$this->addAdminPublishMetaboxForPage( $display_type );
 	        }
 
             global $post;
             if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
-                $this->addAdminPublishMetaboxForPage();
                 $this->addEditorButtons();
             }
         }
@@ -198,6 +191,7 @@ class Contextly
     }
 
     public function initDefault() {
+        add_shortcode(self::MAIN_MODULE_SHORT_CODE, array( $this, 'prepareMainModule' ) );
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
         add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
     }
@@ -214,7 +208,7 @@ class Contextly
     }
 
     private function addPostEditor() {
-			wp_enqueue_script( 'contextly-post-editor', $this->getPluginJs( 'contextly-post-editor.js' ), 'contextly', null );
+		wp_enqueue_script( 'contextly-post-editor', $this->getPluginJs( 'contextly-post-editor.js' ), 'contextly', null, true );
     }
 
     private function addAdminMetaboxForPage( $page_type ) {
@@ -256,6 +250,7 @@ class Contextly
             }
         }
 
+        array_push($buttons, "separator", "contextly");
         array_push($buttons, "separator", "contextlysidebar");
         return $buttons;
     }
@@ -266,7 +261,7 @@ class Contextly
         return $plugin_array;
     }
 
-    public function getSnippetAdminControls() {
+    public function getAdditionalShowHideControl() {
         global $post;
 
         $html = '';
@@ -294,7 +289,7 @@ class Contextly
         global $post;
 
         $default_html_code = '';
-        $additional_admin_controls = '';
+        $additional_html_controls = '';
 
         if ( is_admin() ) {
             $contextly_settings = new ContextlySettings();
@@ -315,17 +310,27 @@ class Contextly
             }
 
             if ( $display_global_settings ) {
-                $additional_admin_controls = $this->getSnippetAdminControls();
+	            $additional_html_controls = $this->getAdditionalShowHideControl();
             }
-
         }
+	    else
+	    {
+		    if ( $this->isLoadWidget() )
+		    {
+			    $api_options = $this->getAPIClientOptions();
+				if ( isset( $api_options[ 'appID' ] ) && $api_options[ 'appID' ] && isset( $post ) && $post->ID )
+				{
+					$additional_html_controls = sprintf( '<a href="%s" style="display: none;">Related</a>',	esc_url( Urls::getApiServerSeoHtmlUrl( $api_options[ 'appID' ], $post->ID ) ) );
+				}
+		    }
+	    }
 
-        return "<div id='" . self::WIDGET_SNIPPET_ID . "' class='" . self::WIDGET_SNIPPET_CLASS . "'>" . $default_html_code . "</div>" . $additional_admin_controls;
+        return "<div id='" . esc_attr( self::WIDGET_SNIPPET_ID ) . "' class='" . esc_attr( self::WIDGET_SNIPPET_CLASS ) . "'>" . $default_html_code . "</div>" . $additional_html_controls;
     }
 
 	public function getPluginJs( $script_name ) {
 		if ( CONTEXTLY_MODE == 'production' ) {
-			return Urls::getPluginJsCdnUrl( $script_name );
+			return Urls::getPluginCdnUrl( $script_name, 'js' );
 		} else {
 		    return plugins_url( 'js/' . $script_name , __FILE__ );
         }
@@ -333,7 +338,7 @@ class Contextly
 
 	public function getPluginCss( $css_name ) {
 		if ( CONTEXTLY_MODE == 'production' ) {
-			return Urls::getPluginCssCdnUrl( $css_name );
+			return Urls::getPluginCdnUrl( $css_name, 'css' );
 		} else {
 			return plugins_url( 'css/' . $css_name , __FILE__ );
 		}
@@ -342,13 +347,10 @@ class Contextly
 	public function loadContextlyAjaxJSScripts() {
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'json2' );
-		wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', null );
-		wp_enqueue_script( 'contextly-create-class', $this->getPluginJs( 'contextly-class.min.js' ), 'easy_xdm', null );
-		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', null );
-	}
-
-	public function loadContextlyAdditionalJSScripts() {
-		wp_enqueue_script( 'pretty_photo', $this->getPluginJs( 'jquery.prettyPhoto.js' ), 'jquery', null );
+		wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', null, true );
+		wp_enqueue_script( 'jquery_cookie', $this->getPluginJs( 'jquery.cookie.js' ), 'jquery', null, true );
+		wp_enqueue_script( 'contextly-create-class', $this->getPluginJs( 'contextly-class.min.js' ), 'easy_xdm', null, true );
+		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', null, true );
 	}
 
 	private function getAjaxUrl() {
@@ -360,8 +362,9 @@ class Contextly
 	}
 
 	public function makeContextlyJSObject( $additional_options = array() ) {
+		global $post;
+
 		$api_options = $this->getAPIClientOptions();
-		$post_data = $this->getPostData();
 
 		$options = array(
 			'ajax_url'      => $this->getAjaxUrl(),
@@ -370,15 +373,14 @@ class Contextly
 			'editor_url'    => $this->getOverlayEditorUrl(),
 			'app_id'        => $api_options[ 'appID' ],
 			'settings'      => $this->getSettingsOptions(),
-			'post'          => $post_data,
 			'admin'         => (boolean)is_admin(),
 			'mode'          => CONTEXTLY_MODE,
 			'https'         => CONTEXTLY_HTTPS,
 			'version'       => CONTEXTLY_PLUGIN_VERSION
 		);
 
-		if ( isset( $post_data['post_id'] ) ) {
-			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post_data['post_id']}" );
+		if ( isset( $post ) && isset( $post->ID ) ) {
+			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
 		}
 
 		if ( is_array( $additional_options ) ) {
@@ -390,25 +392,31 @@ class Contextly
 			'Contextly',
 			array( 'l10n_print_after' => 'Contextly = ' . json_encode( $options ) . ';' )
 		);
+	}
 
+	private function isLoadWidget()
+	{
+		global $post;
+
+		$contextly_settings = new ContextlySettings();
+		if ( $this->checkWidgetDisplayType() && !$contextly_settings->isPageDisplayDisabled( $post->ID ) )
+		{
+			return is_page() || is_single() || $this->isAdminEditPage();
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public function loadScripts() {
-        global $post;
-
-        $contextly_settings = new ContextlySettings();
-        if ( !$this->checkWidgetDisplayType() || $contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
-	        return;
-        }
-
-        if ( is_page() || is_single() || $this->isAdminEditPage() ) {
+        if ( $this->isLoadWidget() ) {
 	        $this->loadContextlyAjaxJSScripts();
-			$this->loadContextlyAdditionalJSScripts();
 		    $this->makeContextlyJSObject();
 
 	        if ( $this->isAdminEditPage() ) {
-						$this->addOverlayLibrary();
-						$this->addPostEditor();
+				$this->addOverlayLibrary();
+				$this->addPostEditor();
 	        }
         }
     }
@@ -424,10 +432,13 @@ class Contextly
 	}
 
 	public function loadStyles() {
-		wp_register_style( 'pretty-photo-style', $this->getPluginCss( 'prettyPhoto/style.css' ) );
-		wp_enqueue_style( 'pretty-photo-style' );
-		wp_register_style( 'contextly-branding', $this->getPluginCss( 'branding/branding.css' ) );
-		wp_enqueue_style( 'contextly-branding' );
+		if ( $this->isLoadWidget() )
+		{
+			wp_register_style( 'video-modal', $this->getPluginCss( 'video-modal/reveal.css' ) );
+			wp_enqueue_style( 'video-modal' );
+			wp_register_style( 'contextly-branding', $this->getPluginCss( 'branding/branding.css' ) );
+			wp_enqueue_style( 'contextly-branding' );
+		}
 	}
 
 	public function ajaxPublishPostCallback() {
@@ -488,9 +499,11 @@ class Contextly
 			} catch ( Exception $e ) {
 	            return $e;
             }
+
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
@@ -503,7 +516,7 @@ class Contextly
 		$post_tags = get_the_tags( $post_id );
 		if (is_array($post_tags) && count($post_tags) > 0) {
 			foreach (array_slice($post_tags, 0, $tags_num_limit) as $post_tag) {
-				$tags_array[] = $post_tag->name;
+				$tags_array[] = $this->escape( $post_tag->name );
 			}
 		}
 
@@ -522,7 +535,7 @@ class Contextly
 			foreach ( array_slice($post_categories, 0, $categories_num_limit) as $category_id ) {
 				$category = get_category( $category_id );
 				if ( $category && strtolower( $category->name ) != "uncategorized" ) {
-					$categories_array[] = $category->name;
+					$categories_array[] = $this->escape( $category->name );
 				}
 			}
 		}
@@ -532,19 +545,29 @@ class Contextly
 
 	/**
 	 * @param $post_id
+	 * @return array|bool
+	 */
+	private function getPostImages($post_id)
+	{
+		$attachment_images = get_children(
+			array(
+				'post_parent'    => $post_id,
+				'post_type'      => 'attachment',
+				'numberposts'    => 0,
+				'post_mime_type' => 'image'
+			)
+		);
+		return $attachment_images;
+	}
+
+	/**
+	 * @param $post_id
 	 * @return array
 	 */
 	private function getPostImagesArray( $post_id ) {
 		$images_array = array();
 
-		$attachment_images = get_children(
-			array(
-				'post_parent' => $post_id,
-				'post_type' => 'attachment',
-				'numberposts' => 0,
-				'post_mime_type' => 'image'
-			)
-		);
+		$attachment_images = $this->getPostImages($post_id);
 
 		if ($attachment_images && is_array($attachment_images)) {
 			foreach($attachment_images as $image) {
@@ -557,6 +580,53 @@ class Contextly
 	}
 
 	/**
+	 * @param $post_id
+	 * @return mixed|null
+	 */
+	private function getPostFeaturedImage( $post_id )
+	{
+		if (has_post_thumbnail( $post_id ) )
+		{
+			list($url) = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'single-post-thumbnail' );
+
+			if ( $url )
+			{
+				return $url;
+			}
+		}
+		else
+		{
+			$post_images = $this->getPostImages( $post_id );
+
+			if ( count( $post_images ) > 0 )
+			{
+				$sorted_images = array();
+				foreach ( $post_images as $image )
+				{
+					list($url, $width, $height) = wp_get_attachment_image_src( $image->ID, 'full' );
+
+					$image_rank = $width + $height;
+
+					if ( !isset( $sorted_images[$image_rank] ) )
+					{
+						$sorted_images[$image_rank] = array($url);
+					}
+					else
+					{
+						$sorted_images[$image_rank][] = $url;
+					}
+				}
+
+				krsort( $sorted_images );
+
+				return current(reset($sorted_images));
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * In this method we will display hidden div. After page loading we will load it's content with javascript.
 	 * This will help to load page without loosing performance.
 	 * @param $attrs
@@ -565,7 +635,7 @@ class Contextly
 	public function prepareSidebar( $attrs ) {
         // We will display sidebar only if we have id for this sidebar
         if ( isset( $attrs[ 'id' ] ) ) {
-            return "<div class='" . self::WIDGET_SIDEBAR_CLASS . "' id='" . self::WIDGET_SIDEBAR_PREFIX . $attrs[ 'id' ] ."'></div>";
+            return "<div class='" . esc_attr( self::WIDGET_SIDEBAR_CLASS ) . "' id='" . esc_attr( self::WIDGET_SIDEBAR_PREFIX . $attrs[ 'id' ] ) ."'></div>";
         }
         else {
             return '';
@@ -654,6 +724,59 @@ class Contextly
 		else {
 			return '';
 		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function prepareMainModule() {
+		return sprintf( "<div class='%s' id='%s'></div>", esc_attr( self::MAIN_MODULE_SHORT_CODE_CLASS ), esc_attr( self::MAIN_MODULE_SHORT_CODE_ID ) );
+	}
+
+	/**
+	 *
+	 */
+	public function insertMetatags()
+	{
+		if ( $this->isLoadWidget() )
+		{
+			global $post;
+			$json_data = null;
+
+			if ( isset( $post ) )
+			{
+				$json_data = array(
+					'title'                    => $this->escape( $post->post_title ),
+					'url'                      => get_permalink( $post->ID ),
+					'pub_date'                 => $post->post_date,
+					'mod_date'                 => $post->post_modified,
+					'type'                     => $post->post_type,
+					'post_id'                  => $post->ID,
+					'author_id'                => $this->escape( $post->post_author ),
+					'author_name'              => $this->getAuthorFullName( $post ),
+					'author_display_name'      => $this->getAuthorDisplayName( $post ),
+					'tags'                     => $this->getPostTagsArray( $post->ID ),
+					'categories'               => $this->getPostCategoriesArray( $post->ID ),
+					'image'                    => $this->getPostFeaturedImage( $post->ID )
+				);
+			}
+
+			if ( $json_data !== null )
+			{
+				?>
+<meta name='contextly-page' id='contextly-page' content='<?php echo json_encode( $json_data ); ?>' />
+<?php
+			}
+		}
+	}
+
+	/**
+	 * @param $text
+	 * @return string
+	 */
+	private function escape($text)
+	{
+		return htmlspecialchars($text, ENT_QUOTES & ~ENT_COMPAT, 'utf-8');
 	}
 
 	public function return404() {

@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories
 Requires at least: 2.0.2
-Tested up to: 3.8
+Tested up to: 3.9
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -88,6 +88,17 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 
 == Changelog ==
+
+= 1.1.2 =
+
+- Fix for bug where apostrophes in tags or categories prevented recommendations from displaying
+- Small CSS updates to handle edge cases
+
+
+= 1.1.1 =
+
+- Fixed a bug where pots with quote marks in the title would not have a recommendation display
+
 
 = 1.1 =
 

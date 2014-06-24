@@ -30,7 +30,7 @@ class ContextlyWpKit extends ContextlyKit {
 		$config->urlPrefix   = plugins_url('kit', __FILE__);
 
 		if ( CONTEXTLY_MODE !== 'production' ) {
-			$config->mode = 'dev';
+			$config->mode = CONTEXTLY_MODE;
 		}
 
 		$contextly = new Contextly();
@@ -45,7 +45,6 @@ class ContextlyWpKit extends ContextlyKit {
 	}
 
 	function isHttps() {
-		// Use built-in function to check, for consistency.
 		return is_ssl();
 	}
 
@@ -179,7 +178,7 @@ class ContextlyWpAssetsRenderer extends ContextlyKitAssetsRenderer {
 	public function renderJs() {
 		$version = $this->getAssetsVersion();
 		foreach ($this->assets->buildJsUrls() as $key => $url) {
-			wp_enqueue_script($this->resourceHandle( $key ), $url, array(), $version);
+			wp_enqueue_script( $this->resourceHandle( $key ), $url, array(), $version, true );
 		}
 	}
 
