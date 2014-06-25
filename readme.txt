@@ -89,6 +89,16 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.2 =
+
+- Brand new editor interface
+- Better detection of featured images
+- Better communication of updated and deleted posts
+- CSS fixes for displays
+- New video player
+- Minor fixes
+
+
 = 1.1.2 =
 
 - Fix for bug where apostrophes in tags or categories prevented recommendations from displaying
