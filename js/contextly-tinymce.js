@@ -140,7 +140,7 @@
 
 			// Init buttons state right after the editor initialization has been
 			// finished.
-			editor.onInit.add(function () {
+			editor.onInit.add( function () {
 				// Set up event handlers to enable/disable buttons on the settings
 				// loading events.
 				var eventHandlers = {
@@ -153,7 +153,7 @@
 				}
 
 				// Initialize button state depending on data loading state.
-				setButtonsState(Contextly.PostEditor.isLoaded);
+				setButtonsState(Contextly.PostEditor.getInstance().isLoaded);
 			});
 
 			// Unbind the events on editor removing.
