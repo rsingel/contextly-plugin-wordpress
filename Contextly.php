@@ -160,6 +160,7 @@ class Contextly
             global $post;
             if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
                 $this->addEditorButtons();
+                $this->addQuicktagsEditorIntegration();
             }
         }
     }
@@ -209,6 +210,7 @@ class Contextly
 
     private function addPostEditor() {
 		wp_enqueue_script( 'contextly-post-editor', $this->getPluginJs( 'contextly-post-editor.js' ), 'contextly', null, true );
+	    wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly', null, true );
     }
 
     private function addAdminMetaboxForPage( $page_type ) {
@@ -229,6 +231,11 @@ class Contextly
     public function addSnippetWidgetToContent( $content ) {
         return $content . $this->getSnippetWidget();
     }
+
+	private function addQuicktagsEditorIntegration()
+	{
+		wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly', null, true );
+	}
 
     public function registerMceButtons( $buttons ) {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
@@ -417,6 +424,7 @@ class Contextly
 	        if ( $this->isAdminEditPage() ) {
 				$this->addOverlayLibrary();
 				$this->addPostEditor();
+		        $this->addQuicktagsEditorIntegration();
 	        }
         }
     }
