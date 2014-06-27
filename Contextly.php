@@ -43,6 +43,7 @@ class Contextly
             add_action( 'save_post', array( $this, 'publishBoxControlSavePostHook' ) );
 	        add_filter( 'default_content', array( $this, 'addAutosidebarCodeFilter' ), 10, 2 );
 			add_action( 'admin_head', array( $this, 'insertMetatags' ) );
+			add_action( 'admin_footer', array( $this, 'addQuicktagsEditorIntegration' ) );
 
 			// Register overlay dialog page.
 			ContextlyWpKit::getInstance()
@@ -50,7 +51,7 @@ class Contextly
 					->addMenuAction();
         } else {
             add_action( 'init', array( $this, 'initDefault' ), 1 );
-            add_action('the_content', array( $this, 'addSnippetWidgetToContent' ) );
+            add_action( 'the_content', array( $this, 'addSnippetWidgetToContent' ) );
 			add_action( 'wp_head', array( $this, 'insertMetatags' ) );
         }
 
@@ -160,7 +161,6 @@ class Contextly
             global $post;
             if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
                 $this->addEditorButtons();
-                $this->addQuicktagsEditorIntegration();
             }
         }
     }
@@ -210,7 +210,6 @@ class Contextly
 
     private function addPostEditor() {
 		wp_enqueue_script( 'contextly-post-editor', $this->getPluginJs( 'contextly-post-editor.js' ), 'contextly', null, true );
-	    wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly', null, true );
     }
 
     private function addAdminMetaboxForPage( $page_type ) {
@@ -232,9 +231,17 @@ class Contextly
         return $content . $this->getSnippetWidget();
     }
 
-	private function addQuicktagsEditorIntegration()
+	public function addQuicktagsEditorIntegration()
 	{
-		wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly', null, true );
+		if ( $this->checkWidgetDisplayType() ) {
+
+			global $post;
+			$contextly_settings = new ContextlySettings();
+			if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) )
+			{
+				wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly', null, true );
+			}
+		}
 	}
 
     public function registerMceButtons( $buttons ) {
