@@ -40,50 +40,66 @@
         }
     }
 
-    QTags.addButton(
-        'ctx_link',
-        'Contextly Link',
-        function(e, c, ed) {
-            var selection_text = getSelectedText( c );
-
-            if ( !selection_text ) {
-                alert('First highlight the word or phrase you want to link, then press this button.');
-                return;
+    jQuery( document).ready(
+        function () {
+            if ( typeof QTags != "undefined" )
+            {
+                registerContextlyQtLinkButton();
+                registerContextlyQtSidebarButton();
             }
-
-            Contextly.PostEditor.getInstance().linkPopup(selection_text, function(link_url, link_title) {
-                var tag = '<a href="' + link_url + '">' + selection_text + '</a>';
-                QTags.insertContent( tag );
-            });
-        },
-        null,
-        null,
-        'Contextly Link',
-        29
+        }
     );
 
-    QTags.addButton(
-        'ctx_sidebar',
-        'Contextly Sidebar',
-        function(e, c, ed) {
-            var sidebar_id = null;
+    function registerContextlyQtLinkButton()
+    {
+        QTags.addButton(
+            'ctx_link',
+            'Contextly Link',
+            function(e, c, ed) {
+                var selection_text = getSelectedText( c );
 
-            // Try to extract existing sidebar ID from the editor.
-            var selection_text = getSelectedText( c );
-            var matches = selection_text.match(buildSidebarRegexp());
-            if (matches) {
-                sidebar_id = matches[1];
-            }
+                if ( !selection_text ) {
+                    alert('First highlight the word or phrase you want to link, then press this button.');
+                    return;
+                }
 
-            Contextly.PostEditor.getInstance().sidebarPopup(sidebar_id, function (sidebar) {
-                var token = buildSidebarToken(sidebar);
-                QTags.insertContent( token );
-            });
-        },
-        null,
-        null,
-        'Contextly Sidebar',
-        500
-    );
+                Contextly.PostEditor.getInstance().linkPopup(selection_text, function(link_url, link_title) {
+                    var tag = '<a href="' + link_url + '">' + selection_text + '</a>';
+                    QTags.insertContent( tag );
+                });
+            },
+            null,
+            null,
+            'Contextly Link',
+            29
+        );
+    }
+
+    function registerContextlyQtSidebarButton()
+    {
+        QTags.addButton(
+            'ctx_sidebar',
+            'Contextly Sidebar',
+            function(e, c, ed) {
+                var sidebar_id = null;
+
+                // Try to extract existing sidebar ID from the editor.
+                var selection_text = getSelectedText( c );
+                var matches = selection_text.match(buildSidebarRegexp());
+                if (matches) {
+                    sidebar_id = matches[1];
+                }
+
+                Contextly.PostEditor.getInstance().sidebarPopup(sidebar_id, function (sidebar) {
+                    var token = buildSidebarToken(sidebar);
+                    QTags.insertContent( token );
+                });
+            },
+            null,
+            null,
+            'Contextly Sidebar',
+            500
+        );
+    }
 
 })( jQuery );
