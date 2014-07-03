@@ -29,7 +29,7 @@ class ContextlyWpKit extends ContextlyKit {
 		$config              = new ContextlyKitSettings();
 		$config->urlPrefix   = plugins_url('kit', __FILE__);
 
-		if ( CONTEXTLY_MODE !== 'production' ) {
+		if ( CONTEXTLY_MODE !== Urls::MODE_LIVE ) {
 			$config->mode = CONTEXTLY_MODE;
 		}
 
@@ -250,7 +250,7 @@ class ContextlyWpWidgetsEditor extends ContextlyKitWidgetsEditor {
 			$result = $this->handleRequest( $method, $params );
 		}
 		catch (ContextlyKitException $e) {
-		  if (CONTEXTLY_MODE !== 'production') {
+		  if (CONTEXTLY_MODE !== Urls::MODE_LIVE) {
 				$message = (string) $e;
 			}
 			else {

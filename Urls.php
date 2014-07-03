@@ -12,7 +12,7 @@ class Urls {
 
 	const MODE_LOCAL = 'local';
 	const MODE_DEV = 'dev';
-	const MODE_LIVE = 'production';
+	const MODE_LIVE = 'live';
 
     static private function getScheme() {
         return 'http' . ( CONTEXTLY_HTTPS ? 's' : '' );

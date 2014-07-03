@@ -182,7 +182,7 @@
 		},
 
 		openEditor: function(type, api) {
-			if (!this.isLoaded) {
+            if (!this.isLoaded) {
 				return;
 			}
 

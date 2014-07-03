@@ -343,7 +343,7 @@ class Contextly
     }
 
 	public function getPluginJs( $script_name ) {
-		if ( CONTEXTLY_MODE == 'production' ) {
+		if ( CONTEXTLY_MODE == Urls::MODE_LIVE ) {
 			return Urls::getPluginCdnUrl( $script_name, 'js' );
 		} else {
 		    return plugins_url( 'js/' . $script_name , __FILE__ );
@@ -351,7 +351,7 @@ class Contextly
 	}
 
 	public function getPluginCss( $css_name ) {
-		if ( CONTEXTLY_MODE == 'production' ) {
+		if ( CONTEXTLY_MODE == Urls::MODE_LIVE ) {
 			return Urls::getPluginCdnUrl( $css_name, 'css' );
 		} else {
 			return plugins_url( 'css/' . $css_name , __FILE__ );

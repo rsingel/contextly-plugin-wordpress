@@ -8,7 +8,7 @@ Version: 1.2
 */
 
 define ( "CONTEXTLY_PLUGIN_VERSION", '1.2' );
-define ( "CONTEXTLY_MODE", 'dev' );
+define ( "CONTEXTLY_MODE", 'live' );
 define ( "CONTEXTLY_HTTPS", is_ssl() );
 
 require_once ( "kit/server/Kit.php" );
