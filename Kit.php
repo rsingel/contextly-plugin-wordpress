@@ -87,6 +87,7 @@ class ContextlyWpApiTransport implements ContextlyKitApiTransportInterface {
 		}
 
 		$result = wp_remote_request( $url, array(
+			'timeout'   => 10,
 			'method'    => $method,
 			'body'      => $data,
 			'headers'   => $headers,
@@ -107,9 +108,11 @@ class ContextlyWpApiTransport implements ContextlyKitApiTransportInterface {
 
 }
 
-class ContextlyWpSharedSession extends ContextlyKitApiSessionIsolated {
+class ContextlyWpSharedSession extends ContextlyKitBase implements ContextlyKitApiSessionInterface {
 
 	const TOKEN_OPTION_NAME   = 'contextly_access_token';
+
+	protected $token;
 
 	public function __construct( $kit ) {
 		parent::__construct( $kit );
@@ -138,13 +141,17 @@ class ContextlyWpSharedSession extends ContextlyKitApiSessionIsolated {
 	}
 
 	public function cleanupToken() {
-		parent::cleanupToken();
+		$this->token = $this->kit->newApiTokenEmpty();
 		$this->removeSharedToken();
 	}
 
 	public function setToken( $token ) {
-		parent::setToken( $token );
+		$this->token = $token;
 		$this->saveSharedToken( $token );
+	}
+
+	public function getToken() {
+		return $this->token;
 	}
 
 }
