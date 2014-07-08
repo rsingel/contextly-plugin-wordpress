@@ -659,6 +659,8 @@ class Contextly
 
 	public function ajaxGetAuthTokenCallback() {
 		try {
+			$this->api()->testCredentials();
+
 			$data = array(
 				'success' => 1,
 				'contextly_access_token' => (string) $this->api()
