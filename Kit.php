@@ -261,8 +261,7 @@ class ContextlyWpWidgetsEditor extends ContextlyKitWidgetsEditor {
 				$message = (string) $e;
 			}
 			else {
-				//$message = NULL; todo:
-				$message = (string) $e;
+				$message = NULL;
 			}
 			$GLOBALS['contextly']->return500( $message );
 		}
