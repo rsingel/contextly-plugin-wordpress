@@ -89,6 +89,16 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+= 1.2.2 =
+
+- Brand new editor interface
+- Better detection of featured images
+- Better communication of updated and deleted posts
+- CSS fixes for displays
+- New video player
+- Added minor bug fixes in CSS and JS to help with displays
+
+
 = 1.2 =
 
 - Brand new editor interface
