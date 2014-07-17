@@ -7,7 +7,7 @@ Author: Contextly
 Version: 1.2.3
 */
 
-define ( "CONTEXTLY_PLUGIN_VERSION", '1.2.2' ); // todo: update to 1.2.3
+define ( "CONTEXTLY_PLUGIN_VERSION", '1.2.3' );
 define ( "CONTEXTLY_MODE", 'live' );
 define ( "CONTEXTLY_HTTPS", is_ssl() );
 
