@@ -214,7 +214,7 @@ class ContextlyWpOverlayPage extends ContextlyKitBase {
 
 	public function registerPage() {
 		// Register back-end callback without adding it to the menu.
-		add_submenu_page( '', '', '', 'manage_options', self::MENU_KEY, array( $this, 'display' ) );
+		add_submenu_page( '', '', '', 'edit_posts', self::MENU_KEY, array( $this, 'display' ) );
 	}
 
 	public function display() {
