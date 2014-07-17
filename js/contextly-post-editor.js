@@ -257,7 +257,7 @@
 				.bind('click.contextlyPublishConfirmation', this.proxy(function () {
 					var wp_settings = Contextly.Settings.getInstance().getWPSettings();
 
-					if (wp_settings.publish_confirmation && this.data !== null) {
+					if (wp_settings.publish_confirmation && wp_settings.publish_confirmation == "1" && this.data !== null) {
 						// Put snippet and sidebars together for a check.
 						var widgets = $.extend({
 							'0': this.data.snippet
