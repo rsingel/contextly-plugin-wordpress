@@ -89,6 +89,13 @@ You give us an RSS feed of stuff you want us to show off. This can be a feed of 
 
 == Changelog ==
 
+
+= 1.2.3 =
+
+- Fixed an issue where non-admins could be blocked from using the Contextly editor buttons
+- Fixed a bug where prompts to choose related posts before publishing couldn't be turned off
+
+
 = 1.2.2 =
 
 - Brand new editor interface
