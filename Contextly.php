@@ -459,7 +459,10 @@ class Contextly
     }
 
 	protected function addOverlayLibrary() {
-		$this->addKitAssets( 'components/overlay' );
+		$ignore = array(
+			'libraries/jquery' => TRUE,
+		);
+		$this->addKitAssets( 'components/overlay', $ignore );
 	}
 
 	public function loadStyles() {
