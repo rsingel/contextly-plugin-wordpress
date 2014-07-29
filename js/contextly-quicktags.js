@@ -63,7 +63,7 @@
                     return;
                 }
 
-                Contextly.PostEditor.getInstance().linkPopup(selection_text, function(link_url, link_title) {
+                Contextly.PostEditor.linkPopup(selection_text, function(link_url, link_title) {
                     var tag = '<a href="' + link_url + '">' + selection_text + '</a>';
                     QTags.insertContent( tag );
                 });
@@ -90,7 +90,7 @@
                     sidebar_id = matches[1];
                 }
 
-                Contextly.PostEditor.getInstance().sidebarPopup(sidebar_id, function (sidebar) {
+                Contextly.PostEditor.sidebarPopup(sidebar_id, function (sidebar) {
                     var token = buildSidebarToken(sidebar);
                     QTags.insertContent( token );
                 });

@@ -225,7 +225,7 @@ class ContextlySettings {
 		<script>
 			jQuery( document ).ready(
 				function () {
-					Contextly.SettingsAutoLogin.getInstance().doLogin();
+					Contextly.SettingsAutoLogin.doLogin();
 				}
 			);
 		</script>
