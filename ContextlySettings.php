@@ -67,7 +67,7 @@ class ContextlySettings {
 	    add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settingsDisplayPublishConfirmation' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 
 	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
-	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API' );
+	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API Key' );
         $this->tabs[ self::ADVANCED_SETTINGS_KEY ] = __( 'Advanced' );
     }
 
