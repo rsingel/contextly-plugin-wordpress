@@ -121,7 +121,7 @@ class ContextlySettings {
 			$class = 'updated';
 		}
 
-		echo '<div ' . ( $error ? 'id="contextly_warning" ' : '') . 'class="' . esc_attr( $class ) . ' fade' . '"><p>'. esc_html( $message ) . '</p></div>';
+		echo '<div ' . ( $error ? 'id="contextly_warning" ' : '') . 'class="' . esc_attr( $class ) . ' fade' . '"><p>'. $message . '</p></div>';
 	}
 
 	private function getWPPluginSettingsUrl( $tab = 'contextly_options_api' ) {
