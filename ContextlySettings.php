@@ -201,32 +201,39 @@ class ContextlySettings {
 			                    font-size: 22px;
 			                    margin-right: 10px;
 		                    }
+		                    span.btn-area {
+			                    line-height: 2em;
+		                    }
 	                    </style>
-	                    <div>
+	                    <div style="margin-top: 20px;">
 		                    <span class="btn-step-number">1.</span>
-	                    <?php submit_button(
-		                    'Customize Contextly and Get API Key',
-		                    'primary large button-hero',
-		                    'button',
-		                    null,
-		                    array(
-			                    'style'     => 'font-size: 18px; margin-top: 20px; background-color: #35b137; background-image: linear-gradient(to bottom, #36a739, #249b27); border-color: #36a739;',
-			                    'onclick'   => 'return open_contextly_api_page();',
-			                    'id'        => 'contextly-api-btn'
-		                    )
-	                    ); ?>
+		                    <span class="btn-area">
+			                    <?php submit_button(
+				                    'Customize Contextly and Get API Key',
+				                    'primary large button-hero',
+				                    'button',
+				                    null,
+				                    array(
+					                    'style'     => 'font-size: 18px; background-color: #35b137; background-image: linear-gradient(to bottom, #36a739, #249b27); border-color: #36a739;',
+					                    'onclick'   => 'return open_contextly_api_page();',
+					                    'id'        => 'contextly-api-btn'
+				                    )
+			                    ); ?>
+		                    <span>
 		                </div>
-						<div>
+	                    <div style="margin-top: 20px;">
 							<span class="btn-step-number">2.</span>
-	                    <?php submit_button(
-		                    'Save API Key',
-		                    'primary large button-hero',
-		                    'submit',
-		                    null,
-		                    array(
-			                    'style' => 'font-size: 18px; margin-top: 20px;'
-		                    )
-	                    ); ?>
+							<span class="btn-area">
+			                    <?php submit_button(
+				                    'Save API Key',
+				                    'primary large button-hero',
+				                    'submit',
+				                    null,
+				                    array(
+					                    'style' => 'font-size: 18px;'
+				                    )
+			                    ); ?>
+							</span>
 	                    </div>
 	                <?php
 	                    $this->displaySettingsAutoloadStuff( 'contextly-api-btn' );
