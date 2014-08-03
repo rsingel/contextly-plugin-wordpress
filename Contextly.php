@@ -56,7 +56,6 @@ class Contextly
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
-	    add_action( 'wp_enqueue_scripts', array( $this, 'loadStyles' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'loadScripts' ) );
 
         add_action( 'publish_post', array( $this, 'publishPost'), 10, 2 );
@@ -208,9 +207,23 @@ class Contextly
         }
     }
 
-    private function addPostEditor() {
+	private function addKitAssets( $packages, $ignore = array() ) {
+		$kit = ContextlyWpKit::getInstance();
+		$assets = $kit->newAssetsList();
+		$manager = $kit->newAssetsManager();
+
+		$packages = (array) $packages;
+		foreach ( $packages as $package ) {
+			$manager->extractPackageAssets( $package, $assets, $ignore );
+		}
+
+		$kit->newWpAssetsRenderer( $assets )
+				->renderAll();
+	}
+
+	private function addPostEditor() {
 		wp_enqueue_script( 'contextly-post-editor', $this->getPluginJs( 'contextly-post-editor.js' ), 'contextly', null, true );
-    }
+	}
 
     private function addAdminMetaboxForPage( $page_type ) {
         add_meta_box(
@@ -361,10 +374,18 @@ class Contextly
 	public function loadContextlyAjaxJSScripts() {
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'json2' );
-		wp_enqueue_script( 'easy_xdm', Urls::getMainJsCdnUrl( 'easyXDM.min.js' ), 'jquery', null, true );
-		wp_enqueue_script( 'jquery_cookie', $this->getPluginJs( 'jquery.cookie.js' ), 'jquery', null, true );
-		wp_enqueue_script( 'contextly-create-class', $this->getPluginJs( 'contextly-class.min.js' ), 'easy_xdm', null, true );
-		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'contextly-create-class', null, true );
+
+		$include = array(
+			'libraries/jquery-cookie',
+			'widgets/factory',
+		);
+		$ignore = array(
+			'libraries/jquery' => TRUE,
+			'libraries/json2' => TRUE,
+		);
+		$this->addKitAssets( $include, $ignore );
+
+		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'jquery', null, true );
 	}
 
 	private function getAjaxUrl() {
@@ -402,7 +423,7 @@ class Contextly
 		}
 
 		wp_localize_script(
-			'easy_xdm',
+			'json2',
 			'Contextly',
 			array( 'l10n_print_after' => 'Contextly = ' . json_encode( $options ) . ';' )
 		);
@@ -437,23 +458,10 @@ class Contextly
     }
 
 	protected function addOverlayLibrary() {
-		$kit = ContextlyWpKit::getInstance();
-		$assets = $kit->newAssetsList();
-
-		$kit->newAssetsManager()
-			->extractPackageAssets('components/overlay', $assets);
-		$kit->newWpAssetsRenderer($assets)
-			->renderAll();
-	}
-
-	public function loadStyles() {
-		if ( $this->isLoadWidget() )
-		{
-			wp_register_style( 'video-modal', $this->getPluginCss( 'video-modal/reveal.css' ) );
-			wp_enqueue_style( 'video-modal' );
-			wp_register_style( 'contextly-branding', $this->getPluginCss( 'branding/branding.css' ) );
-			wp_enqueue_style( 'contextly-branding' );
-		}
+		$ignore = array(
+			'libraries/jquery' => TRUE,
+		);
+		$this->addKitAssets( 'components/overlay', $ignore );
 	}
 
 	public function ajaxPublishPostCallback() {

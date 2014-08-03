@@ -13,7 +13,7 @@
 
 				// Open contextly window for select text/link.
 				var selectedText = selection.getContent({format: 'text'});
-				Contextly.PostEditor.getInstance().linkPopup(selectedText, function(link_url, link_title) {
+				Contextly.PostEditor.linkPopup(selectedText, function(link_url, link_title) {
 					var attrs = {
 						href: link_url,
 						title: link_title
@@ -70,7 +70,7 @@
 						}
 					}
 
-					Contextly.PostEditor.getInstance().sidebarPopup(sidebar_id, function (sidebar) {
+					Contextly.PostEditor.sidebarPopup(sidebar_id, function (sidebar) {
 						var token = buildSidebarToken(sidebar);
 						editor.execCommand('mceInsertContent', false, token);
 					});
@@ -153,7 +153,7 @@
 				}
 
 				// Initialize button state depending on data loading state.
-				setButtonsState(Contextly.PostEditor.getInstance().isLoaded);
+				setButtonsState(Contextly.PostEditor.isLoaded);
 			});
 
 			// Unbind the events on editor removing.
