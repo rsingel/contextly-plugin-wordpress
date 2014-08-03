@@ -56,7 +56,6 @@ class Contextly
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
-	    add_action( 'wp_enqueue_scripts', array( $this, 'loadStyles' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'loadScripts' ) );
 
         add_action( 'publish_post', array( $this, 'publishPost'), 10, 2 );
@@ -463,16 +462,6 @@ class Contextly
 			'libraries/jquery' => TRUE,
 		);
 		$this->addKitAssets( 'components/overlay', $ignore );
-	}
-
-	public function loadStyles() {
-		if ( $this->isLoadWidget() )
-		{
-			wp_register_style( 'video-modal', $this->getPluginCss( 'video-modal/reveal.css' ) );
-			wp_enqueue_style( 'video-modal' );
-			wp_register_style( 'contextly-branding', $this->getPluginCss( 'branding/branding.css' ) );
-			wp_enqueue_style( 'contextly-branding' );
-		}
 	}
 
 	public function ajaxPublishPostCallback() {
