@@ -27,25 +27,6 @@ Contextly.Loader = Contextly.createClass({
 			return this.response;
 		},
 
-		isWidgetHasLinks: function () {
-			var has_links = false;
-			var response = this.getLastResponse();
-
-			if ( response && response.entry ) {
-				if ( response.entry.snippets ) {
-					has_links = this.isEntryWidgetsHasLinks( response.entry.snippets );
-				}
-				if ( !has_links && response.entry.sidebars ) {
-					has_links = this.isEntryWidgetsHasLinks( response.entry.sidebars );
-				}
-				if ( !has_links && response.entry.auto_sidebars ) {
-					has_links = this.isEntryWidgetsHasLinks( response.entry.auto_sidebars );
-				}
-			}
-
-			return has_links;
-		},
-
 		isEntryWidgetsHasLinks: function ( entry_widgets ) {
 			for ( var i = 0; i < entry_widgets.length; i++ ) {
 				if ( entry_widgets[i].links ) {
@@ -212,7 +193,7 @@ Contextly.PageView = Contextly.createClass({
                 var widget_object = Contextly.widget.Factory.getWidget( widgets[ idx ] );
                 if ( widget_object ) {
                     widget_object.display();
-									this.fixSnippetPagePosition(widget_object);
+					this.fixSnippetPagePosition(widget_object);
                 }
             }
         }
