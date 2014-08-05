@@ -136,9 +136,9 @@ Contextly.PageView = Contextly.createClass({
         {
             if ( this.entry ) {
                 // Display widgets
-				this.displayWidgets( this.entry.snippets );
-				this.displayWidgets( this.entry.sidebars );
-				this.displayWidgets( this.entry.auto_sidebars );
+                this.displayWidgets( this.entry.snippets );
+                this.displayWidgets( this.entry.sidebars );
+                this.displayWidgets( this.entry.auto_sidebars );
 
                 if ( this.entry.update )
                 {
