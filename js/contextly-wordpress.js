@@ -27,25 +27,6 @@ Contextly.Loader = Contextly.createClass({
 			return this.response;
 		},
 
-		isWidgetHasLinks: function () {
-			var has_links = false;
-			var response = this.getLastResponse();
-
-			if ( response && response.entry ) {
-				if ( response.entry.snippets ) {
-					has_links = this.isEntryWidgetsHasLinks( response.entry.snippets );
-				}
-				if ( !has_links && response.entry.sidebars ) {
-					has_links = this.isEntryWidgetsHasLinks( response.entry.sidebars );
-				}
-				if ( !has_links && response.entry.auto_sidebars ) {
-					has_links = this.isEntryWidgetsHasLinks( response.entry.auto_sidebars );
-				}
-			}
-
-			return has_links;
-		},
-
 		isEntryWidgetsHasLinks: function ( entry_widgets ) {
 			for ( var i = 0; i < entry_widgets.length; i++ ) {
 				if ( entry_widgets[i].links ) {
@@ -147,17 +128,17 @@ Contextly.PageView = Contextly.createClass({
                 message = "Sorry, something seems to be broken. Please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
             }
 
-					// TODO Render error without creating base widget.
-          var widget = new Contextly.widget.Base();
-					widget.displayHTML( message );
+			// TODO Render error without creating base widget.
+            var widget = new Contextly.widget.Base();
+			widget.displayHTML( message );
         }
         else
         {
             if ( this.entry ) {
                 // Display widgets
-								this.displayWidgets( this.entry.snippets );
-								this.displayWidgets( this.entry.sidebars );
-								this.displayWidgets( this.entry.auto_sidebars );
+                this.displayWidgets( this.entry.snippets );
+                this.displayWidgets( this.entry.sidebars );
+                this.displayWidgets( this.entry.auto_sidebars );
 
                 if ( this.entry.update )
                 {
@@ -212,7 +193,7 @@ Contextly.PageView = Contextly.createClass({
                 var widget_object = Contextly.widget.Factory.getWidget( widgets[ idx ] );
                 if ( widget_object ) {
                     widget_object.display();
-									this.fixSnippetPagePosition(widget_object);
+					this.fixSnippetPagePosition(widget_object);
                 }
             }
         }
@@ -338,10 +319,12 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 
 	statics: {
 
-		doLogin: function () {
-			var settings_button_id = '#contextly-settings-btn';
+		doLogin: function ( settings_button_id, disabled_flag ) {
 
-			jQuery( settings_button_id ).attr( 'disabled', 'disabled' );
+            if ( disabled_flag )
+            {
+                jQuery( '#' + settings_button_id ).attr( 'disabled', 'disabled' );
+            }
 
 			jQuery.ajax({
 				url: Contextly.Settings.getAjaxUrl(),
@@ -352,16 +335,20 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 				},
 				success: function ( response ) {
 					if ( response.success && response.contextly_access_token ) {
-						jQuery( settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
-						jQuery( settings_button_id ).removeAttr( 'disabled' );
-					} else if ( response.message ) {
-						jQuery( settings_button_id ).parent().append(
-							jQuery( "<p style='color: red; font-weight: bold;'>* You need a valid API key. Click the API tab above to get one.</p>" )
+						jQuery( '#' + settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
+
+                        if ( disabled_flag )
+                        {
+                            jQuery( '#' + settings_button_id ).removeAttr( 'disabled' );
+                        }
+					} else if ( response.message && disabled_flag ) {
+						jQuery( '#' + settings_button_id ).parent().append(
+							jQuery( "<p style='color: red; font-weight: bold;'>* You need a valid API key. Click the \"API Key\" tab above to get one.</p>" )
 						);
 					}
 				},
 				error: function () {
-					jQuery( settings_button_id ).removeAttr( 'disabled' );
+					jQuery( '#' + settings_button_id ).removeAttr( 'disabled' );
 				}
 			});
 		}
