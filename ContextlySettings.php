@@ -128,31 +128,31 @@ class ContextlySettings {
 		return admin_url( 'admin.php?page=contextly_options&tab=' . $tab );
 	}
 
-	private function getContextlyBaseUrl( $page_type = 'settings' ) {
-		return Urls::getMainServerUrl() . 'redirect/?type=' . $page_type;
-	}
+	private function getContextlyBaseUrl( $page_type ) {
+		$url_params = array(
+			'type'              => $page_type,
+			'blog_url'          => site_url(),
+			'blog_title'        => get_bloginfo("name"),
+			'cms_settings_page' => $this->getWPPluginSettingsUrl(),
+		);
 
-	private function getContextlyRegistrationUrl( $page_type = 'settings' ) {
-		return $this->getContextlyBaseUrl( $page_type ) .
-			"&blog_url=" . urlencode( site_url() ) .
-			"&blog_title=" . urlencode( get_bloginfo("name") ) .
-			"&cms_settings_page=" . urlencode( $this->getWPPluginSettingsUrl() );
+		return Urls::getMainServerUrl() . 'cms-redirect/?' . http_build_query($url_params, NULL, '&');
 	}
 
     public function displaySettings() {
         $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : self::GENERAL_SETTINGS_KEY;
         ?>
         <script>
-	        function open_contextly_page( open_page_url, button_id, registration_url )
+	        function open_contextly_page( open_page_url, button_id )
             {
 	            var auth_token_attr = 'contextly_access_token';
 	            var token_attr = jQuery( '#' + button_id ).attr( auth_token_attr );
 
 	            if ( typeof token_attr !== 'undefined' && token_attr !== false ) {
 		            open_page_url += "&" + auth_token_attr + "=" + encodeURIComponent( token_attr );
-	            } else {
-		            open_page_url = registration_url;
 	            }
+
+	            console.log(open_page_url);
 
                 window.open( open_page_url );
 
@@ -160,20 +160,18 @@ class ContextlySettings {
             }
             function open_contextly_settings()
             {
-	            var open_url = <?php echo json_encode( $this->getContextlyBaseUrl() ) ?>;
-	            var registration_url = <?php echo json_encode( $this->getContextlyRegistrationUrl() ) ?>;
+	            var open_url = <?php echo json_encode( $this->getContextlyBaseUrl('settings') ) ?>;
 	            var button_id = 'contextly-settings-btn';
 
-	            return open_contextly_page( open_url, button_id, registration_url );
+	            return open_contextly_page( open_url, button_id );
             }
 
 	        function open_contextly_api_page()
 	        {
-		        var open_url = <?php echo json_encode( $this->getContextlyBaseUrl('home') ) ?>;
-		        var registration_url = <?php echo json_encode( $this->getContextlyRegistrationUrl('home') ) ?>;
+		        var open_url = <?php echo json_encode( $this->getContextlyBaseUrl('') ) ?>;
 		        var button_id = 'contextly-api-btn';
 
-		        return open_contextly_page( open_url, button_id, registration_url );
+		        return open_contextly_page( open_url, button_id );
 	        }
         </script>
         <div class="wrap">
@@ -286,7 +284,7 @@ class ContextlySettings {
     }
 
     public function apiLayoutSection() {
-        echo "<p>In order to communicate securely, we use a shared secret key. You can find your secret API key on <a target='_blank' href='".esc_url( $this->getContextlyRegistrationUrl('tour') )."'>this page</a>. Copy and paste it below.</p>";
+        echo "<p>In order to communicate securely, we use a shared secret key. You can find your secret API key with button \"Customize Contextly and Get API Key\". Copy and paste it below.</p>";
     }
 
     public function apiKeyInput() {

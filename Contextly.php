@@ -105,7 +105,7 @@ class Contextly
         return false;
     }
 
-    public function getAPIClientOptions() {
+    public static function getAPIClientOptions() {
         $client_options = array(
             'appID'         => '',
             'appSecret'     => ''
@@ -344,7 +344,7 @@ class Contextly
 	    {
 		    if ( $this->isLoadWidget() )
 		    {
-			    $api_options = $this->getAPIClientOptions();
+			    $api_options = self::getAPIClientOptions();
 				if ( isset( $api_options[ 'appID' ] ) && $api_options[ 'appID' ] && isset( $post ) && $post->ID )
 				{
 					$additional_html_controls = sprintf( '<a href="%s" style="display: none;">Related</a>',	esc_url( Urls::getApiServerSeoHtmlUrl( $api_options[ 'appID' ], $post->ID ) ) );
@@ -399,7 +399,7 @@ class Contextly
 	public function makeContextlyJSObject( $additional_options = array() ) {
 		global $post;
 
-		$api_options = $this->getAPIClientOptions();
+		$api_options = self::getAPIClientOptions();
 
 		$options = array(
 			'ajax_url'      => $this->getAjaxUrl(),
