@@ -2,30 +2,30 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories
 Requires at least: 2.0.2
-Tested up to: 3.9.1
+Tested up to: 3.9.2
 Stable tag: trunk
 License: GPLv2 or later
 
-Increase pageviews and SEO with the best related and engaging content recommendation widgets and sidebars. Fully automatic to fully manual.
-
+Increase reader engagement and SEO with the best related and interesting content recommendation widgets and sidebars. Editorial control married to machine learning.
 == Description ==
 
 [Contextly](http://contextly.com "Contextly") helps sites keep their readers reading more through content recommendation widgets at the end of stories and in sidebars in the body of posts. We also boost SEO by making it dead simple to add links in the body of your post to previous stories, and old posts get links to new ones.
 
-Sites that take advantage of our sidebars and post-story widgets see clickthrough rates as high as 10.5% - turning drive-by search and social network visitors into loyal readers.
+Contextly uses powerful graph-based cloud computing to create personalized recommendations for readers that includes related, trending and “evergreen” stories (think “oldies but goodies”. Our powerful technology figures out the best recommendation strategy for each post.
 
-Contextly shows off both related content and your most engaging content in responsive widgets. Readers in research mode can dive deep; those just browsing can go wide. Related content can be chosen by writers or left to our algorithms, or some combination of the two.
+Contextly shows off both related content and your most engaging content in responsive modules. Readers in research mode can dive deep; those just browsing can go wide. Related content can be chosen by writers or left to our algorithms, or some combination of the two.
 
-You can also recommend videos, as well promote your events, email list and products with a custom row and promotional links.
+We can also recommend videos and products. Additionally, you can choose to highlight events, promotions, or an email list with promotional links.
 
 Choose from 4 responsive designs that look great on large screens and mobile devices.
 
 = Features =
 
+* Powerful graph-based recommendations that learn over time, without using your site’s database
 * Easily add SEO-building links to the body of your stories with our one-of-a-kind link choosing tool that lets you link inwards or to the web
-* Easily build and add visually appealing sidebars to the body of your posts, including re-using ones you've built before
-* Automatic related and interesting links on ALL posts, regardless if you choose related posts for that post. Fully manual for posts where writers chooses related links
-* Four responsive visual designs and one text design to choose from
+* Easily build and add visually appealing sidebars to the body of your posts, including re-using sidebars you've built before
+* Automatic related and interesting links on ALL posts, regardless if you choose related posts for that post. Fully manual for posts where writers choose related links
+* Three responsive visual designs and one text design to choose from
 * Customizable image sizes that change on the fly. Served from a CDN to make loading super-fast
 * No load on your database
 * Point-n-Click customization of displays (fonts, font sizes, colors, sections) and full CSS control
@@ -40,8 +40,8 @@ Choose from 4 responsive designs that look great on large screens and mobile dev
 
 1. Install using the Wordpress Gallery for the easiest installation or upload the contextly-related-links folder to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Create a new post and click on one of our buttons to be taken through the set-up wizard to choose a display and get your API key.
-4. Contextly will automatically display related and interesting content suggestions. Advanced options can be found under Settings -> Contextly -> Settings
+3. Click on one of our buttons in the Visual Editor or go to Settings- -> Contextly -> Get API Key to get to the set-up wizard. You can then choose your display and get your API key. Save the API key.
+4. Contextly will automatically display related and interesting content suggestions. Advanced options can be found under Settings -> Contextly -> Settings —> Big Settings Button
 
 == Frequently Asked Questions ==
 
@@ -53,15 +53,17 @@ But, let's be honest, humans are still better than computers when it comes to co
 
 = Will Contextly slow down my site? =
 
-No. Our service works outside of Wordpress so we don't slow down your database or your page loads. We also wait to load the sidebars and the after-post widget until the rest of your site load, using asynchronous JavaScipt. And, if for some unforseen reasons Contextly temporarily stops working -- say if zombies destroy our server -- your site will still load quickly.
+No. Our service works outside of WordPress so we don't slow down your database or your page loads. Many related posts plugins use your database and can crash your site if you get substantial traffic. 
+
+We also wait to load the sidebars and the after-post modules until the rest of your site loads, using asynchronous JavaScript. And, if for some unforeseen reasons Contextly temporarily stops working -- say if zombies destroy our servers -- your site will still load quickly.
 
 = How do I use Contextly to promote my event, email list, product, etc? =
 
-Go to Settings -> Contextly -> Settings. Then look for Promo Links. Give us a title and an url of what you want to promote and we'll add it to the section you choose.
+Go to Settings -> Contextly -> Settings —> Big Settings Button. Then look for Promo Links. Give us a title and an url of what you want to promote and we'll add it to the section you choose.
 
 = I just installed Contextly and I don't see related posts, just interesting ones. Where are they? =
 
-You discovered something interesting. Reload the story you just looked at and you will see related links. The first time someone visits an older post after you install Contextly, our service starts to analyze that post. The next visitor, even if they show up seconds later, will see related posts. For new posts, every visitor will see related posts, but when you preview a story, you will only see the ones you have chosen, not the ones we'll pick.
+It takes us a bit of time to learn and spider a site. Please give us an hour or two and if you still don’t see related stories, email us at info@contextly.com
 
 = Can I modify the way the content recommendations are displayed on my site? =
 
@@ -75,7 +77,9 @@ You can also see what's happening in Google Analytics. We use Events to track cl
 
 = How does the Custom Tab work? =
 
-You give us an RSS feed of stuff you want us to show off. This can be a feed of your YouTube videos, a category on your site you like, a set of products, etc. If you just want to choose some items, copy and paste your main RSS feed into the Custom box. Then go to Promo Links and add links you want us to show off and choose the Custom section. Be creative, but there's one limitation: you can't sell this spot to advertisers unless you arrange that with us first. That's because there are certain safeguards against fraud that need to be in place for online ads. Putting external ads in that section without permission is grounds for termination of service.
+You give us an RSS feed of stuff you want us to show off. This can be a feed of your YouTube videos, a category on your site you like, a set of products, etc. 
+
+If you just want to choose some items, copy and paste your main RSS feed into the Custom box. Then go to Promo Links and add links you want us to show off and choose the Custom section. Be creative, but there's one limitation: you can't sell this spot to advertisers unless you arrange that with us first. That's because there are certain safeguards against fraud that need to be in place for online ads. Putting external ads in that section without permission is grounds for termination of service.
 
 
 == Screenshots ==
