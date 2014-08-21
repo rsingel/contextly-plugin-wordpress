@@ -1,40 +1,59 @@
 === Related Links by Contextly ===
 Contributors: rsingel, andrewcgg
-Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories
+Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, A/B testing, optimization
 Requires at least: 2.0.2
 Tested up to: 3.9.2
 Stable tag: trunk
 License: GPLv2 or later
 
-Increase reader engagement and SEO with the best related and interesting content recommendation widgets and sidebars. Editorial control married to machine learning.
+Build your audience and boost your SEO with the best related and interesting content recommendation widgets and sidebars. Editorial control married to machine learning.
 == Description ==
 
-[Contextly](http://contextly.com "Contextly") helps sites keep their readers reading more through content recommendation widgets at the end of stories and in sidebars in the body of posts. We also boost SEO by making it dead simple to add links in the body of your post to previous stories, and old posts get links to new ones.
+[Contextly](http://contextly.com "Contextly") helps you build a loyal audience through content recommendations that keeps readers reading. We do this through a combination of powerful machine learning algorithms and editorial curation. 
 
-Contextly uses powerful graph-based cloud computing to create personalized recommendations for readers that includes related, trending and “evergreen” stories (think “oldies but goodies”. Our powerful technology figures out the best recommendation strategy for each post.
+According to a study by Chartbeat, the most important factor in determining whether a reader will come back to your site is whether they read more than 1 post. If they do, they are likely to return. If they don't, they won't.
 
-Contextly shows off both related content and your most engaging content in responsive modules. Readers in research mode can dive deep; those just browsing can go wide. Related content can be chosen by writers or left to our algorithms, or some combination of the two.
+Contextly shows off both related and engaging content in responsive modules. Readers in research mode can dive deep; those just browsing can explore widely. 
+
+We also boost your SEO by making it dead simple to add links in the body of your post to previous stories.
 
 We can also recommend videos and products. Additionally, you can choose to highlight events, promotions, or an email list with promotional links.
 
-Choose from 4 responsive designs that look great on large screens and mobile devices.
 
 = Features =
 
-* Powerful graph-based recommendations that learn over time, without using your site’s database
-* Easily add SEO-building links to the body of your stories with our one-of-a-kind link choosing tool that lets you link inwards or to the web
-* Easily build and add visually appealing sidebars to the body of your posts, including re-using sidebars you've built before
-* Automatic related and interesting links on ALL posts, regardless if you choose related posts for that post. Fully manual for posts where writers choose related links
-* Three responsive visual designs and one text design to choose from
-* Customizable image sizes that change on the fly. Served from a CDN to make loading super-fast
-* No load on your database
-* Point-n-Click customization of displays (fonts, font sizes, colors, sections) and full CSS control
-* Awesome analytics emails that tell you how your site (and Contextly's recommendations) are performing
-* Reciprocal related links: If Story A links back to Story B, and a reader finds Story B through search, they will see a link to Story A
-* Contextly detects internal HTML links in the body of your stories as related links
-* Custom post types support
-* A/B Testing of widget designs to see which performs best (e.g. You can show 10% of visitors a different design and compare the performance.)
-* Add a custom row filled by an RSS feed or hand-chosen links. Show off your YouTube videos, products, or editor's picks.
+* Related Content - Our related content is *actually* related and we rely on much more than just tags and categories. Related content gives your readers an opportunity to dive deeply into a topic.
+
+* Personalized Content - Personalized content is tailored to the interests of an individual reader. As we learn more about a reader's interests, we show them more of the content they like.
+
+* Popular Content - Readers are often interested in your most recent and best content. That is why we make this content available on every page, because every page is the new home page.
+
+* Evergreen Content - Good stories should be read well after they have been showcased on the home page. We identify "oldies but goodies" and resurface them to users. This increases the lifetime value of every story you write.
+
+* Video Recommendations - Our recommendations are not limited to blog posts. We can easily integrate your Youtube channel content. Videos will be displayed where they are most relevant.
+
+* Product Recommendations - Do you sell products? We can integrate products as well. They will be displayed when they are most actionable and relevant. Contact us at info@contextly.com to learn more.
+
+* Editorial Control/Curation - We believe high-quality content is the result of a happy marriage between humans and smart algorithms. Our curation tools allow writers and editors to control what related posts show up on a story. We then use that info to make better recommendations for the entire site.
+
+* Optimization - Contextly creates multiple sets of recommendations for each post. We then automatically test which set of recommendations is best for every single post!
+
+* SEO - The best SEO comes from links in the body of stories linking to previous content. We make it super-easy for writers to add these links without having to leave the post to go search in Google.
+
+* Promotional links - If you have a newsletter or an event you'd like to promote, Contextly makes it dead-simple to include that in the recommendation module. That puts promotions where users will actually see them.
+
+* Responsive Designs - We have 4 sets of designs to choose from, and they all look great on mobile and desktops. You can customize their look and feel with a few clicks, while advanced users can customize the CSS.
+
+* Analytics - We send daily, weekly and monthly analytics reports that let you easily see which of your posts are doing well and how engaging they are.
+
+* A/B Testing - With just a few clicks, you can set up a test to see which display type works best for your site.
+
+* Performance - Contextly does all the hard work on its servers, so we don't hit your database. That means if you get a lot of traffic, Contextly won't bring your site down.
+
+* Custom post types - If you use custom post types, you can choose which ones to show Contextly recommendations on, and which to keep out.
+
+
+
 
 == Installation ==
 
@@ -49,7 +68,7 @@ Choose from 4 responsive designs that look great on large screens and mobile dev
 
 We've got your back. We'll automatically show related and interesting stories on all posts.
 
-But, let's be honest, humans are still better than computers when it comes to context. As you publish new posts, take the time to add links to the body of your story or choose relevant stories. We make that super easy to do. Your readers will thank you.
+But, we also value editorial wisdom and control, so we make choosing related posts and adding links in the body of the story as easy as possible.
 
 = Will Contextly slow down my site? =
 
