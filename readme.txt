@@ -9,11 +9,11 @@ License: GPLv2 or later
 Build your audience and boost your SEO with the best related and interesting content recommendation widgets and sidebars. Editorial control married to machine learning.
 == Description ==
 
-[Contextly](http://contextly.com "Contextly") helps you build a loyal audience through content recommendations that keeps readers reading. We do this through a combination of powerful machine learning algorithms and editorial curation. 
+[Contextly](http://contextly.com "Contextly") helps you build a loyal audience through content recommendations that keeps readers reading. We do this through a combination of powerful machine learning algorithms and editorial curation.
 
 According to a study by Chartbeat, the most important factor in determining whether a reader will come back to your site is whether they read more than 1 post. If they do, they are likely to return. If they don't, they won't.
 
-Contextly shows off both related and engaging content in responsive modules. Readers in research mode can dive deep; those just browsing can explore widely. 
+Contextly shows off both related and engaging content in responsive modules. Readers in research mode can dive deep; those just browsing can explore widely.
 
 We also boost your SEO by making it dead simple to add links in the body of your post to previous stories.
 
@@ -72,7 +72,7 @@ But, we also value editorial wisdom and control, so we make choosing related pos
 
 = Will Contextly slow down my site? =
 
-No. Our service works outside of WordPress so we don't slow down your database or your page loads. Many related posts plugins use your database and can crash your site if you get substantial traffic. 
+No. Our service works outside of WordPress so we don't slow down your database or your page loads. Many related posts plugins use your database and can crash your site if you get substantial traffic.
 
 We also wait to load the sidebars and the after-post modules until the rest of your site loads, using asynchronous JavaScript. And, if for some unforeseen reasons Contextly temporarily stops working -- say if zombies destroy our servers -- your site will still load quickly.
 
@@ -96,7 +96,7 @@ You can also see what's happening in Google Analytics. We use Events to track cl
 
 = How does the Custom Tab work? =
 
-You give us an RSS feed of stuff you want us to show off. This can be a feed of your YouTube videos, a category on your site you like, a set of products, etc. 
+You give us an RSS feed of stuff you want us to show off. This can be a feed of your YouTube videos, a category on your site you like, a set of products, etc.
 
 If you just want to choose some items, copy and paste your main RSS feed into the Custom box. Then go to Promo Links and add links you want us to show off and choose the Custom section. Be creative, but there's one limitation: you can't sell this spot to advertisers unless you arrange that with us first. That's because there are certain safeguards against fraud that need to be in place for online ads. Putting external ads in that section without permission is grounds for termination of service.
 
@@ -111,6 +111,13 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+
+= 1.3.1 =
+
+- Updated some Settings dialogs and how new users are instructed to get an API key
+- Moved a JavaScript bundling call out of the plugin onto our servers
+- Minor technical tweaks
 
 
 = 1.2.3 =
