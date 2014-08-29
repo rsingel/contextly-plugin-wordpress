@@ -113,6 +113,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 == Changelog ==
 
 
+= 1.3.2 =
+
+- Fixed a bug in displaying videos in the overlay
+
+
 = 1.3.1 =
 
 - Updated some Settings dialogs and how new users are instructed to get an API key
