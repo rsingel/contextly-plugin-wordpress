@@ -423,10 +423,20 @@ class Contextly
 		}
 
 		wp_localize_script(
-			'contextly',
+			$this->getSettingsHandleName(),
 			'Contextly',
 			array( 'l10n_print_after' => 'Contextly = ' . json_encode( $options ) . ';' )
 		);
+	}
+
+	private function getSettingsHandleName()
+	{
+		if ( CONTEXTLY_MODE == 'dev' )
+		{
+			return 'contextly-kit-components-create-class';
+		}
+
+		return 'contextly-kit-widgets--factory';
 	}
 
 	private function isLoadWidget()
