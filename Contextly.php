@@ -423,7 +423,7 @@ class Contextly
 		}
 
 		wp_localize_script(
-			'json2',
+			'contextly',
 			'Contextly',
 			array( 'l10n_print_after' => 'Contextly = ' . json_encode( $options ) . ';' )
 		);
