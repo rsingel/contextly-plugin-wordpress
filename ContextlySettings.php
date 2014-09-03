@@ -152,8 +152,6 @@ class ContextlySettings {
 		            open_page_url += "&" + auth_token_attr + "=" + encodeURIComponent( token_attr );
 	            }
 
-	            console.log(open_page_url);
-
                 window.open( open_page_url );
 
 	            return false;
