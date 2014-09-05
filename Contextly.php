@@ -38,12 +38,13 @@ class Contextly
 	}
 
     public function init() {
-        if ( is_admin() ) {
+	    if ( is_admin() ) {
             add_action( 'admin_enqueue_scripts', array( $this, 'initAdmin' ), 1 );
             add_action( 'save_post', array( $this, 'publishBoxControlSavePostHook' ) );
 	        add_filter( 'default_content', array( $this, 'addAutosidebarCodeFilter' ), 10, 2 );
 			add_action( 'admin_head', array( $this, 'insertMetatags' ) );
 			add_action( 'admin_footer', array( $this, 'addQuicktagsEditorIntegration' ) );
+		    register_activation_hook( CONTEXTLY_PLUGIN_FILE, array( $this, 'addActivationHook' ) );
 
 			// Register overlay dialog page.
 			ContextlyWpKit::getInstance()
@@ -340,17 +341,6 @@ class Contextly
 	            $additional_html_controls = $this->getAdditionalShowHideControl();
             }
         }
-	    else
-	    {
-		    if ( $this->isLoadWidget() )
-		    {
-			    $api_options = self::getAPIClientOptions();
-				if ( isset( $api_options[ 'appID' ] ) && $api_options[ 'appID' ] && isset( $post ) && $post->ID )
-				{
-					$additional_html_controls = sprintf( '<a href="%s" style="display: none;">Related</a>',	esc_url( Urls::getApiServerSeoHtmlUrl( $api_options[ 'appID' ], $post->ID ) ) );
-				}
-		    }
-	    }
 
         return "<div id='" . esc_attr( self::WIDGET_SNIPPET_ID ) . "' class='" . esc_attr( self::WIDGET_SNIPPET_CLASS ) . "'>" . $default_html_code . "</div>" . $additional_html_controls;
     }
@@ -431,7 +421,7 @@ class Contextly
 
 	private function getSettingsHandleName()
 	{
-		if ( CONTEXTLY_MODE == 'dev' )
+		if ( CONTEXTLY_MODE == Urls::MODE_DEV )
 		{
 			return 'contextly-kit-components-create-class';
 		}
@@ -828,6 +818,30 @@ class Contextly
 			print $message;
 		}
 		exit;
+	}
+
+	public function addActivationHook()
+	{
+		self::fireAPIEvent( 'contextlyPluginActivated' );
+	}
+
+	public static function fireAPIEvent( $type, $text = '' )
+	{
+		$api = ContextlyWpKit::getInstance()->newApi();
+
+		try {
+			$api->method( 'events', 'put' )
+				->extraParams(
+					array(
+						'event_type' => 'email',
+						'event_name' => $type,
+						'site_path'  => site_url(),
+						'event_message' => $text
+					)
+				)
+				->get();
+		} catch ( Exception $e ) {
+		}
 	}
 
 }

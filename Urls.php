@@ -5,7 +5,6 @@
  * Time: 1:59 PM
  */
 
-// TODO Use kit for most of URL types.
 class Urls {
 
 	protected static $_instance;
@@ -14,28 +13,12 @@ class Urls {
 	const MODE_DEV = 'dev';
 	const MODE_LIVE = 'live';
 
-    static private function getScheme() {
-        return 'http' . ( CONTEXTLY_HTTPS ? 's' : '' );
-    }
-
 	static public function getMainServerUrl() {
-		if ( CONTEXTLY_MODE == self::MODE_LIVE ) {
-			return 'https://contextly.com/';
-		} elseif ( CONTEXTLY_MODE == self::MODE_DEV ) {
-			return 'https://dev.contextly.com/';
-		} else {
-			return 'http://linker.site/';
-		}
+		return ContextlyWpKit::getInstance()->getServerUrl('cp');
 	}
 
 	static public function getApiServerUrl() {
-		if ( CONTEXTLY_MODE == self::MODE_LIVE ) {
-			return self::getScheme() . '://rest.contextly.com/';
-		} elseif ( CONTEXTLY_MODE == self::MODE_DEV ) {
-			return 'http://devrest.contextly.com/';
-		} else {
-			return 'http://contextly-api.local/';
-		}
+		return ContextlyWpKit::getInstance()->getServerUrl('api');
 	}
 
 	static public function getPluginCdnUrl( $file, $type = 'js' ) {
@@ -56,11 +39,6 @@ class Urls {
 		}
 
 		return $prefix . 'js/' . $js_file;
-	}
-
-	static public function getApiServerSeoHtmlUrl( $app_id, $page_id )
-	{
-		return sprintf( '%sstatichtml/get/app_id/%s/page_id/%s/#!related_links', Urls::getApiServerUrl(), $app_id, $page_id );
 	}
 
 }

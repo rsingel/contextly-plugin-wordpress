@@ -23,21 +23,10 @@ Contextly.Loader = Contextly.createClass({
 			return Contextly.Settings.isReadyToLoad();
 		},
 
-		getLastResponse: function () {
-			return this.response;
-		},
-
-		isEntryWidgetsHasLinks: function ( entry_widgets ) {
-			for ( var i = 0; i < entry_widgets.length; i++ ) {
-				if ( entry_widgets[i].links ) {
-					return true;
-				}
-			}
-			return false;
-		},
-
 		// Main method for load page widgets
 		load: function () {
+            this.attachLogEvents();
+
 			if ( !this.isCallAvailable() ) return;
 
 			var self = this;
@@ -55,6 +44,12 @@ Contextly.Loader = Contextly.createClass({
 				}
 			);
 		},
+
+        attachLogEvents: function() {
+            Contextly.LogPluginEvents.attachEvent( 'contextlyDataFailed' );
+            Contextly.LogPluginEvents.attachEvent( 'contextlySettingsAuthSuccess' );
+            Contextly.LogPluginEvents.attachEvent( 'contextlySettingsAuthFailed' );
+        },
 
 		getCookieName: function ()
 		{
@@ -320,7 +315,6 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 	statics: {
 
 		doLogin: function ( settings_button_id, disabled_flag ) {
-
             if ( disabled_flag )
             {
                 jQuery( '#' + settings_button_id ).attr( 'disabled', 'disabled' );
@@ -341,19 +335,72 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
                         {
                             jQuery( '#' + settings_button_id ).removeAttr( 'disabled' );
                         }
-					} else if ( response.message && disabled_flag ) {
-						jQuery( '#' + settings_button_id ).parent().append(
-							jQuery( "<p style='color: red; font-weight: bold;'>* You need a valid API key. Click the \"API Key\" tab above to get one.</p>" )
-						);
-					}
+
+                        Contextly.LogPluginEvents.fireEvent('contextlySettingsAuthSuccess', response);
+					} else {
+                        if ( response.message && disabled_flag ) {
+                            jQuery( '#' + settings_button_id ).parent().append(
+                                jQuery( "<p style='color: red; font-weight: bold;'>* You need a valid API key. Click the \"API Key\" tab above to get one.</p>" )
+                            );
+                        }
+
+                        Contextly.LogPluginEvents.fireEvent('contextlySettingsAuthFailed', response);
+                    }
 				},
 				error: function () {
 					jQuery( '#' + settings_button_id ).removeAttr( 'disabled' );
+
+                    Contextly.LogPluginEvents.fireEvent('contextlySettingsAuthFailed');
 				}
 			});
 		}
 
 	}
+
+});
+
+Contextly.LogPluginEventsType = {
+    EMAIL: 'email'
+};
+
+Contextly.LogPluginEvents = Contextly.createClass({
+
+    statics: {
+
+        fireEvent: function (type, args)
+        {
+            // Remove the type of event.
+            var args = Array.prototype.slice.call(arguments, 1);
+
+            jQuery(window).triggerHandler(type, args);
+        },
+
+        attachEvent: function (type, handler)
+        {
+            var self = this;
+
+            if ( typeof handler === 'undefined' )
+            {
+                handler = function(event, message) { self.emailEvent(type, message) };
+            }
+
+            jQuery(window).bind( type, handler );
+        },
+
+        emailEvent: function( event, message )
+        {
+            Contextly.RESTClient.call(
+                'events',
+                'put',
+                {
+                    event_type: Contextly.LogPluginEventsType.EMAIL,
+                    event_name: event,
+                    event_page: window.location.href,
+                    event_message: easyXDM.getJSONObject().stringify(message)
+                }
+            );
+        }
+    }
 
 });
 

@@ -295,6 +295,8 @@ class ContextlySettings {
 
 		    if ( !isset( $options["api_key"] ) || $options["api_key"] != $get_api_key )
 		    {
+			    Contextly::fireAPIEvent( 'contextlyApiInserted', $get_api_key );
+
 			    $options["api_key"] = sanitize_text_field( $get_api_key );
 			    $input_style = " style='background-color: #FFEBE8; border-color: #CC0000;'";
 		    }

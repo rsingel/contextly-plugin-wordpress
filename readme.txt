@@ -112,6 +112,9 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 1.3.3 =
+
+- Fixed a bug in logging
 
 = 1.3.2 =
 
