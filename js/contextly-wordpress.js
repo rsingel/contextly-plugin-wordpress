@@ -389,6 +389,13 @@ Contextly.LogPluginEvents = Contextly.createClass({
 
         emailEvent: function( event, message )
         {
+            var json_message = null;
+
+            if ( typeof message !== 'undefined' )
+            {
+                json_message = easyXDM.getJSONObject().stringify(message);
+            }
+
             Contextly.RESTClient.call(
                 'events',
                 'put',
@@ -396,7 +403,7 @@ Contextly.LogPluginEvents = Contextly.createClass({
                     event_type: Contextly.LogPluginEventsType.EMAIL,
                     event_name: event,
                     event_page: window.location.href,
-                    event_message: easyXDM.getJSONObject().stringify(message)
+                    event_message: json_message
                 }
             );
         }
