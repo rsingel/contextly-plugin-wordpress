@@ -6,7 +6,7 @@ Tested up to: 4.0
 Stable tag: trunk
 License: GPLv2 or later
 
-Build your audience and boost your SEO with the best related and interesting content recommendation widgets and sidebars. Editorial control married to machine learning.
+Build your audience with the content recommendations that are relevant, trending, evergreen and personalized. Editorial control and machine learning.
 == Description ==
 
 [Contextly](http://contextly.com "Contextly") helps you build a loyal audience through content recommendations that keeps readers reading. We do this through a combination of powerful machine learning algorithms and editorial curation.
