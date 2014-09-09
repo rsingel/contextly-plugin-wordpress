@@ -44,7 +44,7 @@ class ContextlyWpKit extends ContextlyKit {
 	}
 
 	function isHttps() {
-		return is_ssl();
+		return CONTEXTLY_HTTPS;
 	}
 
 	protected function getClassesMap() {
