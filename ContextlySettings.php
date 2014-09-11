@@ -429,13 +429,7 @@ class ContextlySettings {
 	}
 
 	public function getKitCdnValue() {
-/*		$options = get_option( self::ADVANCED_SETTINGS_KEY );
-
-		if ( isset( $options[ 'kit_cdn' ] ) ) {
-			return (bool) $options[ 'kit_cdn' ];
-		}*/
-
-		return false;
+		return true;
 	}
 
     public function isPageDisplayDisabled( $page_id ) {
