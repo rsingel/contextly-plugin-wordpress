@@ -276,9 +276,12 @@ Contextly.Settings = Contextly.createClass({
 		},
 		getPostData: function () {
 			var data = jQuery("meta[name='contextly-page']").attr("content");
-			var json = jQuery.parseJSON(data);
 
-			return json;
+            if ( data ) {
+                return jQuery.parseJSON(data);
+            }
+
+			return null;
 		},
 		getSnippetCssUrl: function(settings) {
 			var css_url;
