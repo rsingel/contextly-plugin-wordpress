@@ -309,7 +309,7 @@ class ContextlySettings {
 		$options = get_option( self::API_SETTINGS_KEY );
 
 		if ( !$options || !isset( $options["api_key"] ) || !$options["api_key"] || !$this->validateApiKeyRegexp( $options['api_key'] ) ) {
-			$this->showAdminMessage( sprintf( 'You must %sconfigure the plugin%s to enable Contextly for WordPress.', '<a href="' . esc_url( $this->getWPPluginSettingsUrl() ) . '">', '</a>' ), true );
+			$this->showAdminMessage( sprintf( 'You need to get your %ssecret key%s before Contextly shows recommendations.', '<a href="' . esc_url( $this->getWPPluginSettingsUrl() ) . '">', '</a>' ), true );
 		}
 	}
 
