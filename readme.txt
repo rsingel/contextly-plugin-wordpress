@@ -112,9 +112,14 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
-= 1.3.3 =
+= 1.3.4 =
 
-- Fixed a bug in logging
+- Bug fix to make sure images are always served from https for sites using HTTPS
+- New video icon in CSS
+- Minor video overlay fix
+- JavaScript for display now loading from our CDN
+- Minor bug fixes for Settings panel login
+
 
 = 1.3.2 =
 
