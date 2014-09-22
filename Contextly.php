@@ -678,7 +678,7 @@ class Contextly
 			$data = array(
 				'success' => 0,
 				'code' => $e->getCode(),
-				'message' => $e->getMessage()
+				'message' => print_r($e, true)
 			);
 		}
 
