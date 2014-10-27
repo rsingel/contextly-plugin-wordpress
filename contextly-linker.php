@@ -4,10 +4,10 @@ Plugin Name: Contextly
 Plugin URI: http://contextly.com
 Description: Adds the Contextly content recommendation tool to your blog. Contextly provides related, trending, evergreen and personalized recommendations to help your reader keep reading. Includes text, video and product recommendations to show off your best content.
 Author: Contextly
-Version: 1.3.4
+Version: 1.3.5
 */
 
-define ( "CONTEXTLY_PLUGIN_VERSION", '1.3.4' );
+define ( "CONTEXTLY_PLUGIN_VERSION", '1.3.5' );
 define ( "CONTEXTLY_MODE", 'live' );
 define ( "CONTEXTLY_HTTPS", is_ssl() );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );

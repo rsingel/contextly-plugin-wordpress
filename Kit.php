@@ -86,7 +86,7 @@ class ContextlyWpApiTransport implements ContextlyKitApiTransportInterface {
 		}
 
 		$result = wp_remote_request( $url, array(
-			'timeout'   => 20,
+			'timeout'   => 40,
 			'method'    => $method,
 			'body'      => $data,
 			'headers'   => $headers,
