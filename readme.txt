@@ -112,6 +112,10 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 1.3.5 =
+
+- Improved and larger display for Video recommendations
+
 = 1.3.4 =
 
 - Bug fix to make sure images are always served from https for sites using HTTPS
