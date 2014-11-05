@@ -67,21 +67,15 @@ Contextly.Loader = Contextly.createClass({
 
 		setCookieId: function ( cookie_id )
 		{
-            if ( typeof jQuery.cookie === 'undefined' ) return;
-
-			jQuery.cookie( this.getCookieName(), {id: cookie_id}, { expires: 1, path: '/' } );
+            Contextly.Cookie.set( this.getCookieName(), {id: cookie_id}, { expires: 1, path: '/' } )
 		},
 
 		getCookieId: function ()
 		{
-            if ( typeof jQuery.cookie === 'undefined' ) return;
-
-            jQuery.cookie.json = true;
-
-			var cookie = jQuery.cookie( this.getCookieName() );
-			if ( cookie && cookie.id && cookie.id != 'null' ) {
-				return cookie.id;
-			}
+            var cookie = Contextly.Cookie.get( this.getCookieName() );
+            if ( cookie && cookie.id && cookie.id != 'null' ) {
+                return cookie.id;
+            }
 
 			return null;
 		}

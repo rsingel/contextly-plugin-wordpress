@@ -366,7 +366,6 @@ class Contextly
 		wp_enqueue_script( 'json2' );
 
 		$include = array(
-			'libraries/jquery-cookie',
 			'widgets/factory',
 		);
 		$ignore = array(
