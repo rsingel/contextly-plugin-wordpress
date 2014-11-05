@@ -58,10 +58,8 @@ Contextly.Loader = Contextly.createClass({
 
 		initCookie: function ( rest_response )
 		{
-			if ( rest_response && rest_response.cookie_id )
-			{
-				if ( !this.getCookieId() )
-				{
+			if ( rest_response && rest_response.cookie_id )	{
+				if ( !this.getCookieId() ) {
 					this.setCookieId( rest_response.cookie_id );
 				}
 			}
@@ -69,16 +67,19 @@ Contextly.Loader = Contextly.createClass({
 
 		setCookieId: function ( cookie_id )
 		{
+            if ( typeof jQuery.cookie === 'undefined' ) return;
+
 			jQuery.cookie( this.getCookieName(), {id: cookie_id}, { expires: 1, path: '/' } );
 		},
 
 		getCookieId: function ()
 		{
-			jQuery.cookie.json = true;
-			var cookie = jQuery.cookie( this.getCookieName() );
+            if ( typeof jQuery.cookie === 'undefined' ) return;
 
-			if ( cookie && cookie.id && cookie.id != 'null' )
-			{
+            jQuery.cookie.json = true;
+
+			var cookie = jQuery.cookie( this.getCookieName() );
+			if ( cookie && cookie.id && cookie.id != 'null' ) {
 				return cookie.id;
 			}
 
@@ -394,8 +395,7 @@ Contextly.LogPluginEvents = Contextly.createClass({
         {
             var json_message = null;
 
-            if ( typeof message !== 'undefined' )
-            {
+            if ( typeof message !== 'undefined' ) {
                 json_message = easyXDM.getJSONObject().stringify(message);
             }
 

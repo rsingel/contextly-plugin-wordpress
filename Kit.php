@@ -256,8 +256,10 @@ class ContextlyWpWidgetsEditor extends ContextlyKitWidgetsEditor {
 		try {
 			$result = $this->handleRequest( $method, $params );
 		}
-		catch (ContextlyKitException $e) {
-		    if (CONTEXTLY_MODE !== Urls::MODE_LIVE) {
+		catch (Exception $e) {
+			Contextly::fireAPIEvent( 'handleAjaxAction', print_r( $e, true ) );
+
+			if (CONTEXTLY_MODE !== Urls::MODE_LIVE) {
 				$message = (string) $e;
 			}
 			else {

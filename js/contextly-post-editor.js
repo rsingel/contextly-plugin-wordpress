@@ -61,12 +61,12 @@
 				this.fireEvent('contextlyDataLoaded');
 			},
 
-			onDataLoadingFailure: function() {
+			onDataLoadingFailure: function(response) {
 				this.isLoading = false;
 				this.error = true;
 
 				this.updateAdminControls();
-				this.fireEvent('contextlyDataFailed');
+				this.fireEvent('contextlyDataFailed', response);
 			},
 
 			getData: function() {
