@@ -112,9 +112,17 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 1.3.6 =
+
+- Moved video and branding CSS into our CDN
+- Reconfigured the cookie setting code to reduce conflicts with other plugins
+- Improved error logging
+
+
 = 1.3.5 =
 
 - Improved and larger display for Video recommendations
+
 
 = 1.3.4 =
 
