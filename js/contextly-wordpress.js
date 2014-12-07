@@ -3,308 +3,76 @@
  */
 Contextly = Contextly || {};
 
-Contextly.Errors = {
-    ERROR_FORBIDDEN: 403,
-    ERROR_SUSPENDED: 408
-};
-
-// TODO: Replace use cases with the same dictionary from Kit and drop.
-Contextly.WidgetType = {
-    SNIPPET: 'snippet',
-    SIDEBAR: 'sidebar',
-    AUTO_SIDEBAR: 'auto-sidebar'
-};
-
-Contextly.Loader = Contextly.createClass({
-
-	statics: {
-
-		isCallAvailable: function () {
-			return Contextly.Settings.isReadyToLoad();
-		},
-
-		// Main method for load page widgets
-		load: function () {
-            this.attachLogEvents();
-
-			if ( !this.isCallAvailable() ) return;
-
-			var self = this;
-			Contextly.RESTClient.call(
-				'pagewidgets',
-				'get',
-				{},
-				function ( response ) {
-					self.response = response;
-
-					var pageView = new Contextly.PageView( response );
-					pageView.display();
-
-					self.initCookie( response );
-				}
-			);
-		},
-
-        attachLogEvents: function() {
-            Contextly.LogPluginEvents.attachEvent( 'contextlyDataFailed' );
-            Contextly.LogPluginEvents.attachEvent( 'contextlySettingsAuthSuccess' );
-            Contextly.LogPluginEvents.attachEvent( 'contextlySettingsAuthFailed' );
-        },
-
-		getCookieName: function ()
-		{
-			return "contextly";
-		},
-
-		initCookie: function ( rest_response )
-		{
-			if ( rest_response && rest_response.cookie_id )	{
-				if ( !this.getCookieId() ) {
-					this.setCookieId( rest_response.cookie_id );
-				}
-			}
-		},
-
-		setCookieId: function ( cookie_id )
-		{
-            Contextly.Cookie.set( this.getCookieName(), {id: cookie_id}, { expires: 1, path: '/' } )
-		},
-
-		getCookieId: function ()
-		{
-            var cookie = Contextly.Cookie.get( this.getCookieName() );
-            if ( cookie && cookie.id && cookie.id != 'null' ) {
-                return cookie.id;
-            }
-
-			return null;
-		}
-
-	}
-
-});
-
-Contextly.PageView = Contextly.createClass({
-    construct: function ( rest )
-    {
-        this.entry = null;
-        this.error = null;
-
-        if ( rest.entry ) {
-            this.entry = rest.entry;
-        } else if ( rest.error ) {
-            this.error = rest;
-        }
-    },
-
-    isError: function () {
-        return this.error != null;
-    },
-
-    // Main method for process rest response and display widgets or some admin messages
-    display: function () {
-        // Check if we have error on page
-        if ( this.isError() && Contextly.Settings.isAdmin() ) {
-            var message = '';
-            if ( this.error.error ) {
-                if ( this.error.error_code == Contextly.Errors.ERROR_FORBIDDEN ) {
-                    message = this.error.error + " Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
-                } else if ( this.error.error_code == Contextly.Errors.ERROR_SUSPENDED ) {
-                    message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
-                } else {
-                    message = "Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
-                }
-            } else {
-                message = "Sorry, something seems to be broken. Please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
-            }
-
-			// TODO Render error without creating base widget.
-            var widget = new Contextly.widget.Base();
-			widget.displayHTML( message );
-        }
-        else
-        {
-            if ( this.entry ) {
-                // Display widgets
-                this.displayWidgets( this.entry.snippets );
-                this.displayWidgets( this.entry.sidebars );
-                this.displayWidgets( this.entry.auto_sidebars );
-
-                if ( this.entry.update )
-                {
-                    this.updatePost();
-                }
-            }
-        }
-    },
-
-    updatePost: function () {
-        var self = this;
-
-        var data = {
-            action: 'contextly_publish_post',
-            page_id: Contextly.Settings.getPageId(),
-            contextly_nonce: Contextly.Settings.getAjaxNonce()
-        };
-
-        jQuery.ajax({
-            url: Contextly.ajax_url,
-            type: 'post',
-            dataType: 'json',
-            data: data,
-            success: function(response) {
-                if ( response != true )
-                {
-                    self.updatePostWithRest();
-                }
-            },
-            error: function ()
-            {
-                self.updatePostWithRest();
-            }
-        });
-    },
-
-    updatePostWithRest: function () {
-        Contextly.RESTClient.call(
-            'postsimport',
-            'put',
-            {
-                url: Contextly.Settings.getPageUrl()
-            },
-            function ( response ) {
-            }
-        );
-    },
-
-    displayWidgets: function ( widgets ) {
-        if ( widgets && widgets.length ) {
-            for ( var idx = 0; idx < widgets.length; idx++ ) {
-                var widget_object = Contextly.widget.Factory.getWidget( widgets[ idx ] );
-                if ( widget_object ) {
-                    widget_object.display();
-					this.fixSnippetPagePosition(widget_object);
-                }
-            }
-        }
-    },
-
-	getMainWidgetShortCodeId: function () {
-		return '#ctx_main_module_short_code';
-	},
-
-	fixSnippetPagePosition: function(snippet) {
-		if (snippet.widget_type !== Contextly.widget.types.SNIPPET) {
-			return;
-		}
-
-		if (Contextly.Settings.isAdmin() || !snippet.hasWidgetData()) {
-			return;
-		}
-
-		if (jQuery(this.getMainWidgetShortCodeId()).length) {
-			snippet.getDisplayElement().appendTo(
-				this.getMainWidgetShortCodeId()
-			);
-		}
-		else {
-			// We need to be sure that our control is last in content element
-			if (!snippet.getDisplayElement().is(":last-child")) {
-				snippet.getDisplayElement().parent().append(snippet.getDisplayElement());
-			}
-		}
-	}
-
-});
-
 Contextly.Settings = Contextly.createClass({
-  extend: Contextly.BaseSettings,
+    extend: Contextly.BaseSettings,
 
-	statics: {
-		getAPIServerUrl: function () {
-			return Contextly.api_server;
-		},
-		getMainServerUrl: function () {
-			return Contextly.main_server;
-		},
-		getEditorUrl: function () {
-			return Contextly.editor_url;
-		},
-		getPluginVersion: function () {
-			return Contextly.version;
-		},
-		getAppId: function () {
-			return Contextly.app_id;
-		},
-		isAdmin: function () {
-			return Contextly.admin;
-		},
-		getMode: function () {
-			return Contextly.mode;
-		},
-		getWPSettings: function () {
-			return Contextly.settings;
-		},
-		isHttps: function () {
-			return Contextly.https;
-		},
-		getCookieId: function() {
-			return Contextly.Loader.getCookieId();
-		},
-		isReadyToLoad: function() {
-			if ( Contextly.disable_autoload && Contextly.disable_autoload == true ) {
-				return false;
-			}
-			return true;
-		},
-		getAjaxUrl: function () {
-			return Contextly.ajax_url;
-		},
-		getAjaxNonce: function () {
-			if ( Contextly.ajax_nonce ) {
-				return Contextly.ajax_nonce;
-			}
-			return null;
-		},
-		isBrandingDisplayed: function () {
-			return !this.isAdmin();
-		},
-		getPostData: function () {
-			var data = jQuery("meta[name='contextly-page']").attr("content");
-
-            if ( data ) {
-                return jQuery.parseJSON(data);
+    statics: {
+        getAPIServerUrl: function () {
+            return Contextly.api_server;
+        },
+        getMainServerUrl: function () {
+            return Contextly.main_server;
+        },
+        getEditorUrl: function () {
+            return Contextly.editor_url;
+        },
+        getPluginVersion: function () {
+            return Contextly.version;
+        },
+        getAppId: function () {
+            return Contextly.app_id;
+        },
+        getMode: function () {
+            return Contextly.mode;
+        },
+        getWPSettings: function () {
+            return Contextly.settings;
+        },
+        isHttps: function () {
+            return Contextly.https;
+        },
+        isReadyToLoad: function() {
+            if ( Contextly.disable_autoload && Contextly.disable_autoload == true ) {
+                return false;
             }
-
-			return null;
-		},
-		getSnippetCssUrl: function(settings) {
-			var css_url;
-			if (this.getMode() == 'local') {
-				css_url = "http://linker.site/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
-			}
-			else if (this.getMode() == 'dev') {
-				css_url = "http://dev.contextly.com/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
-			}
-			else {
-				css_url = Contextly.BaseSettings.getSnippetCssUrl.apply(this, arguments);
-			}
-			return css_url;
-		},
-		getSidebarCssUrl: function(settings) {
-			var css_url;
-			if (this.getMode() == 'local') {
-				css_url = "http://linker.site/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
-			}
-			else if (this.getMode() == 'dev') {
-				css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
-			}
-			else {
-				css_url = Contextly.BaseSettings.getSidebarCssUrl.apply(this, arguments);
-			}
-			return css_url;
-		}
-	}
+            return true;
+        },
+        getAjaxUrl: function () {
+            return Contextly.ajax_url;
+        },
+        getAjaxNonce: function () {
+            if ( Contextly.ajax_nonce ) {
+                return Contextly.ajax_nonce;
+            }
+            return null;
+        },
+        isAdmin: function () {
+            return Contextly.admin;
+        },
+        isBrandingDisplayed: function () {
+            return !this.isAdmin();
+        },
+        getSnippetCssUrl: function(settings) {
+            var css_url;
+            if (this.getMode() == 'dev') {
+                css_url = "http://dev.contextly.com/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
+            }
+            else {
+                css_url = Contextly.BaseSettings.getSnippetCssUrl.apply(this, arguments);
+            }
+            return css_url;
+        },
+        getSidebarCssUrl: function(settings) {
+            var css_url;
+            if (this.getMode() == 'dev') {
+                css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
+            }
+            else {
+                css_url = Contextly.BaseSettings.getSidebarCssUrl.apply(this, arguments);
+            }
+            return css_url;
+        }
+    }
 
 });
 
@@ -357,56 +125,103 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 
 });
 
-Contextly.LogPluginEventsType = {
-    EMAIL: 'email'
-};
+/**
+ * @class
+ * @extends Contextly.PageView
+ */
+Contextly.WPPageView = Contextly.createClass({ /** @lends Contextly.PageView.prototype */
+    extend: Contextly.PageView,
 
-Contextly.LogPluginEvents = Contextly.createClass({
-
-    statics: {
-
-        fireEvent: function (type, args)
-        {
-            // Remove the type of event.
-            var args = Array.prototype.slice.call(arguments, 1);
-
-            jQuery(window).triggerHandler(type, args);
-        },
-
-        attachEvent: function (type, handler)
-        {
-            var self = this;
-
-            if ( typeof handler === 'undefined' )
-            {
-                handler = function(event, message) { self.emailEvent(type, message) };
-            }
-
-            jQuery(window).bind( type, handler );
-        },
-
-        emailEvent: function( event, message )
-        {
-            var json_message = null;
-
-            if ( typeof message !== 'undefined' ) {
-                json_message = easyXDM.getJSONObject().stringify(message);
-            }
-
-            Contextly.RESTClient.call(
-                'events',
-                'put',
-                {
-                    event_type: Contextly.LogPluginEventsType.EMAIL,
-                    event_name: event,
-                    event_page: window.location.href,
-                    event_message: json_message
+    display: function () {
+        // Check if we have error on page
+        if ( this.isError() && Contextly.Settings.isAdmin() ) {
+            var message = '';
+            if ( this.error.error ) {
+                if ( this.error.error_code == Contextly.Loader.Errors.ERROR_FORBIDDEN ) {
+                    message = this.error.error + " Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+                } else if ( this.error.error_code == Contextly.Loader.Errors.ERROR_SUSPENDED ) {
+                    message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+                } else {
+                    message = "Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
                 }
+            } else {
+                message = "Sorry, something seems to be broken. Please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+            }
+
+            // TODO Render error without creating base widget.
+            var widget = new Contextly.widget.Base();
+            widget.displayHTML( message );
+        } else {
+            Contextly.PageView.fn.display.call( this );
+        }
+    },
+
+    updatePostAction: function () {
+        var data = {
+            action: 'contextly_publish_post',
+            page_id: Contextly.Settings.getPageId(),
+            contextly_nonce: Contextly.Settings.getAjaxNonce()
+        };
+
+        jQuery.ajax({
+            url: Contextly.ajax_url,
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function(response) {
+                if ( response != true ) {
+                    Contextly.PageView.fn.updatePostAction.call( this );
+                }
+            },
+            error: function () {
+                Contextly.PageView.fn.updatePostAction.call( this );
+            }
+        });
+    },
+
+    afterDisplayWidgetAction: function ( snippet ) {
+        if (snippet.widget_type !== Contextly.widget.types.SNIPPET) {
+            return;
+        }
+
+        if (Contextly.Settings.isAdmin() || !snippet.hasWidgetData()) {
+            return;
+        }
+
+        if (jQuery(this.getMainWidgetShortCodeId()).length) {
+            snippet.getDisplayElement().appendTo(
+                this.getMainWidgetShortCodeId()
             );
         }
+        else {
+            // We need to be sure that our control is last in content element
+            if (!snippet.getDisplayElement().is(":last-child")) {
+                snippet.getDisplayElement().parent().append(snippet.getDisplayElement());
+            }
+        }
+    },
+
+    getMainWidgetShortCodeId: function () {
+        return '#ctx_main_module_short_code';
     }
 
 });
 
-// Load Contextly widgets for this page
-Contextly.Loader.load();
+/**
+ * @class
+ * @extends Contextly.Loader
+ */
+Contextly.WPLoader = Contextly.createClass({
+    extend: Contextly.Loader,
+    statics: {
+
+        displayWidgets: function ( response ) {
+            var pageView = new Contextly.WPPageView( response );
+            pageView.display();
+        }
+
+    }
+
+});
+
+Contextly.WPLoader.load();

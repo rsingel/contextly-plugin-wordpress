@@ -16,7 +16,7 @@
     var buildSidebarToken = function (sidebar) {
         // Build the token code.
         var token = '[contextly';
-        if (sidebar.type == Contextly.WidgetType.AUTO_SIDEBAR)
+        if (sidebar.type == Contextly.widget.types.AUTO_SIDEBAR)
         {
             token += '_auto';
         }
