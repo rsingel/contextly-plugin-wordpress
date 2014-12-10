@@ -2,11 +2,11 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, A/B testing, optimization
 Requires at least: 2.0.2
-Tested up to: 4.0
+Tested up to: 4.0.1
 Stable tag: trunk
 License: GPLv2 or later
 
-Build your audience with the content recommendations that are relevant, trending, evergreen and personalized. Editorial control and machine learning.
+Build your audience with content recommendations that are related, trending, evergreen and personalized. Editorial control and machine learning.
 == Description ==
 
 [Contextly](http://contextly.com "Contextly") helps you build a loyal audience through content recommendations that keeps readers reading. We do this through a combination of powerful machine learning algorithms and editorial curation.
@@ -111,6 +111,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+= 1.3.7 =
+
+- Fixed an issue where sidebars displayed intermittently for some sites
+
 
 = 1.3.6 =
 
