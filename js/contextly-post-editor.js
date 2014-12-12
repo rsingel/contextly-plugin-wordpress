@@ -254,7 +254,7 @@
 			},
 
 			attachPublishConfirmation: function () {
-				$('#publish')
+                $('#publish')
 					.unbind('click.contextlyPublishConfirmation')
 					.bind('click.contextlyPublishConfirmation', this.proxy(function () {
 						var wp_settings = Contextly.Settings.getWPSettings();
@@ -362,7 +362,7 @@
 				}
 
 				$('.ctx_snippets_editor_btn')
-					.attr('value', label)
+					.html(label)
 					.removeAttr('disabled')
 					.unbind('.contextlySnippetEditor')
 					.bind('click.contextlySnippetEditor', this.proxy(callback));

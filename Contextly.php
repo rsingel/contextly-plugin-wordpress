@@ -187,7 +187,7 @@ class Contextly
 
     public function echoAdminPublishMetaboxForPage() {
 	    echo '<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee; margin-bottom: 5px;">';
-	    echo 'Contextly: <input type="button" value="Loading..." class="button action button-primary ctx_snippets_editor_btn" disabled="disabled" style="float: right;"/>';
+	    echo 'Contextly: <a class="button action button-primary ctx_snippets_editor_btn" disabled="disabled" style="float: right;">Loading...</a>';
 	    echo '</div>';
     }
 
@@ -297,9 +297,9 @@ class Contextly
             $contextly_settings = new ContextlySettings();
             $flag = $contextly_settings->isPageDisplayDisabled( $post->ID );
 
-						if ( !$flag ) {
-							$html .= '<input type="button" class="button action ctx_snippets_editor_btn" value="Loading..." disabled="disabled" />';
-						}
+			if ( !$flag ) {
+				$html .= '<a class="button action ctx_snippets_editor_btn" disabled="disabled">Loading...</a>';
+			}
 
             $html .= '<div style="border-top: 1px solid #DFDFDF; margin-top: 8px; padding-top: 8px;"><span id="timestamp">';
             $html .= '<label>Don\'t display Contextly content on this ' . $post->post_type . ': ';
