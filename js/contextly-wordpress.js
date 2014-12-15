@@ -161,7 +161,10 @@ Contextly.WPPageView = Contextly.createClass({ /** @lends Contextly.PageView.pro
             widget.displayHTML( message );
         } else {
             Contextly.PageView.fn.display.call( this );
-            this.attachModuleViewEvent();
+
+            if ( !Contextly.Settings.isAdmin() ) {
+                this.attachModuleViewEvent();
+            }
         }
     },
 
@@ -276,7 +279,7 @@ Contextly.WPUtils = Contextly.createClass({
     statics: {
 
         isElementVisible: function ( $el ) {
-            var win = $(window);
+            var win = jQuery(window);
             var viewport = {
                 top : win.scrollTop(),
                 left : win.scrollLeft()
