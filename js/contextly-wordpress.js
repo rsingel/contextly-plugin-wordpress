@@ -3,6 +3,14 @@
  */
 Contextly = Contextly || {};
 
+Contextly.WPLogPluginEventType = {
+    LOG: 'log'
+};
+
+Contextly.WPLogPluginEventName = {
+    MODULE_VIEW: 'module_view'
+};
+
 Contextly.Settings = Contextly.createClass({
     extend: Contextly.BaseSettings,
 
@@ -153,6 +161,10 @@ Contextly.WPPageView = Contextly.createClass({ /** @lends Contextly.PageView.pro
             widget.displayHTML( message );
         } else {
             Contextly.PageView.fn.display.call( this );
+
+            if ( !Contextly.Settings.isAdmin() ) {
+                this.attachModuleViewEvent();
+            }
         }
     },
 
@@ -203,7 +215,43 @@ Contextly.WPPageView = Contextly.createClass({ /** @lends Contextly.PageView.pro
 
     getMainWidgetShortCodeId: function () {
         return '#ctx_main_module_short_code';
+    },
+
+    attachModuleViewEvent: function () {
+        var self = this;
+        this.module_view_interval = window.setInterval(
+            function () {
+                var check_display_element = jQuery( '.ctx-section .ctx-link p.ctx-nodefs ' ).first();
+                if ( check_display_element.length ) {
+                    var is_visible = Contextly.WPUtils.isElementVisible( check_display_element );
+
+                    if ( is_visible ) {
+                        self.logModuleViewEvent();
+
+                        if ( self.module_view_interval ) {
+                            window.clearInterval( self.module_view_interval );
+                        }
+                    }
+                }
+            },
+            300
+        );
+    },
+
+    logModuleViewEvent: function () {
+        if ( Contextly.WPLoader.response && Contextly.WPLoader.response.guid ) {
+            Contextly.RESTClient.call(
+                'events',
+                'put',
+                {
+                    event_type: Contextly.WPLogPluginEventType.LOG,
+                    event_name: Contextly.WPLogPluginEventName.MODULE_VIEW,
+                    event_guid: Contextly.WPLoader.response.guid
+                }
+            );
+        }
     }
+
 
 });
 
@@ -214,14 +262,40 @@ Contextly.WPPageView = Contextly.createClass({ /** @lends Contextly.PageView.pro
 Contextly.WPLoader = Contextly.createClass({
     extend: Contextly.Loader,
     statics: {
-
         displayWidgets: function ( response ) {
             var pageView = new Contextly.WPPageView( response );
             pageView.display();
         }
-
     }
 
+});
+
+/**
+ * @class
+ * @extends Contextly.widget.Utils
+ */
+Contextly.WPUtils = Contextly.createClass({
+    extend: Contextly.widget.Utils,
+    statics: {
+
+        isElementVisible: function ( $el ) {
+            var win = jQuery(window);
+            var viewport = {
+                top : win.scrollTop(),
+                left : win.scrollLeft()
+            };
+
+            viewport.right = viewport.left + win.width();
+            viewport.bottom = viewport.top + win.height();
+
+            var bounds = $el.offset();
+            bounds.right = bounds.left + $el.outerWidth();
+            bounds.bottom = bounds.top + $el.outerHeight();
+
+            return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
+        }
+
+    }
 });
 
 Contextly.WPLoader.load();
