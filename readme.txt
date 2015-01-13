@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, A/B testing, optimization
 Requires at least: 2.0.2
-Tested up to: 4.0.1
+Tested up to: 4.1
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -111,6 +111,14 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+= 1.4 =
+
+- Removed unneeded cross-site communication file from plugin
+- Updated Sidebar button to make it easier to edit existing sidebars. It's no longer necessary to highlight the shortcode to edit a story's sidebar -
+  simply press the sidebar button on any story to edit the sidebars in that story
+- Updated the Sidebar button to make it easier to add previously created sidebars from the Sidebar Library
+
 
 = 1.3.7 =
 
