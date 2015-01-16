@@ -221,7 +221,7 @@ Contextly.WPPageView = Contextly.createClass({ /** @lends Contextly.PageView.pro
         var self = this;
         this.module_view_interval = window.setInterval(
             function () {
-                var check_display_element = jQuery( '.ctx-section .ctx-link p.ctx-nodefs ' ).first();
+                var check_display_element = jQuery( '.ctx-section .ctx-link a' ).first();
                 if ( check_display_element.length ) {
                     var is_visible = Contextly.WPUtils.isElementVisible( check_display_element );
 
