@@ -281,7 +281,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
  * @extends Contextly.widget.Utils
  */
 Contextly.WPUtils = Contextly.createClass({
-    extend: Contextly.widget.Utils,
+    extend: Contextly.Utils,
     statics: {
 
         isElementVisible: function ( $el ) {
