@@ -290,7 +290,7 @@
 
 				setTimeout(this.proxy(function() {
 					this.isUpdateQueued = false;
-					Contextly.Loader.load();
+					Contextly.WPPageView.loadWidgets();
 				}), 1);
 			},
 

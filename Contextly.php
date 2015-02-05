@@ -366,7 +366,7 @@ class Contextly
 		wp_enqueue_script( 'json2' );
 
 		$include = array(
-			'widgets/factory',
+			'widgets/page-view',
 		);
 		$ignore = array(
 			'libraries/jquery' => TRUE,

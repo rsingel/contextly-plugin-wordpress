@@ -39,12 +39,6 @@ Contextly.Settings = Contextly.createClass({
         isHttps: function () {
             return Contextly.https;
         },
-        isReadyToLoad: function() {
-            if ( Contextly.disable_autoload && Contextly.disable_autoload == true ) {
-                return false;
-            }
-            return true;
-        },
         getAjaxUrl: function () {
             return Contextly.ajax_url;
         },
@@ -137,137 +131,149 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
  * @class
  * @extends Contextly.PageView
  */
-Contextly.WPPageView = Contextly.createClass({ /** @lends Contextly.PageView.prototype */
-    extend: Contextly.PageView,
+Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prototype */ {
 
-    display: function () {
-        // Check if we have error on page
-        if ( this.isError() && Contextly.Settings.isAdmin() ) {
-            var message = '';
-            if ( this.error.error ) {
-                if ( this.error.error_code == Contextly.Loader.Errors.ERROR_FORBIDDEN ) {
-                    message = this.error.error + " Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
-                } else if ( this.error.error_code == Contextly.Loader.Errors.ERROR_SUSPENDED ) {
-                    message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
-                } else {
-                    message = "Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
-                }
-            } else {
-                message = "Sorry, something seems to be broken. Please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
-            }
+	extend: Contextly.PageView,
 
-            // TODO Render error without creating base widget.
-            var widget = new Contextly.widget.Base();
-            widget.displayHTML( message );
-        } else {
-            Contextly.PageView.fn.display.call( this );
+	statics: {
 
-            if ( !Contextly.Settings.isAdmin() ) {
-                this.attachModuleViewEvent();
-            }
-        }
-    },
+		construct: function() {
+			var callback = this.proxy(this.afterDisplayWidgetAction, false, true);
+			jQuery(window).bind(Contextly.widget.broadcastTypes.DISPLAYED, callback);
+		},
 
-    updatePostAction: function () {
-        var data = {
-            action: 'contextly_publish_post',
-            page_id: Contextly.Settings.getPageId(),
-            contextly_nonce: Contextly.Settings.getAjaxNonce()
-        };
+		onWidgetsLoadingError: function(response) {
+			Contextly.PageView.onWidgetsLoadingError.apply(this, arguments);
+			if ( !Contextly.Setting.isAdmin() ) {
+				return;
+			}
 
-        jQuery.ajax({
-            url: Contextly.ajax_url,
-            type: 'post',
-            dataType: 'json',
-            data: data,
-            success: function(response) {
-                if ( response != true ) {
-                    Contextly.PageView.fn.updatePostAction.call( this );
-                }
-            },
-            error: function () {
-                Contextly.PageView.fn.updatePostAction.call( this );
-            }
-        });
-    },
+			var message = '';
+			if ( response.error ) {
+				if ( response.error_code == Contextly.RESTClient.errors.FORBIDDEN ) {
+					message = response.error + " Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+				} else if ( response.error_code == Contextly.RESTClient.errors.SUSPENDED ) {
+					message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+				} else {
+					message = "Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+				}
+			} else {
+				message = "Sorry, something seems to be broken. Please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+			}
 
-    afterDisplayWidgetAction: function ( snippet ) {
-        if (snippet.widget_type !== Contextly.widget.types.SNIPPET) {
-            return;
-        }
+			// TODO Render error without creating base widget.
+			var widget = new Contextly.widget.Base();
+			widget.displayHTML( message );
+		},
 
-        if (Contextly.Settings.isAdmin() || !snippet.hasWidgetData()) {
-            return;
-        }
+		onWidgetsLoadingSuccess: function(response) {
+			Contextly.PageView.onWidgetsLoadingSuccess.apply(this, arguments);
 
-        if (jQuery(this.getMainWidgetShortCodeId()).length) {
-            snippet.getDisplayElement().appendTo(
-                this.getMainWidgetShortCodeId()
-            );
-        }
-        else {
-            // We need to be sure that our control is last in content element
-            if (!snippet.getDisplayElement().is(":last-child")) {
-                snippet.getDisplayElement().parent().append(snippet.getDisplayElement());
-            }
-        }
-    },
+			if ( !Contextly.Settings.isAdmin() ) {
+				this.attachModuleViewEvent();
+			}
+		},
 
-    getMainWidgetShortCodeId: function () {
-        return '#ctx_main_module_short_code';
-    },
+		updatePostAction: function () {
+			var args = arguments;
+			var parentUpdate = this.proxy(function() {
+				Contextly.PageView.updatePostAction.apply( this, args );
+			});
 
-    attachModuleViewEvent: function () {
-        var self = this;
-        this.module_view_interval = window.setInterval(
-            function () {
-                var check_display_element = jQuery( '.ctx-section .ctx-link p.ctx-nodefs ' ).first();
-                if ( check_display_element.length ) {
-                    var is_visible = Contextly.WPUtils.isElementVisible( check_display_element );
+			var data = {
+				action: 'contextly_publish_post',
+				page_id: Contextly.Settings.getPageId(),
+				contextly_nonce: Contextly.Settings.getAjaxNonce()
+			};
 
-                    if ( is_visible ) {
-                        self.logModuleViewEvent();
+			jQuery.ajax({
+				url: Contextly.ajax_url,
+				type: 'post',
+				dataType: 'json',
+				data: data,
+				success: function(response) {
+					if ( response != true ) {
+						parentUpdate();
+					}
+				},
+				error: function () {
+					parentUpdate();
+				}
+			});
+		},
 
-                        if ( self.module_view_interval ) {
-                            window.clearInterval( self.module_view_interval );
-                        }
-                    }
-                }
-            },
-            300
-        );
-    },
+		afterDisplayWidgetAction: function ( e, widgetType, snippet ) {
+			if (widgetType !== Contextly.widget.types.SNIPPET) {
+				return;
+			}
 
-    logModuleViewEvent: function () {
-        if ( Contextly.WPLoader.response && Contextly.WPLoader.response.guid ) {
-            Contextly.RESTClient.call(
-                'events',
-                'put',
-                {
-                    event_type: Contextly.WPLogPluginEventType.LOG,
-                    event_name: Contextly.WPLogPluginEventName.MODULE_VIEW,
-                    event_guid: Contextly.WPLoader.response.guid
-                }
-            );
-        }
-    }
+			if (Contextly.Settings.isAdmin() || !snippet.hasWidgetData()) {
+				return;
+			}
 
+			if (jQuery(this.getMainWidgetShortCodeId()).length) {
+				snippet.getDisplayElement().appendTo(
+					this.getMainWidgetShortCodeId()
+				);
+			}
+			else {
+				// We need to be sure that our control is last in content element
+				if (!snippet.getDisplayElement().is(":last-child")) {
+					snippet.getDisplayElement().parent().append(snippet.getDisplayElement());
+				}
+			}
+		},
 
-});
+		detDisplayableWidgetCollections: function(response) {
+			// Display snippet preview only on the post edit page.
+			if ( Contextly.Settings.isAdmin() ) {
+				return [ response.entry.snippets ];
+			}
+			else {
+				return Contextly.PageView.detDisplayableWidgetCollections.apply(this, arguments);
+			}
+		},
 
-/**
- * @class
- * @extends Contextly.Loader
- */
-Contextly.WPLoader = Contextly.createClass({
-    extend: Contextly.Loader,
-    statics: {
-        displayWidgets: function ( response ) {
-            var pageView = new Contextly.WPPageView( response );
-            pageView.display();
-        }
-    }
+		getMainWidgetShortCodeId: function () {
+			return '#ctx_main_module_short_code';
+		},
 
+		attachModuleViewEvent: function () {
+			var self = this;
+			this.module_view_interval = window.setInterval(
+				function () {
+					var check_display_element = jQuery( '.ctx-section .ctx-link p.ctx-nodefs ' ).first();
+					if ( check_display_element.length ) {
+						var is_visible = Contextly.WPUtils.isElementVisible( check_display_element );
+
+						if ( is_visible ) {
+							self.logModuleViewEvent();
+
+							if ( self.module_view_interval ) {
+								window.clearInterval( self.module_view_interval );
+							}
+						}
+					}
+				},
+				300
+			);
+		},
+
+		logModuleViewEvent: function () {
+			if ( this.lastWidgetsResponse && this.lastWidgetsResponse.guid ) {
+				Contextly.RESTClient.call(
+					'events',
+					'put',
+					{
+						event_type: Contextly.WPLogPluginEventType.LOG,
+						event_name: Contextly.WPLogPluginEventName.MODULE_VIEW,
+						event_guid: this.lastWidgetsResponse.guid
+					}
+				);
+			}
+		}
+
+	}
 });
 
 /**
@@ -275,7 +281,7 @@ Contextly.WPLoader = Contextly.createClass({
  * @extends Contextly.widget.Utils
  */
 Contextly.WPUtils = Contextly.createClass({
-    extend: Contextly.widget.Utils,
+    extend: Contextly.Utils,
     statics: {
 
         isElementVisible: function ( $el ) {
@@ -298,4 +304,6 @@ Contextly.WPUtils = Contextly.createClass({
     }
 });
 
-Contextly.WPLoader.load();
+if ( !Contextly.disable_autoload ) {
+	Contextly.WPPageView.loadWidgets();
+}
