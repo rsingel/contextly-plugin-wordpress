@@ -224,13 +224,13 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			}
 		},
 
-		detDisplayableWidgetCollections: function(response) {
+		getDisplayableWidgetCollections: function(response) {
 			// Display snippet preview only on the post edit page.
 			if ( Contextly.Settings.isAdmin() ) {
 				return [ response.entry.snippets ];
 			}
 			else {
-				return Contextly.PageView.detDisplayableWidgetCollections.apply(this, arguments);
+				return Contextly.PageView.getDisplayableWidgetCollections.apply(this, arguments);
 			}
 		},
 
