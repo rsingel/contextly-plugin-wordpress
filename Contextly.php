@@ -173,13 +173,13 @@ class Contextly
         if ( !current_user_can( 'edit_page', $post_id ) ) return false;
         if ( empty( $post_id ) ) return false;
 
-	    $display_widget_flag = null;
 	    if ( isset( $_POST['contextly_display_widgets'] ) ) {
 		    $display_widget_flag = $_POST['contextly_display_widgets'];
-	    }
 
-	    $contextly_settings = new ContextlySettings();
-	    $contextly_settings->changePageDisplay( $post_id, $display_widget_flag );
+		    $contextly_settings = new ContextlySettings();
+		    $contextly_settings->changePageDisplay( $post_id, $display_widget_flag );
+
+	    }
 
         return true;
     }
@@ -306,6 +306,7 @@ class Contextly
 
             $html .= '<div style="border-top: 1px solid #DFDFDF; margin-top: 8px; padding-top: 8px;"><span id="timestamp">';
             $html .= '<label>Don\'t display Contextly content on this ' . $post->post_type . ': ';
+            $html .= "<input type='hidden' name='contextly_display_widgets' value='' />";
             $html .= "<input type='checkbox' name='contextly_display_widgets' " . ( $flag ? "checked='checked'" : "" ) . " onchange=\"jQuery('#post').submit();\" /></label>";
             $html .= '</span></div>';
 
