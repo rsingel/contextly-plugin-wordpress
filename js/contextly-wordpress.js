@@ -54,6 +54,9 @@ Contextly.Settings = Contextly.createClass({
         isBrandingDisplayed: function () {
             return !this.isAdmin();
         },
+		areLinkWidgetsDisplayed: function() {
+			return Contextly.render_link_widgets;
+		},
         getSnippetCssUrl: function(settings) {
             var css_url;
             if (this.getMode() == 'dev') {
@@ -224,13 +227,22 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			}
 		},
 
-		detDisplayableWidgetCollections: function(response) {
-			// Display snippet preview only on the post edit page.
+		getDisplayableWidgetCollections: function(response) {
 			if ( Contextly.Settings.isAdmin() ) {
-				return [ response.entry.snippets ];
+				if ( Contextly.Settings.areLinkWidgetsDisplayed() ) {
+					return [ response.entry.snippets ];
+				}
+				else {
+					return [];
+				}
 			}
 			else {
-				return Contextly.PageView.detDisplayableWidgetCollections.apply(this, arguments);
+				if ( Contextly.Settings.areLinkWidgetsDisplayed() ) {
+					return Contextly.PageView.getDisplayableWidgetCollections.apply(this, arguments);
+				}
+				else {
+					return [ response.entry.storyline_subscribe ];
+				}
 			}
 		},
 

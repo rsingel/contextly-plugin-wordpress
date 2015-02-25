@@ -20,6 +20,9 @@ class Contextly
     const WIDGET_SIDEBAR_PREFIX = 'contextly-';
 	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar id="%HASH%"]';
 
+    const WIDGET_STORYLINE_ID = 'ctx-sl-subscribe';
+    const WIDGET_STORYLINE_CLASS = 'ctx-clearfix';
+
 	const MAIN_MODULE_SHORT_CODE = 'contextly_main_module';
 	const MAIN_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
 	const MAIN_MODULE_SHORT_CODE_ID = 'ctx_main_module_short_code';
@@ -316,6 +319,7 @@ class Contextly
     public function getSnippetWidget() {
         global $post;
 
+		$prefix = '';
         $default_html_code = '';
         $additional_html_controls = '';
 
@@ -341,8 +345,12 @@ class Contextly
 	            $additional_html_controls = $this->getAdditionalShowHideControl();
             }
         }
+		else
+		{
+			$prefix = "<div id='" . esc_attr( self::WIDGET_STORYLINE_ID ) . "' class='" . esc_attr( self::WIDGET_STORYLINE_CLASS ) . "'></div>";
+		}
 
-        return "<div id='" . esc_attr( self::WIDGET_SNIPPET_ID ) . "' class='" . esc_attr( self::WIDGET_SNIPPET_CLASS ) . "'>" . $default_html_code . "</div>" . $additional_html_controls;
+        return $prefix . "<div id='" . esc_attr( self::WIDGET_SNIPPET_ID ) . "' class='" . esc_attr( self::WIDGET_SNIPPET_CLASS ) . "'>" . $default_html_code . "</div>" . $additional_html_controls;
     }
 
 	public function getPluginJs( $script_name ) {
@@ -405,6 +413,9 @@ class Contextly
 
 		if ( isset( $post ) && isset( $post->ID ) ) {
 			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
+
+			$contextly_settings = new ContextlySettings();
+			$options[ 'render_link_widgets' ] = !$contextly_settings->isPageDisplayDisabled( $post->ID );
 		}
 
 		if ( is_array( $additional_options ) ) {
@@ -430,10 +441,7 @@ class Contextly
 
 	private function isLoadWidget()
 	{
-		global $post;
-
-		$contextly_settings = new ContextlySettings();
-		if ( $this->checkWidgetDisplayType() && !$contextly_settings->isPageDisplayDisabled( $post->ID ) )
+		if ( $this->checkWidgetDisplayType() )
 		{
 			return is_page() || is_single() || $this->isAdminEditPage();
 		}
@@ -460,7 +468,7 @@ class Contextly
 		$ignore = array(
 			'libraries/jquery' => TRUE,
 		);
-		$this->addKitAssets( 'components/overlay', $ignore );
+		$this->addKitAssets( 'overlay-dialogs/overlay', $ignore );
 	}
 
 	public function ajaxPublishPostCallback() {
