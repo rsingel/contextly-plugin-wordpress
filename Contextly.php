@@ -158,7 +158,10 @@ class Contextly
 
 	        foreach ( $display_types as $display_type ) {
 		        $this->addAdminMetaboxForPage( $display_type );
-				$this->addAdminPublishMetaboxForPage( $display_type );
+
+		        if ( $this->isLoadWidget() ) {
+			        $this->addAdminPublishMetaboxForPage($display_type);
+		        }
 	        }
 
             global $post;
@@ -178,13 +181,13 @@ class Contextly
 
 		    $contextly_settings = new ContextlySettings();
 		    $contextly_settings->changePageDisplay( $post_id, $display_widget_flag );
-
 	    }
 
         return true;
     }
 
     private function addAdminPublishMetaboxForPage() {
+
 	    add_action( 'post_submitbox_misc_actions', array( $this, 'echoAdminPublishMetaboxForPage' ) );
     }
 
@@ -442,7 +445,10 @@ class Contextly
 
 	private function isLoadWidget()
 	{
-		if ( $this->checkWidgetDisplayType() )
+		global $post;
+		$contextly_settings = new ContextlySettings();
+
+		if ( $this->checkWidgetDisplayType() && !$contextly_settings->isPageDisplayDisabled( $post->ID ))
 		{
 			return is_page() || is_single() || $this->isAdminEditPage();
 		}
