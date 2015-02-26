@@ -437,7 +437,7 @@ class Contextly
 			return 'contextly-kit-components-create-class';
 		}
 
-		return 'contextly-kit-widgets--factory';
+		return 'contextly-kit-widgets--page-view';
 	}
 
 	private function isLoadWidget()
