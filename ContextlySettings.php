@@ -299,10 +299,12 @@ class ContextlySettings {
 
 			    $options["api_key"] = sanitize_text_field( $get_api_key );
 			    $input_style = " style='background-color: #FFEBE8; border-color: #CC0000;'";
+
+			    update_option( self::API_SETTINGS_KEY, $options );
 		    }
 	    }
 
-	    echo "<label><input name='" . esc_attr( self::API_SETTINGS_KEY ) . "[api_key]' type='text' size='40' value='". esc_attr( $options["api_key"] ) . "' " . esc_html( $input_style ) . "/></label>";
+	    echo "<label><input name='" . esc_attr( self::API_SETTINGS_KEY ) . "[api_key]' type='text' size='40' value='". esc_attr( $options["api_key"] ) . "' " . $input_style . "/></label>";
     }
 
 	public function checkApiSettings() {
