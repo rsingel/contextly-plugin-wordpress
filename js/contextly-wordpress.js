@@ -100,7 +100,11 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 				},
 				success: function ( response ) {
 					if ( response.success && response.contextly_access_token ) {
-						jQuery( '#' + settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
+                        if ( response.message ) {
+                            Contextly.WPAdminMessages.waring( response.message );
+                        }
+
+                        jQuery( '#' + settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
 
                         if ( disabled_flag )
                         {
@@ -109,10 +113,8 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 
                         Contextly.LogPluginEvents.fireEvent('contextlySettingsAuthSuccess', response);
 					} else {
-                        if ( response.message && disabled_flag ) {
-                            jQuery( '#' + settings_button_id ).parent().append(
-                                jQuery( "<p style='color: red; font-weight: bold;'>* You need a valid API key. Click the \"API Key\" tab above to get one.</p>" )
-                            );
+                        if ( response.message ) {
+                            Contextly.WPAdminMessages.error( "You need a valid API key. Click the \"API Key\" tab above to get one." );
                         }
 
                         Contextly.LogPluginEvents.fireEvent('contextlySettingsAuthFailed', response);
@@ -128,6 +130,27 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 
 	}
 
+});
+
+/**
+ * @class
+ */
+Contextly.WPAdminMessages = Contextly.createClass({
+    statics: {
+        error: function ( message ) {
+            this.render( 'error', message )
+        },
+
+        waring: function ( message ) {
+            this.render( 'error', message )
+        },
+
+        render: function ( message_class, message_text ) {
+            jQuery( '#contextly_warnings').html(
+                "<div class='fade " + message_class + "'><p>" + message_text + "</p></div>"
+            );
+        }
+    }
 });
 
 /**

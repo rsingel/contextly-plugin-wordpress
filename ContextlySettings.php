@@ -176,7 +176,8 @@ class ContextlySettings {
             <?php $this->displaySettingsTabs(); ?>
 
 	            <?php if ( $tab == self::GENERAL_SETTINGS_KEY ) { ?>
-				    <h3>
+		            <div id='contextly_warnings'></div>
+		            <h3>
 					    Most of the controls for Contextly are hosted outside Wordpress. Press The Big Settings Button to securely login.
 				    </h3>
 				    <p>
@@ -282,7 +283,8 @@ class ContextlySettings {
     }
 
     public function apiLayoutSection() {
-        echo "<p>In order to communicate securely, we use a shared secret key. You can find your secret API key with button \"Customize Contextly and Get API Key\". Copy and paste it below.</p>";
+        echo "<div id='contextly_warnings'></div>";
+	    echo "<p>In order to communicate securely, we use a shared secret key. You can find your secret API key with button \"Customize Contextly and Get API Key\". Copy and paste it below.</p>";
     }
 
     public function apiKeyInput() {
