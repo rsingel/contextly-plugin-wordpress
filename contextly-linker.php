@@ -8,7 +8,7 @@ Version: 1.4.1
 */
 
 define ( "CONTEXTLY_PLUGIN_VERSION", '1.4.1' );
-define ( "CONTEXTLY_MODE", 'dev' );
+define ( "CONTEXTLY_MODE", 'live' );
 define ( "CONTEXTLY_HTTPS", is_ssl() );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
 

@@ -171,6 +171,14 @@ class ContextlySettings {
 
 		        return open_contextly_page( open_url, button_id );
 	        }
+
+	        function open_contextly_registration_page()
+	        {
+		        var open_url = <?php echo json_encode( $this->getContextlyBaseUrl('') ) ?>;
+		        window.open( open_url );
+
+		        return false;
+	        }
         </script>
         <div class="wrap">
             <?php $this->displaySettingsTabs(); ?>

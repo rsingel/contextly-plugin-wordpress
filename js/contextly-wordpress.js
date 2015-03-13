@@ -100,8 +100,9 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 				},
 				success: function ( response ) {
 					if ( response.success && response.contextly_access_token ) {
-                        if ( response.message ) {
-                            Contextly.WPAdminMessages.waring( response.message );
+                        if ( response.key_different_domain ) {
+                            Contextly.WPAdminMessages.waring( "This API key has been used in the past by another installation. DO NOT use the same API key for multiple installations. " +
+                                "This will result in undesired behavior. Please get a new API key <a href='#' onclick='open_contextly_registration_page();'>here</a>." );
                         }
 
                         jQuery( '#' + settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
@@ -200,8 +201,12 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			}
 		},
 
-		updatePostAction: function () {
-			var args = arguments;
+		updatePostAction: function (response) {
+            if (!response.entry.update) {
+                return;
+            }
+
+            var args = arguments;
 			var parentUpdate = this.proxy(function() {
 				Contextly.PageView.updatePostAction.apply( this, args );
 			});

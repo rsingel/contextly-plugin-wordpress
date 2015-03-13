@@ -682,12 +682,15 @@ class Contextly
 	public function ajaxGetAuthTokenCallback() {
 		try {
 			$this->api()->testCredentials();
+			$json_response = $this->api()->getCurrentResponse();
 
 			$data = array(
 				'success' => 1,
-				'contextly_access_token' => (string) $this->api()
-						->getAccessToken()
+				'contextly_access_token' => (string) $this->api()->getAccessToken(),
 			);
+			if ( isset( $json_response->key_different_domain ) ) {
+				$data['key_different_domain'] = (bool)$json_response->key_different_domain;
+			}
 		} catch ( Exception $e ) {
 			$data = array(
 				'success' => 0,
