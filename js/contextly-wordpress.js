@@ -243,14 +243,17 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			}
 
 			if (jQuery(this.getMainWidgetShortCodeId()).length) {
-				snippet.getDisplayElement().appendTo(
-					this.getMainWidgetShortCodeId()
-				);
+				if ( snippet.getDisplayElement().length ) {
+                    snippet.getDisplayElement().appendTo( this.getMainWidgetShortCodeId() );
+                } else {
+                    jQuery( this.getMainWidgetShortCodeId() ).html( "<div id='ctx-module' class='ctx-module-container ctx-clearfix'>" + snippet.getWidgetHTML() + "</div>" );
+                    snippet.broadcastWidgetDisplayed();
+                }
 			}
 			else {
 				// We need to be sure that our control is last in content element
 				if (!snippet.getDisplayElement().is(":last-child")) {
-					snippet.getDisplayElement().parent().append(snippet.getDisplayElement());
+                    snippet.getDisplayElement().parent().append(snippet.getDisplayElement());
 				}
 			}
 		},
