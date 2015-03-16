@@ -246,8 +246,8 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 				if ( snippet.getDisplayElement().length ) {
                     snippet.getDisplayElement().appendTo( this.getMainWidgetShortCodeId() );
                 } else {
-                    jQuery( this.getMainWidgetShortCodeId() ).html( "<div id='ctx-module' class='ctx-module-container ctx-clearfix'>" + snippet.getWidgetHTML() + "</div>" );
-                    snippet.broadcastWidgetDisplayed();
+                    jQuery( this.getMainWidgetShortCodeId() ).html( "<div id='ctx-module' class='ctx-module-container ctx-clearfix'></div>" );
+                    snippet.display();
                 }
 			}
 			else {
