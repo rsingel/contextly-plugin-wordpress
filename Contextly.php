@@ -45,7 +45,7 @@ class Contextly
             add_action( 'admin_enqueue_scripts', array( $this, 'initAdmin' ), 1 );
             add_action( 'save_post', array( $this, 'publishBoxControlSavePostHook' ) );
 	        add_filter( 'default_content', array( $this, 'addAutosidebarCodeFilter' ), 10, 2 );
-			add_action( 'admin_head', array( $this, 'insertMetatags' ) );
+			add_action( 'admin_head', array( $this, 'insertMetatags' ), 0 );
 			add_action( 'admin_footer', array( $this, 'addQuicktagsEditorIntegration' ) );
 		    register_activation_hook( CONTEXTLY_PLUGIN_FILE, array( $this, 'addActivationHook' ) );
 
@@ -56,7 +56,7 @@ class Contextly
         } else {
             add_action( 'init', array( $this, 'initDefault' ), 1 );
             add_action( 'the_content', array( $this, 'addSnippetWidgetToContent' ) );
-			add_action( 'wp_head', array( $this, 'insertMetatags' ) );
+			add_action( 'wp_head', array( $this, 'insertMetatags' ), 0 );
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
