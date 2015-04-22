@@ -170,6 +170,22 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			jQuery(window).bind(Contextly.widget.broadcastTypes.DISPLAYED, callback);
 		},
 
+        loadWidgets: function() {
+            // Fix problem for some clients with few our widgets on page
+            // remove all occurrences and leave only one last
+            var modules = jQuery("div[id='ctx-module']");
+            if ( modules.length > 1 ) {
+                var modules_count = modules.length;
+                modules.each(function(index, element) {
+                    if ( index != modules_count - 1 ) {
+                        jQuery(element).remove();
+                    }
+                });
+            }
+
+            Contextly.PageView.loadWidgets();
+        },
+
 		onWidgetsLoadingError: function(response) {
 			Contextly.PageView.onWidgetsLoadingError.apply(this, arguments);
 			if ( !Contextly.Setting.isAdmin() ) {
