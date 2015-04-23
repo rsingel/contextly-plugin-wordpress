@@ -183,7 +183,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
                 });
             }
 
-            Contextly.PageView.loadWidgets();
+            Contextly.PageView.loadWidgets.apply(this, arguments);
         },
 
 		onWidgetsLoadingError: function(response) {
@@ -210,11 +210,11 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			widget.displayHTML( message );
 		},
 
-		onWidgetsLoadingSuccess: function(response) {
+        onWidgetsLoadingSuccess: function(response) {
 			Contextly.PageView.onWidgetsLoadingSuccess.apply(this, arguments);
 
 			if ( !Contextly.Settings.isAdmin() ) {
-				this.attachModuleViewEvent();
+                this.attachModuleViewEvent();
 			}
 		},
 
@@ -251,7 +251,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 		},
 
 		afterDisplayWidgetAction: function ( e, widgetType, snippet ) {
-			if (widgetType !== Contextly.widget.types.SNIPPET) {
+            if (widgetType !== Contextly.widget.types.SNIPPET) {
 				return;
 			}
 
@@ -302,7 +302,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			var self = this;
 			this.module_view_interval = window.setInterval(
 				function () {
-					var check_display_element = jQuery( '.ctx-section .ctx-link p.ctx-nodefs ' ).first();
+					var check_display_element = jQuery( '.ctx-section .ctx-link' ).first();
 					if ( check_display_element.length ) {
 						var is_visible = Contextly.WPUtils.isElementVisible( check_display_element );
 
