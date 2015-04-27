@@ -20,6 +20,9 @@ class Contextly
     const WIDGET_SIDEBAR_PREFIX = 'contextly-';
 	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar id="%HASH%"]';
 
+    const WIDGET_STORYLINE_ID = 'ctx-sl-subscribe';
+    const WIDGET_STORYLINE_CLASS = 'ctx-clearfix';
+
 	const MAIN_MODULE_SHORT_CODE = 'contextly_main_module';
 	const MAIN_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
 	const MAIN_MODULE_SHORT_CODE_ID = 'ctx_main_module_short_code';
@@ -42,7 +45,7 @@ class Contextly
             add_action( 'admin_enqueue_scripts', array( $this, 'initAdmin' ), 1 );
             add_action( 'save_post', array( $this, 'publishBoxControlSavePostHook' ) );
 	        add_filter( 'default_content', array( $this, 'addAutosidebarCodeFilter' ), 10, 2 );
-			add_action( 'admin_head', array( $this, 'insertMetatags' ) );
+			add_action( 'admin_head', array( $this, 'insertMetatags' ), 0 );
 			add_action( 'admin_footer', array( $this, 'addQuicktagsEditorIntegration' ) );
 		    register_activation_hook( CONTEXTLY_PLUGIN_FILE, array( $this, 'addActivationHook' ) );
 
@@ -53,7 +56,7 @@ class Contextly
         } else {
             add_action( 'init', array( $this, 'initDefault' ), 1 );
             add_action( 'the_content', array( $this, 'addSnippetWidgetToContent' ) );
-			add_action( 'wp_head', array( $this, 'insertMetatags' ) );
+			add_action( 'wp_head', array( $this, 'insertMetatags' ), 0 );
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
@@ -155,7 +158,10 @@ class Contextly
 
 	        foreach ( $display_types as $display_type ) {
 		        $this->addAdminMetaboxForPage( $display_type );
-				$this->addAdminPublishMetaboxForPage( $display_type );
+
+		        if ( $this->isLoadWidget() ) {
+			        $this->addAdminPublishMetaboxForPage($display_type);
+		        }
 	        }
 
             global $post;
@@ -170,18 +176,18 @@ class Contextly
         if ( !current_user_can( 'edit_page', $post_id ) ) return false;
         if ( empty( $post_id ) ) return false;
 
-	    $display_widget_flag = null;
 	    if ( isset( $_POST['contextly_display_widgets'] ) ) {
 		    $display_widget_flag = $_POST['contextly_display_widgets'];
-	    }
 
-	    $contextly_settings = new ContextlySettings();
-	    $contextly_settings->changePageDisplay( $post_id, $display_widget_flag );
+		    $contextly_settings = new ContextlySettings();
+		    $contextly_settings->changePageDisplay( $post_id, $display_widget_flag );
+	    }
 
         return true;
     }
 
     private function addAdminPublishMetaboxForPage() {
+
 	    add_action( 'post_submitbox_misc_actions', array( $this, 'echoAdminPublishMetaboxForPage' ) );
     }
 
@@ -303,6 +309,7 @@ class Contextly
 
             $html .= '<div style="border-top: 1px solid #DFDFDF; margin-top: 8px; padding-top: 8px;"><span id="timestamp">';
             $html .= '<label>Don\'t display Contextly content on this ' . $post->post_type . ': ';
+            $html .= "<input type='hidden' name='contextly_display_widgets' value='' />";
             $html .= "<input type='checkbox' name='contextly_display_widgets' " . ( $flag ? "checked='checked'" : "" ) . " onchange=\"jQuery('#post').submit();\" /></label>";
             $html .= '</span></div>';
 
@@ -316,6 +323,7 @@ class Contextly
     public function getSnippetWidget() {
         global $post;
 
+		$prefix = '';
         $default_html_code = '';
         $additional_html_controls = '';
 
@@ -341,8 +349,12 @@ class Contextly
 	            $additional_html_controls = $this->getAdditionalShowHideControl();
             }
         }
+		else
+		{
+			$prefix = "<div id='" . esc_attr( self::WIDGET_STORYLINE_ID ) . "' class='" . esc_attr( self::WIDGET_STORYLINE_CLASS ) . "'></div>";
+		}
 
-        return "<div id='" . esc_attr( self::WIDGET_SNIPPET_ID ) . "' class='" . esc_attr( self::WIDGET_SNIPPET_CLASS ) . "'>" . $default_html_code . "</div>" . $additional_html_controls;
+        return $prefix . "<div id='" . esc_attr( self::WIDGET_SNIPPET_ID ) . "' class='" . esc_attr( self::WIDGET_SNIPPET_CLASS ) . "'>" . $default_html_code . "</div>" . $additional_html_controls;
     }
 
 	public function getPluginJs( $script_name ) {
@@ -366,7 +378,7 @@ class Contextly
 		wp_enqueue_script( 'json2' );
 
 		$include = array(
-			'widgets/factory',
+			'widgets/page-view',
 		);
 		$ignore = array(
 			'libraries/jquery' => TRUE,
@@ -405,6 +417,9 @@ class Contextly
 
 		if ( isset( $post ) && isset( $post->ID ) ) {
 			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
+
+			$contextly_settings = new ContextlySettings();
+			$options[ 'render_link_widgets' ] = !$contextly_settings->isPageDisplayDisabled( $post->ID );
 		}
 
 		if ( is_array( $additional_options ) ) {
@@ -425,15 +440,15 @@ class Contextly
 			return 'contextly-kit-components-create-class';
 		}
 
-		return 'contextly-kit-widgets--factory';
+		return 'contextly-kit-widgets--page-view';
 	}
 
 	private function isLoadWidget()
 	{
 		global $post;
-
 		$contextly_settings = new ContextlySettings();
-		if ( $this->checkWidgetDisplayType() && !$contextly_settings->isPageDisplayDisabled( $post->ID ) )
+
+		if ( $this->checkWidgetDisplayType() && !$contextly_settings->isPageDisplayDisabled( $post->ID ))
 		{
 			return is_page() || is_single() || $this->isAdminEditPage();
 		}
@@ -460,7 +475,7 @@ class Contextly
 		$ignore = array(
 			'libraries/jquery' => TRUE,
 		);
-		$this->addKitAssets( 'components/overlay', $ignore );
+		$this->addKitAssets( 'overlay-dialogs/overlay', $ignore );
 	}
 
 	public function ajaxPublishPostCallback() {
@@ -667,12 +682,15 @@ class Contextly
 	public function ajaxGetAuthTokenCallback() {
 		try {
 			$this->api()->testCredentials();
+			$json_response = $this->api()->getCurrentResponse();
 
 			$data = array(
 				'success' => 1,
-				'contextly_access_token' => (string) $this->api()
-						->getAccessToken()
+				'contextly_access_token' => (string) $this->api()->getAccessToken(),
 			);
+			if ( isset( $json_response->key_different_domain ) ) {
+				$data['key_different_domain'] = (bool)$json_response->key_different_domain;
+			}
 		} catch ( Exception $e ) {
 			$data = array(
 				'success' => 0,

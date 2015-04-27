@@ -171,12 +171,21 @@ class ContextlySettings {
 
 		        return open_contextly_page( open_url, button_id );
 	        }
+
+	        function open_contextly_registration_page()
+	        {
+		        var open_url = <?php echo json_encode( $this->getContextlyBaseUrl('') ) ?>;
+		        window.open( open_url );
+
+		        return false;
+	        }
         </script>
         <div class="wrap">
             <?php $this->displaySettingsTabs(); ?>
 
 	            <?php if ( $tab == self::GENERAL_SETTINGS_KEY ) { ?>
-				    <h3>
+		            <div id='contextly_warnings'></div>
+		            <h3>
 					    Most of the controls for Contextly are hosted outside Wordpress. Press The Big Settings Button to securely login.
 				    </h3>
 				    <p>
@@ -282,7 +291,8 @@ class ContextlySettings {
     }
 
     public function apiLayoutSection() {
-        echo "<p>In order to communicate securely, we use a shared secret key. You can find your secret API key with button \"Customize Contextly and Get API Key\". Copy and paste it below.</p>";
+        echo "<div id='contextly_warnings'></div>";
+	    echo "<p>In order to communicate securely, we use a shared secret key. You can find your secret API key with button \"Customize Contextly and Get API Key\". Copy and paste it below.</p>";
     }
 
     public function apiKeyInput() {
@@ -299,10 +309,12 @@ class ContextlySettings {
 
 			    $options["api_key"] = sanitize_text_field( $get_api_key );
 			    $input_style = " style='background-color: #FFEBE8; border-color: #CC0000;'";
+
+			    update_option( self::API_SETTINGS_KEY, $options );
 		    }
 	    }
 
-	    echo "<label><input name='" . esc_attr( self::API_SETTINGS_KEY ) . "[api_key]' type='text' size='40' value='". esc_attr( $options["api_key"] ) . "' " . esc_html( $input_style ) . "/></label>";
+	    echo "<label><input name='" . esc_attr( self::API_SETTINGS_KEY ) . "[api_key]' type='text' size='40' value='". esc_attr( $options["api_key"] ) . "' " . $input_style . "/></label>";
     }
 
 	public function checkApiSettings() {

@@ -203,10 +203,13 @@
 					setSnippet: this.proxy(this.setSnippet),
 					removeSnippet: this.proxy(this.removeSnippet),
 					setOverlayCloseButtonHandler: function (callback) {
-						Contextly.overlay.setCloseButtonHandler(callback);
+						Contextly.overlay.Editor.setOptions({
+							extend: true,
+							onClose: callback
+						});
 					},
 					closeOverlay: function () {
-						Contextly.overlay.close();
+						Contextly.overlay.Editor.close();
 					}
 				}, api);
 
@@ -219,23 +222,7 @@
 
 				// Load an iframe inside modal.
 				var url = this.buildEditorUrl(type);
-				var options = {
-					width: {
-						max: 1400
-					}
-				};
-				this.openOverlay($('<iframe frameBorder="0"/>').attr({
-					src   : url,
-					width : '100%',
-					height: '100%'
-				}), options);
-			},
-
-			openOverlay: function(element, options) {
-				options = $.extend(true, {
-					zIndex: 100000
-				}, options);
-				Contextly.overlay.open(element, options);
+				Contextly.overlay.Editor.open(url);
 			},
 
 			showStubPopup: function () {
@@ -290,7 +277,7 @@
 
 				setTimeout(this.proxy(function() {
 					this.isUpdateQueued = false;
-					Contextly.Loader.load();
+					Contextly.WPPageView.loadWidgets();
 				}), 1);
 			},
 
@@ -310,7 +297,7 @@
 					'<input type="button" value="' + publish_now_value + '" class="button ' + publish_now_class + '" style="margin-left: 20px; float: right;" />' +
 					'</div>';
 				var popupContent = $(html);
-				this.openOverlay(popupContent, {
+				Contextly.overlay.Default.open(popupContent, {
 					width: 440,
 					height: 'auto'
 				});
@@ -319,16 +306,22 @@
 				popupContent
 					.find('input.' + add_links_class)
 					.bind('click.contextlyPublishConfirmation', this.proxy(function() {
-						Contextly.overlay.close();
-						this.snippetPopup();
+						var broadcastType = Contextly.overlay.broadcastTypes.AFTER_CLOSE;
+						jQuery(window).one(broadcastType, this.proxy(this.snippetPopup));
+
+						Contextly.overlay.Default.close();
 					}));
 				popupContent
 					.find('input.' + publish_now_class)
 					.bind('click.contextlyPublishConfirmation', function() {
-						Contextly.overlay.close();
-						$('#publish')
-							.unbind('.contextlyPublishConfirmation')
-							.click();
+						var broadcastType = Contextly.overlay.broadcastTypes.AFTER_CLOSE;
+						jQuery(window).one(broadcastType, function() {
+							$('#publish')
+								.unbind('.contextlyPublishConfirmation')
+								.click();
+						});
+
+						Contextly.overlay.Default.close();
 					});
 			},
 
@@ -338,7 +331,7 @@
 					+ 'We were unable to load Contextly data for this post. Please check your API settings on the Contextly plugin <a href="admin.php?page=contextly_options&tab=contextly_options_api" target="_blank">settings page</a> or <a href="http://contextly.com/contact-us/" target="_blank">contact us</a>.'
 					+ '</div>';
 				var content = $(html);
-				this.openOverlay(content, {
+				Contextly.overlay.Default.open(content, {
 					width: 440,
 					height: 'auto'
 				});
