@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, A/B testing, optimization
 Requires at least: 2.0.2
-Tested up to: 4.1
+Tested up to: 4.2
 Stable tag: trunk
 License: GPLv2 or later
 
