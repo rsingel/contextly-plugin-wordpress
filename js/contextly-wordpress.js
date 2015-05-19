@@ -101,8 +101,9 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
 				success: function ( response ) {
 					if ( response.success && response.contextly_access_token ) {
                         if ( response.key_different_domain ) {
-                            Contextly.WPAdminMessages.waring( "We think this API key has been used on staging or development site. " +
-                                "If this is true, please do not reuse this API key. Please get <a href='#' onclick='open_contextly_registration_page();'>another</a> API key for your new site. "
+                            Contextly.WPAdminMessages.waring( "We believe this API key has been used on a staging or development site. " +
+                                "If this is true, please do not reuse this API key. " +
+                                "Please get a <a href='#' onclick='open_contextly_registration_page();'>new</a> API key for your new site. "
                             );
                         }
 

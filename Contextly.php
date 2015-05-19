@@ -622,40 +622,36 @@ class Contextly
 	 */
 	private function getPostFeaturedImage( $post_id )
 	{
-		if (has_post_thumbnail( $post_id ) )
-		{
+		if (has_post_thumbnail( $post_id ) ) {
 			list($url) = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'single-post-thumbnail' );
 
-			if ( $url )
-			{
+			if ( $url )	{
 				return $url;
 			}
-		}
-		else
-		{
+		} else {
 			$post_images = $this->getPostImages( $post_id );
 
-			if ( count( $post_images ) > 0 )
-			{
+			if ( count( $post_images ) > 0 ) {
 				$sorted_images = array();
-				foreach ( $post_images as $image )
-				{
+				$check_images_count = 5;
+
+				foreach ( $post_images as $image ) {
 					list($url, $width, $height) = wp_get_attachment_image_src( $image->ID, 'full' );
 
 					$image_rank = $width + $height;
 
-					if ( !isset( $sorted_images[$image_rank] ) )
-					{
+					if ( !isset( $sorted_images[$image_rank] ) ) {
 						$sorted_images[$image_rank] = array($url);
-					}
-					else
-					{
+					} else {
 						$sorted_images[$image_rank][] = $url;
+					}
+
+					if ( count( $sorted_images ) >= $check_images_count ) {
+						break;
 					}
 				}
 
 				krsort( $sorted_images );
-
 				return current(reset($sorted_images));
 			}
 		}
