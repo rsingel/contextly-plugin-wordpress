@@ -633,7 +633,7 @@ class Contextly
 
 			if ( count( $post_images ) > 0 ) {
 				$sorted_images = array();
-				$check_images_count = 5;
+				$check_images_count = 1;
 
 				foreach ( $post_images as $image ) {
 					list($url, $width, $height) = wp_get_attachment_image_src( $image->ID, 'full' );
