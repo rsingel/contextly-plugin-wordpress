@@ -269,13 +269,18 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
                     jQuery( this.getMainWidgetShortCodeId() ).html( "<div id='ctx-module' class='ctx-module-container ctx-clearfix'></div>" );
                     snippet.display();
                 }
-			}
-			else {
+			} else {
 				// We need to be sure that our control is last in content element
 				if (!snippet.getDisplayElement().is(":last-child")) {
                     snippet.getDisplayElement().parent().append(snippet.getDisplayElement());
 				}
 			}
+
+            if (jQuery(this.getSLButtonShortCodeId()).length) {
+                jQuery('#ctx-sl-subscribe')
+                    .appendTo( this.getSLButtonShortCodeId() )
+                    .removeClass( 'ctx_widget_hidden' );
+            }
 		},
 
 		getDisplayableWidgetCollections: function(response) {
@@ -299,6 +304,10 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 
 		getMainWidgetShortCodeId: function () {
 			return '#ctx_main_module_short_code';
+		},
+
+		getSLButtonShortCodeId: function () {
+			return '#ctx_sl_button_short_code';
 		},
 
 		attachModuleViewEvent: function () {
