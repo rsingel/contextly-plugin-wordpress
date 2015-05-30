@@ -642,7 +642,7 @@ class Contextly
 
 				foreach ( $post_images as $image ) {
 					// Check if image url, this is NOT URL to another server. If this is external URL, this can take a lot of time to detect image size
-					if ( false && strpos( $image->guid, site_url() ) !== false ) {
+					if ( strpos( $image->guid, site_url() ) !== false ) {
 						list($url, $width, $height) = wp_get_attachment_image_src($image->ID, 'full');
 						$image_rank = $width + $height;
 
