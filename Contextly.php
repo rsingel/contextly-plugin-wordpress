@@ -613,8 +613,11 @@ class Contextly
 
 		if ($attachment_images && is_array($attachment_images)) {
 			foreach($attachment_images as $image) {
-				list($src) = wp_get_attachment_image_src($image->ID, 'full');
-				$images_array[] = $src;
+				if ( isset( $image->guid ) ) {
+					$images_array[] = $image->guid;
+				}
+
+				if ( count( $images_array ) > 5 ) break;
 			}
 		}
 
