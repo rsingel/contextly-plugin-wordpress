@@ -76,7 +76,16 @@ Contextly.Settings = Contextly.createClass({
                 css_url = Contextly.BaseSettings.getSidebarCssUrl.apply(this, arguments);
             }
             return css_url;
+        },
+        getAssetUrl: function(path, ext) {
+            if (this.getMode() == 'dev') {
+                return Contextly.asset_url + '/' + path + '.' + ext;
+            }
+            else {
+                return Contextly.BaseSettings.getAssetUrl.apply(this, arguments);
+            }
         }
+
     }
 
 });
@@ -166,11 +175,6 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 
 	statics: {
 
-		construct: function() {
-			var callback = this.proxy(this.afterDisplayWidgetAction, false, true);
-			jQuery(window).bind(Contextly.widget.broadcastTypes.DISPLAYED, callback);
-		},
-
         loadWidgets: function() {
             // Fix problem for some clients with few our widgets on page
             // remove all occurrences and leave only one last
@@ -191,7 +195,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 
 		onWidgetsLoadingError: function(response) {
 			Contextly.PageView.onWidgetsLoadingError.apply(this, arguments);
-			if ( !Contextly.Setting.isAdmin() ) {
+			if ( !Contextly.Settings.isAdmin() ) {
 				return;
 			}
 
@@ -211,14 +215,6 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			// TODO Render error without creating base widget.
 			var widget = new Contextly.widget.Base();
 			widget.displayHTML( message );
-		},
-
-        onWidgetsLoadingSuccess: function(response) {
-			Contextly.PageView.onWidgetsLoadingSuccess.apply(this, arguments);
-
-			if ( !Contextly.Settings.isAdmin() ) {
-                this.attachModuleViewEvent();
-			}
 		},
 
 		updatePostAction: function (response) {
@@ -254,6 +250,8 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 		},
 
 		afterDisplayWidgetAction: function ( e, widgetType, snippet ) {
+            // TODO: Check this method
+
             if (widgetType !== Contextly.widget.types.SNIPPET) {
 				return;
 			}
@@ -283,32 +281,22 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
             }
 		},
 
-		getDisplayableWidgetCollections: function(response) {
-			if ( Contextly.Settings.isAdmin() ) {
-				if ( Contextly.Settings.areLinkWidgetsDisplayed() ) {
-					return [ response.entry.snippets ];
-				}
-				else {
-					return [];
-				}
-			}
-			else {
-				if ( Contextly.Settings.areLinkWidgetsDisplayed() ) {
-					return Contextly.PageView.getDisplayableWidgetCollections.apply(this, arguments);
-				}
-				else {
-					return [ response.entry.storyline_subscribe ];
-				}
-			}
-		},
-
 		getMainWidgetShortCodeId: function () {
 			return '#ctx_main_module_short_code';
 		},
 
 		getSLButtonShortCodeId: function () {
 			return '#ctx_sl_button_short_code';
-		},
+		}
+/*\
+        onWidgetsLoadingSuccess: function(response) {
+            //Contextly.PageView.onWidgetsLoadingSuccess.apply(this, arguments);
+
+            //if ( !Contextly.Settings.isAdmin() ) {
+            //    this.attachModuleViewEvent();
+            //}
+            console.log(response);
+        },
 
 		attachModuleViewEvent: function () {
 			var self = this;
@@ -344,7 +332,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 				);
 			}
 		}
-
+*/
 	}
 });
 
@@ -376,6 +364,6 @@ Contextly.WPUtils = Contextly.createClass({
     }
 });
 
-if ( !Contextly.disable_autoload ) {
+if ( Contextly.Settings.getPageId() ) {
 	Contextly.WPPageView.loadWidgets();
 }

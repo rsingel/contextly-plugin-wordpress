@@ -260,12 +260,6 @@ class ContextlySettings {
 		{
 			$contextly_object = new Contextly();
 			$contextly_object->loadContextlyAjaxJSScripts();
-			$contextly_object->makeContextlyJSObject(
-				array(
-					'disable_autoload' => true
-				)
-			);
-
 			?>
 			<script>
 				jQuery( document ).ready(
@@ -281,7 +275,6 @@ class ContextlySettings {
     public function displaySettingsTabs() {
         $current_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : self::GENERAL_SETTINGS_KEY;
 
-        screen_icon();
         echo '<h2 class="nav-tab-wrapper">';
         foreach ( $this->tabs as $tab_key => $tab_caption ) {
             $active = $current_tab == $tab_key ? 'nav-tab-active' : '';
@@ -400,7 +393,7 @@ class ContextlySettings {
 <input name='{$control_name}' type='checkbox' value='1' " . ( $publish_confirmation ? "checked='checked'" : "" ) . " style='margin-left: 3px;'/>";
 	}
 
-    public function getPluginOptions() {
+    public static function getPluginOptions() {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
         if ( !is_array( $options ) ) {
 	        $options = array();
@@ -444,7 +437,7 @@ class ContextlySettings {
 		return true;
 	}
 
-    public function isPageDisplayDisabled( $page_id ) {
+    public static function isPageDisplayDisabled( $page_id ) {
         $post_flag = get_post_meta( $page_id, '_contextly_display_widgets', true );
 
         if ( isset( $post_flag ) && $post_flag == 'on' ) {

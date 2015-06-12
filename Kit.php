@@ -189,14 +189,22 @@ class ContextlyWpAssetsRenderer extends ContextlyKitAssetsRenderer {
 		}
 	}
 
-	public function renderTpl() {
-		// TODO Implement for widgets rendering later.
+	public function renderAll() {
+		$this->renderCss();
+		$this->renderJs();
+		$this->renderTpl();
+		$this->renderInlineJs();
 	}
 
-	public function renderAll() {
-		$this->renderJs();
-		$this->renderCss();
-		$this->renderTpl();
+	public function renderTpl() {
+		// TODO: Implement for widgets rendering later.
+	}
+
+	public function renderInlineJs() {
+	}
+
+	public function getInlineJs() {
+		return $this->assets->buildInlineJs(TRUE);
 	}
 
 }

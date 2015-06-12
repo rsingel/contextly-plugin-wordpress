@@ -7,7 +7,8 @@ Author: Contextly
 Version: 1.4.2
 */
 
-define ( "CONTEXTLY_PLUGIN_VERSION", '1.4.2' );
+define ( "CONTEXTLY_PLUGIN_VERSION", '1.5' );
+define ( "CONTEXTLY_KIT_VERSION", '3.0' );
 define ( "CONTEXTLY_MODE", 'dev' );
 define ( "CONTEXTLY_HTTPS", is_ssl() );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );

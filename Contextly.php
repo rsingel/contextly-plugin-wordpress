@@ -36,6 +36,8 @@ class Contextly
 	 */
 	protected $api;
 
+	protected $inline_js = '';
+
 	protected function api() {
 		if (!isset($this->api)) {
 			$this->api = ContextlyWpKit::getInstance()->newApi();
@@ -150,11 +152,6 @@ class Contextly
 		return $this->escape( $name );
 	}
 
-    private function getSettingsOptions() {
-        $contextly_settings = new ContextlySettings();
-        return $contextly_settings->getPluginOptions();
-    }
-
     public function initAdmin() {
         if ( $this->checkWidgetDisplayType() ) {
 	        $contextly_settings = new ContextlySettings();
@@ -229,8 +226,12 @@ class Contextly
 			$manager->extractPackageAssets( $package, $assets, $ignore );
 		}
 
-		$kit->newWpAssetsRenderer( $assets )
-				->renderAll();
+		$kit->newWpAssetsRenderer( $assets )->renderAll();
+
+		$new_inline_js = $kit->newWpAssetsRenderer( $assets )->getInlineJs();
+		if ( $new_inline_js ) {
+			$this->inline_js .= $new_inline_js;
+		}
 	}
 
 	private function addPostEditor() {
@@ -256,14 +257,11 @@ class Contextly
         return $content . $this->getSnippetWidget();
     }
 
-	public function addQuicktagsEditorIntegration()
-	{
+	public function addQuicktagsEditorIntegration() {
 		if ( $this->checkWidgetDisplayType() ) {
-
 			global $post;
 			$contextly_settings = new ContextlySettings();
-			if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) )
-			{
+			if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
 				wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly', null, true );
 			}
 		}
@@ -389,62 +387,67 @@ class Contextly
 			'libraries/jquery' => TRUE,
 			'libraries/json2' => TRUE,
 		);
+
 		$this->addKitAssets( $include, $ignore );
+
+		$contextly_object = Contextly::getContextlyJSObject();
+		wp_localize_script(
+			Contextly::getSettingsHandleName(),
+			'Contextly',
+			array(
+				'l10n_print_after' => 'Contextly = ' . json_encode( $contextly_object ) . ';' .  $this->inline_js
+			)
+		);
 
 		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'jquery', null, true );
 	}
 
-	private function getAjaxUrl() {
+	public static function getAjaxUrl() {
 		return admin_url( 'admin-ajax.php' );
 	}
 
-	private function getOverlayEditorUrl() {
+	public static function getOverlayEditorUrl() {
 		return admin_url( 'admin.php?page=contextly_overlay_dialog&noheader' );
 	}
 
-	public function makeContextlyJSObject( $additional_options = array() ) {
+	public static function getContextlyJSObject( $additional_params = null ) {
 		global $post;
 
 		$api_options = self::getAPIClientOptions();
-
 		$options = array(
-			'ajax_url'      => $this->getAjaxUrl(),
+			'ajax_url'      => self::getAjaxUrl(),
 			'api_server'    => Urls::getApiServerUrl(),
 			'main_server'   => Urls::getMainServerUrl(),
-			'editor_url'    => $this->getOverlayEditorUrl(),
+			'editor_url'    => self::getOverlayEditorUrl(),
 			'app_id'        => $api_options[ 'appID' ],
-			'settings'      => $this->getSettingsOptions(),
+			'settings'      => ContextlySettings::getPluginOptions(),
 			'admin'         => (boolean)is_admin(),
 			'mode'          => CONTEXTLY_MODE,
 			'https'         => CONTEXTLY_HTTPS,
-			'version'       => CONTEXTLY_PLUGIN_VERSION
+			'version'       => CONTEXTLY_PLUGIN_VERSION,
+			'kit'           => CONTEXTLY_KIT_VERSION
 		);
+
+		if ( CONTEXTLY_MODE == Urls::MODE_DEV ) {
+			$options['asset_url'] = plugin_dir_url( __FILE__ ) . 'kit/client/src';
+		}
 
 		if ( isset( $post ) && isset( $post->ID ) ) {
 			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
-
-			$contextly_settings = new ContextlySettings();
-			$options[ 'render_link_widgets' ] = !$contextly_settings->isPageDisplayDisabled( $post->ID );
+			$options[ 'render_link_widgets' ] = !ContextlySettings::isPageDisplayDisabled( $post->ID );
 		}
 
-		if ( is_array( $additional_options ) ) {
-			$options = $additional_options + $options;
+		if ( $additional_params !== null ) {
+			$options = $options + $additional_params;
 		}
 
-		wp_localize_script(
-			$this->getSettingsHandleName(),
-			'Contextly',
-			array( 'l10n_print_after' => 'Contextly = ' . json_encode( $options ) . ';' )
-		);
+		return $options;
 	}
 
-	private function getSettingsHandleName()
-	{
-		if ( CONTEXTLY_MODE == Urls::MODE_DEV )
-		{
+	public static function getSettingsHandleName() {
+		if ( CONTEXTLY_MODE == Urls::MODE_DEV ) {
 			return 'contextly-kit-components-create-class';
 		}
-
 		return 'contextly-kit-widgets--page-view';
 	}
 
@@ -464,9 +467,8 @@ class Contextly
 	}
 
 	public function loadScripts() {
-        if ( $this->isLoadWidget() ) {
+		if ( $this->isLoadWidget() ) {
 	        $this->loadContextlyAjaxJSScripts();
-		    $this->makeContextlyJSObject();
 
 	        if ( $this->isAdminEditPage() ) {
 				$this->addOverlayLibrary();
