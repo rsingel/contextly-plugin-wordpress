@@ -24,9 +24,6 @@ Contextly.Settings = Contextly.createClass({
         getEditorUrl: function () {
             return Contextly.editor_url;
         },
-        getPluginVersion: function () {
-            return Contextly.version;
-        },
         getAppId: function () {
             return Contextly.app_id;
         },
@@ -54,29 +51,6 @@ Contextly.Settings = Contextly.createClass({
         isBrandingDisplayed: function () {
             return !this.isAdmin();
         },
-		areLinkWidgetsDisplayed: function() {
-			return Contextly.render_link_widgets;
-		},
-        getSnippetCssUrl: function(settings) {
-            var css_url;
-            if (this.getMode() == 'dev') {
-                css_url = "http://dev.contextly.com/resources/css/plugin/widget/" + settings.display_type + "/template-" + settings.tabs_style + ".css";
-            }
-            else {
-                css_url = Contextly.BaseSettings.getSnippetCssUrl.apply(this, arguments);
-            }
-            return css_url;
-        },
-        getSidebarCssUrl: function(settings) {
-            var css_url;
-            if (this.getMode() == 'dev') {
-                css_url = "http://dev.contextly.com/resources/css/plugin/sidebar/template-" + settings.theme + ".css";
-            }
-            else {
-                css_url = Contextly.BaseSettings.getSidebarCssUrl.apply(this, arguments);
-            }
-            return css_url;
-        },
         getAssetUrl: function(path, ext) {
             if (this.getMode() == 'dev') {
                 return Contextly.asset_url + '/' + path + '.' + ext;
@@ -84,6 +58,15 @@ Contextly.Settings = Contextly.createClass({
             else {
                 return Contextly.BaseSettings.getAssetUrl.apply(this, arguments);
             }
+        },
+        getClientInfo: function() {
+            return {
+                client: 'wp',
+                version: Contextly.version
+            };
+        },
+        getKitVersion: function() {
+            return Contextly.data.versions.kit;
         }
 
     }
