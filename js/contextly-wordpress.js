@@ -235,7 +235,6 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
                 if ( jQuery(main_module_id).length ) {
                     jQuery(main_module_id).appendTo(main_module_code_id);
                 } else {
-                    console.log('add new snippet code');
                     jQuery(main_module_code_id).html(
                         "<div id='ctx-module' class='ctx-module-container ctx-clearfix'></div>"
                     );
