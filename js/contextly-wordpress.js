@@ -147,34 +147,6 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 
 	statics: {
 
-        shortCodeUpdates: function() {
-            var main_module_code_id = '#ctx_main_module_short_code';
-            var main_module_id = '#ctx-module';
-
-            if (jQuery(main_module_code_id).length) {
-                if ( jQuery(main_module_id).length ) {
-                    jQuery(main_module_id).appendTo(main_module_code_id);
-                } else {
-                    console.log('add new snippet code');
-                    jQuery(main_module_code_id).html(
-                        "<div id='ctx-module' class='ctx-module-container ctx-clearfix'></div>"
-                    );
-                }
-            } else {
-                // We need to be sure that our control is last in content element
-                if (!jQuery(main_module_id).is(":last-child")) {
-                    jQuery(main_module_id).parent().append(snippet.getWidgetContainers());
-                }
-            }
-
-            var sl_button_code_id = '#ctx_sl_button_short_code';
-            if (jQuery(sl_button_code_id).length) {
-                jQuery('#ctx-sl-subscribe')
-                    .appendTo(sl_button_code_id)
-                    .removeClass( 'ctx_widget_hidden' );
-            }
-        },
-
         loadWidgets: function() {
             // Fix problem for some clients with few our widgets on page
             // remove all occurrences and leave only one last
@@ -190,8 +162,10 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
                 }
             }
 
-            // Change Main module and SL button positoon for short codes
-            this.shortCodeUpdates();
+            if ( !Contextly.Settings.isAdmin() ) {
+                // Change Main module and SL button positoon for short codes
+                Contextly.WPPageView.shortCodeUpdates();
+            }
 
             // Load page modules
             Contextly.PageView.loadWidgets.apply(this, arguments);
@@ -251,7 +225,36 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 					parentUpdate();
 				}
 			});
-		}
+		},
+
+        shortCodeUpdates: function() {
+            var main_module_code_id = '#ctx_main_module_short_code';
+            var main_module_id = '#ctx-module';
+
+            if (jQuery(main_module_code_id).length) {
+                if ( jQuery(main_module_id).length ) {
+                    jQuery(main_module_id).appendTo(main_module_code_id);
+                } else {
+                    console.log('add new snippet code');
+                    jQuery(main_module_code_id).html(
+                        "<div id='ctx-module' class='ctx-module-container ctx-clearfix'></div>"
+                    );
+                }
+            } else {
+                // We need to be sure that our control is last in content element
+                if (!jQuery(main_module_id).is(":last-child")) {
+                    jQuery(main_module_id).parent().append(jQuery(main_module_code_id));
+                }
+            }
+
+            var sl_button_code_id = '#ctx_sl_button_short_code';
+            if (jQuery(sl_button_code_id).length) {
+                jQuery('#ctx-sl-subscribe')
+                    .appendTo(sl_button_code_id)
+                    .removeClass( 'ctx_widget_hidden' );
+            }
+        }
+
 	}
 });
 
