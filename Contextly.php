@@ -188,7 +188,6 @@ class Contextly
     }
 
     private function addAdminPublishMetaboxForPage() {
-
 	    add_action( 'post_submitbox_misc_actions', array( $this, 'echoAdminPublishMetaboxForPage' ) );
     }
 

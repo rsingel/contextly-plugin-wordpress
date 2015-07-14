@@ -3,14 +3,6 @@
  */
 Contextly = Contextly || {};
 
-Contextly.WPLogPluginEventType = {
-    LOG: 'log'
-};
-
-Contextly.WPLogPluginEventName = {
-    MODULE_VIEW: 'module_view'
-};
-
 Contextly.Settings = Contextly.createClass({
     extend: Contextly.BaseSettings,
 
@@ -74,9 +66,7 @@ Contextly.Settings = Contextly.createClass({
 });
 
 Contextly.SettingsAutoLogin = Contextly.createClass({
-
 	statics: {
-
 		doLogin: function ( settings_button_id, disabled_flag ) {
             if ( disabled_flag )
             {
@@ -106,19 +96,18 @@ Contextly.SettingsAutoLogin = Contextly.createClass({
                             jQuery( '#' + settings_button_id ).removeAttr( 'disabled' );
                         }
 
-                        Contextly.LogPluginEvents.fireEvent('contextlySettingsAuthSuccess', response);
+                        Contextly.EventsLogger.sendEvent('contextlySettingsAuthSuccess', response);
 					} else {
                         if ( response.message ) {
                             Contextly.WPAdminMessages.error( "You need a valid API key. Click the \"API Key\" tab above to get one." );
                         }
 
-                        Contextly.LogPluginEvents.fireEvent('contextlySettingsAuthFailed', response);
+                        Contextly.EventsLogger.sendEvent('contextlySettingsAuthFailed', response);
                     }
 				},
 				error: function () {
 					jQuery( '#' + settings_button_id ).removeAttr( 'disabled' );
-
-                    Contextly.LogPluginEvents.fireEvent('contextlySettingsAuthFailed');
+                    Contextly.EventsLogger.sendEvent('contextlySettingsAuthFailed');
 				}
 			});
 		}
@@ -158,6 +147,34 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 
 	statics: {
 
+        shortCodeUpdates: function() {
+            var main_module_code_id = '#ctx_main_module_short_code';
+            var main_module_id = '#ctx-module';
+
+            if (jQuery(main_module_code_id).length) {
+                if ( jQuery(main_module_id).length ) {
+                    jQuery(main_module_id).appendTo(main_module_code_id);
+                } else {
+                    console.log('add new snippet code');
+                    jQuery(main_module_code_id).html(
+                        "<div id='ctx-module' class='ctx-module-container ctx-clearfix'></div>"
+                    );
+                }
+            } else {
+                // We need to be sure that our control is last in content element
+                if (!jQuery(main_module_id).is(":last-child")) {
+                    jQuery(main_module_id).parent().append(snippet.getWidgetContainers());
+                }
+            }
+
+            var sl_button_code_id = '#ctx_sl_button_short_code';
+            if (jQuery(sl_button_code_id).length) {
+                jQuery('#ctx-sl-subscribe')
+                    .appendTo(sl_button_code_id)
+                    .removeClass( 'ctx_widget_hidden' );
+            }
+        },
+
         loadWidgets: function() {
             // Fix problem for some clients with few our widgets on page
             // remove all occurrences and leave only one last
@@ -173,11 +190,15 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
                 }
             }
 
+            // Change Main module and SL button positoon for short codes
+            this.shortCodeUpdates();
+
+            // Load page modules
             Contextly.PageView.loadWidgets.apply(this, arguments);
         },
 
 		onWidgetsLoadingError: function(response) {
-			Contextly.PageView.onWidgetsLoadingError.apply(this, arguments);
+            Contextly.PageView.onWidgetsLoadingError.apply(this, arguments);
 			if ( !Contextly.Settings.isAdmin() ) {
 				return;
 			}
@@ -196,7 +217,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 			}
 
 			// TODO Render error without creating base widget.
-			var widget = new Contextly.widget.Base();
+			var widget = new Contextly.widget.TextSnippet();
 			widget.displayHTML( message );
 		},
 
@@ -230,121 +251,8 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
 					parentUpdate();
 				}
 			});
-		},
-
-		afterDisplayWidgetAction: function ( e, widgetType, snippet ) {
-            // TODO: Check this method
-
-            if (widgetType !== Contextly.widget.types.SNIPPET) {
-				return;
-			}
-
-			if (Contextly.Settings.isAdmin() || !snippet.hasWidgetData()) {
-				return;
-			}
-
-			if (jQuery(this.getMainWidgetShortCodeId()).length) {
-				if ( snippet.getDisplayElement().length ) {
-                    snippet.getDisplayElement().appendTo( this.getMainWidgetShortCodeId() );
-                } else {
-                    jQuery( this.getMainWidgetShortCodeId() ).html( "<div id='ctx-module' class='ctx-module-container ctx-clearfix'></div>" );
-                    snippet.display();
-                }
-			} else {
-				// We need to be sure that our control is last in content element
-				if (!snippet.getDisplayElement().is(":last-child")) {
-                    snippet.getDisplayElement().parent().append(snippet.getDisplayElement());
-				}
-			}
-
-            if (jQuery(this.getSLButtonShortCodeId()).length) {
-                jQuery('#ctx-sl-subscribe')
-                    .appendTo( this.getSLButtonShortCodeId() )
-                    .removeClass( 'ctx_widget_hidden' );
-            }
-		},
-
-		getMainWidgetShortCodeId: function () {
-			return '#ctx_main_module_short_code';
-		},
-
-		getSLButtonShortCodeId: function () {
-			return '#ctx_sl_button_short_code';
 		}
-/*\
-        onWidgetsLoadingSuccess: function(response) {
-            //Contextly.PageView.onWidgetsLoadingSuccess.apply(this, arguments);
-
-            //if ( !Contextly.Settings.isAdmin() ) {
-            //    this.attachModuleViewEvent();
-            //}
-            console.log(response);
-        },
-
-		attachModuleViewEvent: function () {
-			var self = this;
-			this.module_view_interval = window.setInterval(
-				function () {
-					var check_display_element = jQuery( '.ctx-section .ctx-link' ).first();
-					if ( check_display_element.length ) {
-						var is_visible = Contextly.WPUtils.isElementVisible( check_display_element );
-
-						if ( is_visible ) {
-							self.logModuleViewEvent();
-
-							if ( self.module_view_interval ) {
-								window.clearInterval( self.module_view_interval );
-							}
-						}
-					}
-				},
-				300
-			);
-		},
-
-		logModuleViewEvent: function () {
-			if ( this.lastWidgetsResponse && this.lastWidgetsResponse.guid ) {
-				Contextly.RESTClient.call(
-					'events',
-					'put',
-					{
-						event_type: Contextly.WPLogPluginEventType.LOG,
-						event_name: Contextly.WPLogPluginEventName.MODULE_VIEW,
-						event_guid: this.lastWidgetsResponse.guid
-					}
-				);
-			}
-		}
-*/
 	}
-});
-
-/**
- * @class
- * @extends Contextly.widget.Utils
- */
-Contextly.WPUtils = Contextly.createClass({
-    extend: Contextly.Utils,
-    statics: {
-
-        isElementVisible: function ( $el ) {
-            var win = jQuery(window);
-            var viewport = {
-                top : win.scrollTop(),
-                left : win.scrollLeft()
-            };
-
-            viewport.right = viewport.left + win.width();
-            viewport.bottom = viewport.top + win.height();
-
-            var bounds = $el.offset();
-            bounds.right = bounds.left + $el.outerWidth();
-            bounds.bottom = bounds.top + $el.outerHeight();
-
-            return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
-        }
-
-    }
 });
 
 if ( Contextly.Settings.getPageId() ) {
