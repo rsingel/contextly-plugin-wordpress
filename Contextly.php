@@ -21,7 +21,7 @@ class Contextly
 	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar id="%HASH%"]';
 
     const WIDGET_STORYLINE_ID = 'ctx-sl-subscribe';
-    const WIDGET_STORYLINE_CLASS = 'ctx-clearfix';
+    const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container ctx-clearfix';
 
 	const MAIN_MODULE_SHORT_CODE = 'contextly_main_module';
 	const MAIN_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
