@@ -134,6 +134,7 @@ class ContextlySettings {
 			'blog_url'          => site_url(),
 			'blog_title'        => get_bloginfo("name"),
 			'cms_settings_page' => $this->getWPPluginSettingsUrl(),
+			'kit_version'       => CONTEXTLY_KIT_VERSION
 		);
 
 		return Urls::getMainServerUrl() . 'cms-redirect/?' . http_build_query($url_params, NULL, '&');
