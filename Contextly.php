@@ -21,16 +21,22 @@ class Contextly
 	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar id="%HASH%"]';
 
     const WIDGET_STORYLINE_ID = 'ctx-sl-subscribe';
-    const WIDGET_STORYLINE_CLASS = 'ctx-clearfix';
+    const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container ctx-clearfix';
 
 	const MAIN_MODULE_SHORT_CODE = 'contextly_main_module';
 	const MAIN_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
 	const MAIN_MODULE_SHORT_CODE_ID = 'ctx_main_module_short_code';
 
+	const SL_MODULE_SHORT_CODE = 'contextly_sl_button';
+	const SL_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
+	const SL_MODULE_SHORT_CODE_ID = 'ctx_sl_button_short_code';
+
 	/**
 	 * @var ContextlyKitApi
 	 */
 	protected $api;
+
+	protected $inline_js = '';
 
 	protected function api() {
 		if (!isset($this->api)) {
@@ -146,11 +152,6 @@ class Contextly
 		return $this->escape( $name );
 	}
 
-    private function getSettingsOptions() {
-        $contextly_settings = new ContextlySettings();
-        return $contextly_settings->getPluginOptions();
-    }
-
     public function initAdmin() {
         if ( $this->checkWidgetDisplayType() ) {
 	        $contextly_settings = new ContextlySettings();
@@ -187,7 +188,6 @@ class Contextly
     }
 
     private function addAdminPublishMetaboxForPage() {
-
 	    add_action( 'post_submitbox_misc_actions', array( $this, 'echoAdminPublishMetaboxForPage' ) );
     }
 
@@ -201,6 +201,7 @@ class Contextly
         add_shortcode(self::MAIN_MODULE_SHORT_CODE, array( $this, 'prepareMainModule' ) );
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
         add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
+        add_shortcode(self::SL_MODULE_SHORT_CODE, array( $this, 'prepareSLButtonShortCode' ) );
     }
 
     private function addEditorButtons() {
@@ -224,8 +225,12 @@ class Contextly
 			$manager->extractPackageAssets( $package, $assets, $ignore );
 		}
 
-		$kit->newWpAssetsRenderer( $assets )
-				->renderAll();
+		$kit->newWpAssetsRenderer( $assets )->renderAll();
+
+		$new_inline_js = $kit->newWpAssetsRenderer( $assets )->getInlineJs();
+		if ( $new_inline_js ) {
+			$this->inline_js .= $new_inline_js;
+		}
 	}
 
 	private function addPostEditor() {
@@ -251,14 +256,11 @@ class Contextly
         return $content . $this->getSnippetWidget();
     }
 
-	public function addQuicktagsEditorIntegration()
-	{
+	public function addQuicktagsEditorIntegration() {
 		if ( $this->checkWidgetDisplayType() ) {
-
 			global $post;
 			$contextly_settings = new ContextlySettings();
-			if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) )
-			{
+			if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
 				wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly', null, true );
 			}
 		}
@@ -384,62 +386,67 @@ class Contextly
 			'libraries/jquery' => TRUE,
 			'libraries/json2' => TRUE,
 		);
+
 		$this->addKitAssets( $include, $ignore );
+
+		$contextly_object = Contextly::getContextlyJSObject();
+		wp_localize_script(
+			Contextly::getSettingsHandleName(),
+			'Contextly',
+			array(
+				'l10n_print_after' => 'Contextly = ' . json_encode( $contextly_object ) . ';' .  $this->inline_js
+			)
+		);
 
 		wp_enqueue_script( 'contextly', $this->getPluginJs( 'contextly-wordpress.js' ), 'jquery', null, true );
 	}
 
-	private function getAjaxUrl() {
+	public static function getAjaxUrl() {
 		return admin_url( 'admin-ajax.php' );
 	}
 
-	private function getOverlayEditorUrl() {
+	public static function getOverlayEditorUrl() {
 		return admin_url( 'admin.php?page=contextly_overlay_dialog&noheader' );
 	}
 
-	public function makeContextlyJSObject( $additional_options = array() ) {
+	public static function getContextlyJSObject( $additional_params = null ) {
 		global $post;
 
 		$api_options = self::getAPIClientOptions();
-
 		$options = array(
-			'ajax_url'      => $this->getAjaxUrl(),
+			'ajax_url'      => self::getAjaxUrl(),
 			'api_server'    => Urls::getApiServerUrl(),
 			'main_server'   => Urls::getMainServerUrl(),
-			'editor_url'    => $this->getOverlayEditorUrl(),
+			'editor_url'    => self::getOverlayEditorUrl(),
 			'app_id'        => $api_options[ 'appID' ],
-			'settings'      => $this->getSettingsOptions(),
+			'settings'      => ContextlySettings::getPluginOptions(),
 			'admin'         => (boolean)is_admin(),
 			'mode'          => CONTEXTLY_MODE,
 			'https'         => CONTEXTLY_HTTPS,
-			'version'       => CONTEXTLY_PLUGIN_VERSION
+			'version'       => CONTEXTLY_PLUGIN_VERSION,
+			'kit'           => CONTEXTLY_KIT_VERSION
 		);
+
+		if ( CONTEXTLY_MODE == Urls::MODE_DEV ) {
+			$options['asset_url'] = plugin_dir_url( __FILE__ ) . 'kit/client/src';
+		}
 
 		if ( isset( $post ) && isset( $post->ID ) ) {
 			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
-
-			$contextly_settings = new ContextlySettings();
-			$options[ 'render_link_widgets' ] = !$contextly_settings->isPageDisplayDisabled( $post->ID );
+			$options[ 'render_link_widgets' ] = !ContextlySettings::isPageDisplayDisabled( $post->ID );
 		}
 
-		if ( is_array( $additional_options ) ) {
-			$options = $additional_options + $options;
+		if ( $additional_params !== null ) {
+			$options = $options + $additional_params;
 		}
 
-		wp_localize_script(
-			$this->getSettingsHandleName(),
-			'Contextly',
-			array( 'l10n_print_after' => 'Contextly = ' . json_encode( $options ) . ';' )
-		);
+		return $options;
 	}
 
-	private function getSettingsHandleName()
-	{
-		if ( CONTEXTLY_MODE == Urls::MODE_DEV )
-		{
+	public static function getSettingsHandleName() {
+		if ( CONTEXTLY_MODE == Urls::MODE_DEV ) {
 			return 'contextly-kit-components-create-class';
 		}
-
 		return 'contextly-kit-widgets--page-view';
 	}
 
@@ -459,9 +466,8 @@ class Contextly
 	}
 
 	public function loadScripts() {
-        if ( $this->isLoadWidget() ) {
+		if ( $this->isLoadWidget() ) {
 	        $this->loadContextlyAjaxJSScripts();
-		    $this->makeContextlyJSObject();
 
 	        if ( $this->isAdminEditPage() ) {
 				$this->addOverlayLibrary();
@@ -608,8 +614,11 @@ class Contextly
 
 		if ($attachment_images && is_array($attachment_images)) {
 			foreach($attachment_images as $image) {
-				list($src) = wp_get_attachment_image_src($image->ID, 'full');
-				$images_array[] = $src;
+				if ( isset( $image->guid ) ) {
+					$images_array[] = $image->guid;
+				}
+
+				if ( count( $images_array ) > 5 ) break;
 			}
 		}
 
@@ -633,25 +642,33 @@ class Contextly
 
 			if ( count( $post_images ) > 0 ) {
 				$sorted_images = array();
-				$check_images_count = 5;
+				$check_images_count = 6;
 
 				foreach ( $post_images as $image ) {
-					list($url, $width, $height) = wp_get_attachment_image_src( $image->ID, 'full' );
+					// Check if image url, this is NOT URL to another server. If this is external URL, this can take a lot of time to detect image size
+					if ( strpos( $image->guid, site_url() ) !== false ) {
+						list($url, $width, $height) = wp_get_attachment_image_src($image->ID, 'full');
+						$image_rank = $width + $height;
 
-					$image_rank = $width + $height;
+						if (!isset($sorted_images[$image_rank])) {
+							$sorted_images[$image_rank] = array($url);
+						} else {
+							$sorted_images[$image_rank][] = $url;
+						}
 
-					if ( !isset( $sorted_images[$image_rank] ) ) {
-						$sorted_images[$image_rank] = array($url);
-					} else {
-						$sorted_images[$image_rank][] = $url;
+						if (count($sorted_images) >= $check_images_count) break;
 					}
+				}
 
-					if ( count( $sorted_images ) >= $check_images_count ) {
-						break;
+				if ( count( $sorted_images ) == 0 ) {
+					$first_image = reset( $post_images );
+					if ( $first_image && isset( $first_image->guid ) ) {
+						$sorted_images[0][] = $first_image->guid;
 					}
 				}
 
 				krsort( $sorted_images );
+
 				return current(reset($sorted_images));
 			}
 		}
@@ -773,17 +790,22 @@ class Contextly
 	}
 
 	/**
+	 * @return string
+	 */
+	public function prepareSLButtonShortCode() {
+		return sprintf( "<div class='%s' id='%s'></div>", esc_attr( self::SL_MODULE_SHORT_CODE_CLASS ), esc_attr( self::SL_MODULE_SHORT_CODE_ID ) );
+	}
+
+	/**
 	 *
 	 */
 	public function insertMetatags()
 	{
-		if ( $this->isLoadWidget() )
-		{
+		if ( $this->isLoadWidget() ) {
 			global $post;
 			$json_data = null;
 
-			if ( isset( $post ) )
-			{
+			if ( isset( $post ) ) {
 				$json_data = array(
 					'title'                    => $this->escape( $post->post_title ),
 					'url'                      => get_permalink( $post->ID ),
@@ -800,9 +822,7 @@ class Contextly
 				);
 			}
 
-			if ( $json_data !== null )
-			{
-				?>
+			if ( $json_data !== null ) {?>
 <meta name='contextly-page' id='contextly-page' content='<?php echo json_encode( $json_data ); ?>' />
 <?php
 			}
