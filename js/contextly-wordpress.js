@@ -242,7 +242,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
             } else {
                 // We need to be sure that our control is last in content element
                 if (!jQuery(main_module_id).is(":last-child")) {
-                    jQuery(main_module_id).parent().append(jQuery(main_module_code_id));
+                    jQuery(main_module_id).parent().append(jQuery(main_module_id));
                 }
             }
 
