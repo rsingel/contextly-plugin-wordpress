@@ -14,7 +14,7 @@ require_once ( "Urls.php" );
 require_once ( "Contextly.php" );
 require_once ( "ContextlySettings.php" );
 
-define ( "CONTEXTLY_MODE", 'dev' );
+define ( "CONTEXTLY_MODE", 'live' );
 define ( "CONTEXTLY_HTTPS", is_ssl() );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
 define ( "CONTEXTLY_PLUGIN_VERSION", '3.0' );
