@@ -7,18 +7,18 @@ Author: Contextly
 Version: 3.0
 */
 
+define ( "CONTEXTLY_MODE", 'live' );
+define ( "CONTEXTLY_HTTPS", is_ssl() );
+define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
+define ( "CONTEXTLY_PLUGIN_VERSION", '3.0' );
+define ( "CONTEXTLY_KIT_VERSION", '3.0' );
+
 require_once ( "kit/server/Kit.php" );
 ContextlyKit::registerAutoload();
 require_once ( "Kit.php" );
 require_once ( "Urls.php" );
 require_once ( "Contextly.php" );
 require_once ( "ContextlySettings.php" );
-
-define ( "CONTEXTLY_MODE", 'live' );
-define ( "CONTEXTLY_HTTPS", is_ssl() );
-define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
-define ( "CONTEXTLY_PLUGIN_VERSION", '3.0' );
-define ( "CONTEXTLY_KIT_VERSION", ContextlyWpKit::getInstance()->version() );
 
 if ( is_admin() ) {
     // Init Contextly WP settings
