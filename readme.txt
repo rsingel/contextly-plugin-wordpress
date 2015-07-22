@@ -112,6 +112,15 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 3.0 =
+
+- Modernized the styling of main display and sidebars. This removes the color bars, which are replaced with clear headings
+- Improved display rendering performance and flexibility
+- Embedded Tweets support
+- Better handling of larger images in sidebars
+- Better support for IE8+
+
+
 = 1.4.2 =
 
 - Minor bug fixes
