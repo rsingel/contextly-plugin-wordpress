@@ -36,7 +36,7 @@ class ContextlyWpKit extends ContextlyKit {
 		$options = Contextly::getAPIClientOptions();
 		$config->appID = $options['appID'];
 		$config->appSecret = $options['appSecret'];
-		$config->cdn = CONTEXTLY_KIT_VERSION;
+		$config->cdn = CONTEXTLY_CDN_VERSION;
 
 		return $config;
 	}

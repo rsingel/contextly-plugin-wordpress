@@ -12,6 +12,7 @@ define ( "CONTEXTLY_HTTPS", is_ssl() );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
 define ( "CONTEXTLY_PLUGIN_VERSION", '3.0' );
 define ( "CONTEXTLY_KIT_VERSION", '3.0' );
+define ( "CONTEXTLY_CDN_VERSION", 'branch' );
 
 require_once ( "kit/server/Kit.php" );
 ContextlyKit::registerAutoload();
