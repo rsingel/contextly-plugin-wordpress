@@ -1,21 +1,29 @@
-=== Related Links by Contextly ===
+=== Contextly Recommends ===
 Contributors: rsingel, andrewcgg
-Tags: related links, SEO, promotion, related, custom posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, A/B testing, optimization
+Tags: related links, SEO, promotion, related, custom posts, related posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, optimization
 Requires at least: 2.0.2
-Tested up to: 4.2
+Tested up to: 4.2.3
 Stable tag: trunk
 License: GPLv2 or later
 
 Build your audience with content recommendations that are related, trending, evergreen and personalized. Editorial control and machine learning.
+
+
 == Description ==
 
-[Contextly](http://contextly.com "Contextly") helps you build a loyal audience through content recommendations that keeps readers reading. We do this through a combination of powerful machine learning algorithms and editorial curation.
+[Contextly](http://contextly.com "Contextly") Contextly helps you build a loyal audience through engagement tools that keeps readers reading. Contextly does far more than just related post recommendations. We also get readers to explore your site by identifying your evergreen posts (think oldies, but goodies) and your most popular posts, as well as personalizing recommendations for return readers
+
+We do this through a combination of powerful machine learning algorithms that run on *our* servers, so we never slow you down. Plus, Contextly has powerful curation tools, including in-story sidebars, ways to choose related links, and ways to drive readers to things that are important to your site or business.
+
+Contextly is free for sites up to 10,000 PVs per month, and for larger sites, we operate on a paid subscription basis. You can see our pricing and learn more about what we do on the [Contextly](http://contextly.com "Contextly") Contextly website.
+
+***
 
 According to a study by Chartbeat, the most important factor in determining whether a reader will come back to your site is whether they read more than 1 post. If they do, they are likely to return. If they don't, they won't.
 
 Contextly shows off both related and engaging content in responsive modules. Readers in research mode can dive deep; those just browsing can explore widely.
 
-We also boost your SEO by making it dead simple to add links in the body of your post to previous stories.
+We also boost your SEO by making it dead simple to add links in the body of your post to previous stories, and Google crawls our links.
 
 We can also recommend videos and products. Additionally, you can choose to highlight events, promotions, or an email list with promotional links.
 
@@ -36,21 +44,17 @@ We can also recommend videos and products. Additionally, you can choose to highl
 
 * Editorial Control/Curation - We believe high-quality content is the result of a happy marriage between humans and smart algorithms. Our curation tools allow writers and editors to control what related posts show up on a story. We then use that info to make better recommendations for the entire site.
 
-* Optimization - Contextly creates multiple sets of recommendations for each post. We then automatically test which set of recommendations is best for every single post!
-
 * SEO - The best SEO comes from links in the body of stories linking to previous content. We make it super-easy for writers to add these links without having to leave the post to go search in Google.
 
-* Promotional links - If you have a newsletter or an event you'd like to promote, Contextly makes it dead-simple to include that in the recommendation module. That puts promotions where users will actually see them.
+* Promotional Links - If you have a newsletter or an event you'd like to promote, Contextly makes it dead-simple to include that in the recommendation module. That puts promotions where users will actually see them.
 
 * Responsive Designs - We have 4 sets of designs to choose from, and they all look great on mobile and desktops. You can customize their look and feel with a few clicks, while advanced users can customize the CSS.
 
 * Analytics - We send daily, weekly and monthly analytics reports that let you easily see which of your posts are doing well and how engaging they are.
 
-* A/B Testing - With just a few clicks, you can set up a test to see which display type works best for your site.
-
 * Performance - Contextly does all the hard work on its servers, so we don't hit your database. That means if you get a lot of traffic, Contextly won't bring your site down.
 
-* Custom post types - If you use custom post types, you can choose which ones to show Contextly recommendations on, and which to keep out.
+* Custom Post Types - If you use custom post types, you can choose which ones to show Contextly recommendations on, and which to keep out.
 
 
 
@@ -60,15 +64,23 @@ We can also recommend videos and products. Additionally, you can choose to highl
 1. Install using the Wordpress Gallery for the easiest installation or upload the contextly-related-links folder to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Click on one of our buttons in the Visual Editor or go to Settings- -> Contextly -> Get API Key to get to the set-up wizard. You can then choose your display and get your API key. Save the API key.
-4. Contextly will automatically display related and interesting content suggestions. Advanced options can be found under Settings -> Contextly -> Settings —> Big Settings Button
+4. Contextly will automatically display related and interesting content suggestions. Advanced options can be found under Settings -> Contextly -> Settings -> Big Settings Button
 
 == Frequently Asked Questions ==
 
 = What will be displayed if I don't choose related posts? =
 
-We've got your back. We'll automatically show related and interesting stories on all posts.
+We've got your back. We'll automatically show related, evergreen, popular and personalized stories on all posts.
 
 But, we also value editorial wisdom and control, so we make choosing related posts and adding links in the body of the story as easy as possible.
+
+= Is Contextly free? =
+
+Contextly offers a free, no credit-card-required 21-day trial. The service is free for sites with up to 10,000 PVs per month. Sites with more traffic can subscribe to our service after the free trial.
+
+= Why does Contextly charge? =
+
+Contextly is a premium service, using state-of-the-art technology and high-powered servers to provide the best recommendations possible. We don't sell reader information or show ads. Being supported by our users means we can continue to build the most powerful reader engagement service for WordPress.
 
 = Will Contextly slow down my site? =
 
@@ -78,11 +90,11 @@ We also wait to load the sidebars and the after-post modules until the rest of y
 
 = How do I use Contextly to promote my event, email list, product, etc? =
 
-Go to Settings -> Contextly -> Settings —> Big Settings Button. Then look for Promo Links. Give us a title and an url of what you want to promote and we'll add it to the section you choose.
+Go to Settings -> Contextly -> Settings â€”> Big Settings Button. Then look for Promo Links. Give us a title and an url of what you want to promote and we'll add it to the section you choose.
 
 = I just installed Contextly and I don't see related posts, just interesting ones. Where are they? =
 
-It takes us a bit of time to learn and spider a site. Please give us an hour or two and if you still don’t see related stories, email us at info@contextly.com
+It takes us a bit of time to learn and spider a site. Please give us an hour or two and if you still don't see related stories, email us at info@contextly.com
 
 = Can I modify the way the content recommendations are displayed on my site? =
 
@@ -94,23 +106,24 @@ Yes. You will get a daily email with statistics about your traffic and related l
 
 You can also see what's happening in Google Analytics. We use Events to track clicks. Go to Content -> Events and look for Contextly Sidebar and Contextly Widget. You can dive deep into this.
 
-= How does the Custom Tab work? =
+= How does the Custom Section work? =
 
-You give us an RSS feed of stuff you want us to show off. This can be a feed of your YouTube videos, a category on your site you like, a set of products, etc.
+You give us an RSS feed of content you want us to show off. This can be  a category on your site you like, an RSS feed from a sister site, and for our Business and Enterprise customers, we can include YouTube/Video and product feeds.
 
 If you just want to choose some items, copy and paste your main RSS feed into the Custom box. Then go to Promo Links and add links you want us to show off and choose the Custom section. Be creative, but there's one limitation: you can't sell this spot to advertisers unless you arrange that with us first. That's because there are certain safeguards against fraud that need to be in place for online ads. Putting external ads in that section without permission is grounds for termination of service.
 
 
 == Screenshots ==
 
-1. Here's how the Contextly related stories Blocks section looks underneath a published story.
-2. Here's a sidebar created in seconds using the plugin.
-3. Here's what the interface for choosing stories looks like.
-4. Here's what the preview looks like inside the post editor.
-5. Here's a sample of what the analytics e-mails look like.
+1. Here's how the Contextly main module looks underneath a post.
+2. Here's an in-story sidebar created in seconds.
+3. Here's what the interface for choosing related posts looks like.
+4. Here's what the related posts preview looks like inside the post editor.
+5. Here's a snippet of what the analytics e-mails look like.
 
 
 == Changelog ==
+
 
 = 3.0 =
 
@@ -124,7 +137,7 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 = 1.4.2 =
 
 - Minor bug fixes
-- Enables FollowUp button
+- Enables FollowUp button for Enterprise customers
 
 
 = 1.4 =
@@ -325,4 +338,3 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 == About Contextly ==
 
 Contextly builds tools that are good for publications, writers and readers. [Contextly](http://contextly.com "Contextly") was founded by veteran online journalist Ryan Singel, a writer and editor for Wired. Our clients include Wired, Cult of Mac, Make Magazine and other great publications. If you have questions, please write us at info@contextly.com.
-
