@@ -68,6 +68,8 @@ class Contextly
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'loadScripts' ) );
 
+		add_action( 'widgets_init', array( $this, 'registerWidgets' ) );
+
         add_action( 'publish_post', array( $this, 'publishPost'), 10, 2 );
         add_action( 'save_post', array( $this, 'publishPost'), 10, 2 );
 
@@ -450,7 +452,7 @@ class Contextly
 		return 'contextly-kit-widgets--page-view';
 	}
 
-	private function isLoadWidget()
+	public function isLoadWidget()
 	{
 		global $post;
 		$contextly_settings = new ContextlySettings();
@@ -876,6 +878,12 @@ class Contextly
 				->get();
 		} catch ( Exception $e ) {
 		}
+	}
+
+	public function registerWidgets()
+	{
+		require_once ( "ContextlySiderailWidget.php" );
+		register_widget( 'ContextlyWpSiderailWidget' );
 	}
 
 }
