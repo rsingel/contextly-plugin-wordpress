@@ -31,6 +31,10 @@ class Contextly
 	const SL_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
 	const SL_MODULE_SHORT_CODE_ID = 'ctx_sl_button_short_code';
 
+	const SIDERAIL_MODULE_SHORT_CODE = 'contextly_siderail';
+	const SIDERAIL_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
+	const SIDERAIL_MODULE_SHORT_CODE_ID = 'ctx_siderail_short_code';
+
 	/**
 	 * @var ContextlyKitApi
 	 */
@@ -204,6 +208,7 @@ class Contextly
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
         add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
         add_shortcode(self::SL_MODULE_SHORT_CODE, array( $this, 'prepareSLButtonShortCode' ) );
+        add_shortcode(self::SIDERAIL_MODULE_SHORT_CODE, array( $this, 'prepareSiderailShortCode' ) );
     }
 
     private function addEditorButtons() {
@@ -796,6 +801,13 @@ class Contextly
 	 */
 	public function prepareSLButtonShortCode() {
 		return sprintf( "<div class='%s' id='%s'></div>", esc_attr( self::SL_MODULE_SHORT_CODE_CLASS ), esc_attr( self::SL_MODULE_SHORT_CODE_ID ) );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function prepareSiderailShortCode() {
+		return sprintf( "<div class='%s' id='%s'></div>", esc_attr( self::SIDERAIL_MODULE_SHORT_CODE_CLASS ), esc_attr( self::SIDERAIL_MODULE_SHORT_CODE_ID ) );
 	}
 
 	/**

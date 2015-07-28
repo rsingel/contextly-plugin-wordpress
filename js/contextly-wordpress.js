@@ -249,6 +249,13 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
                     .appendTo(sl_button_code_id)
                     .removeClass( 'ctx_widget_hidden' );
             }
+
+            var siderail_code_id = '#ctx_siderail_short_code';
+            if (jQuery(siderail_code_id).length) {
+                jQuery('.ctx-siderail-container')
+                    .appendTo(siderail_code_id)
+                    .removeClass( 'ctx_widget_hidden' );
+            }
         }
 
     }
