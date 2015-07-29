@@ -251,9 +251,13 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
             }
 
             var siderail_code_id = '#ctx_siderail_short_code';
-            if (jQuery(siderail_code_id).length) {
-                jQuery('.ctx-siderail-container')
-                    .appendTo(siderail_code_id)
+            var $siderail_containers = jQuery('.ctx-siderail-container');
+            if ( jQuery( siderail_code_id ).length ) {
+                if ( !$siderail_containers.length ) {
+                    jQuery( siderail_code_id).html( '<div class="ctx-siderail-container"></div>' );
+                }
+                $siderail_containers
+                    .appendTo( siderail_code_id )
                     .removeClass( 'ctx_widget_hidden' );
             }
         }

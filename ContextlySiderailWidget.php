@@ -11,7 +11,7 @@ class ContextlyWpSiderailWidget extends WP_Widget {
 	function __construct() {
 		parent::__construct(
 			'contextly_siderail_widget', // Base ID
-			__( 'Contextly Side Rail', 'contextly_linker_textdomain' ), // Name
+			__( 'Contextly Siderail', 'contextly_linker_textdomain' ), // Name
 			array( 'description' => __( 'Displays links recommended by Contextly.', 'contextly_linker_textdomain' ), ) // Args
 		);
 	}
