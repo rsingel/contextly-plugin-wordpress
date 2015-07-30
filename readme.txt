@@ -15,7 +15,7 @@ Build your audience with content recommendations that are related, trending, eve
 
 We do this through a combination of powerful machine learning algorithms that run on *our* servers, so we never slow you down. Plus, Contextly has powerful curation tools, including in-story sidebars, ways to choose related links, and ways to drive readers to things that are important to your site or business.
 
-Contextly is free for sites up to 10,000 PVs per month, and for larger sites, we operate on a paid subscription basis. You can see our pricing and learn more about what we do on the [Contextly](http://contextly.com "Contextly") website.
+Contextly comes with a free trial, but operates on a paid subscription basis. You can see our pricing and learn more about what we do on the [Contextly](http://contextly.com "Contextly") website.
 
 ***
 
@@ -127,8 +127,8 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 = 3.1 =
 
-- Siderail support
-- Minor bug fixes
+- Enables new Siderail display (for WordPress Sidebars)
+- Minor performance fixes
 
 
 = 3.0 =
