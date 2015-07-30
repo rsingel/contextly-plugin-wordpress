@@ -35,4 +35,18 @@ class ContextlyWpSiderailWidget extends WP_Widget {
 		print $args['after_widget'];
 	}
 
+	/**
+	 * Admin form for display widget form.
+	 *
+	 * @param array $instance
+	 * @return void
+	 */
+	function form( $instance ) {
+		?>
+		<p>
+			Options for the Siderail are in the Contextly Control Panel.
+		</p>
+		<?php
+	}
+
 } // class ContextlyWpSiderailWidget
