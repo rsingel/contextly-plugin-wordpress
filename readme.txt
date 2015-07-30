@@ -11,11 +11,11 @@ Build your audience with content recommendations that are related, trending, eve
 
 == Description ==
 
-[Contextly](http://contextly.com "Contextly") Contextly helps you build a loyal audience through engagement tools that keeps readers reading. Contextly does far more than just related post recommendations. We also get readers to explore your site by identifying your evergreen posts (think oldies, but goodies) and your most popular posts, as well as personalizing recommendations for return readers
+[Contextly](http://contextly.com "Contextly") helps you build a loyal audience through engagement tools that keeps readers reading. Contextly does far more than just related post recommendations. We also get readers to explore your site by identifying your evergreen posts (think oldies, but goodies) and your most popular posts, as well as personalizing recommendations for return readers
 
 We do this through a combination of powerful machine learning algorithms that run on *our* servers, so we never slow you down. Plus, Contextly has powerful curation tools, including in-story sidebars, ways to choose related links, and ways to drive readers to things that are important to your site or business.
 
-Contextly is free for sites up to 10,000 PVs per month, and for larger sites, we operate on a paid subscription basis. You can see our pricing and learn more about what we do on the [Contextly](http://contextly.com "Contextly") Contextly website.
+Contextly is free for sites up to 10,000 PVs per month, and for larger sites, we operate on a paid subscription basis. You can see our pricing and learn more about what we do on the [Contextly](http://contextly.com "Contextly") website.
 
 ***
 
