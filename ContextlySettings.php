@@ -276,12 +276,12 @@ class ContextlySettings {
     public function displaySettingsTabs() {
         $current_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : self::GENERAL_SETTINGS_KEY;
 
-        echo '<h2 class="nav-tab-wrapper">';
+        echo '<h1 class="nav-tab-wrapper">';
         foreach ( $this->tabs as $tab_key => $tab_caption ) {
             $active = $current_tab == $tab_key ? 'nav-tab-active' : '';
 	        echo '<a class="nav-tab ' . esc_attr( $active ) . '" href="' . esc_url( '?page=' . self::OPTIONS_KEY . '&tab=' . $tab_key ) . '">' . esc_html( $tab_caption ) . '</a>';
         }
-        echo '</h2>';
+        echo '</h1>';
     }
 
     public function apiLayoutSection() {
