@@ -7,8 +7,13 @@ Author: Contextly
 Version: 3.1
 */
 
+$is_https = is_ssl();
+if (!$is_https && strpos(home_url(), 'https://') !== false) {
+    $is_https = true;
+}
+
 define ( "CONTEXTLY_MODE", 'live' );
-define ( "CONTEXTLY_HTTPS", is_ssl() );
+define ( "CONTEXTLY_HTTPS", $is_https );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
 define ( "CONTEXTLY_PLUGIN_VERSION", '3.1' );
 define ( "CONTEXTLY_KIT_VERSION", '3.1' );
