@@ -261,14 +261,24 @@ class ContextlyWpWidgetsEditor extends ContextlyKitWidgetsEditor {
 
 		try {
 			$result = $this->handleRequest( $method, $params );
-		}
-		catch (Exception $e) {
+		} catch (ContextlyKitApiException $e) {
+			if ( isset( $e->getApiResult()->error_code ) && $e->getApiResult()->error_code == 413 ) {
+				// Access token not exists, try to remove it
+				$this->kit->newApiSession()->cleanupToken();
+			}
+
+			if (CONTEXTLY_MODE !== Urls::MODE_LIVE) {
+				$message = (string) $e;
+			} else {
+				$message = NULL;
+			}
+			$GLOBALS['contextly']->return500( $message );
+		} catch (Exception $e) {
 			Contextly::fireAPIEvent( 'handleAjaxAction', print_r( $e, true ) );
 
 			if (CONTEXTLY_MODE !== Urls::MODE_LIVE) {
 				$message = (string) $e;
-			}
-			else {
+			} else {
 				$message = NULL;
 			}
 			$GLOBALS['contextly']->return500( $message );
