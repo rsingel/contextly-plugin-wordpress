@@ -431,7 +431,6 @@ class Contextly
 			'mode'          => CONTEXTLY_MODE,
 			'https'         => CONTEXTLY_HTTPS,
 			'version'       => CONTEXTLY_PLUGIN_VERSION,
-			'kit'           => CONTEXTLY_KIT_VERSION
 		);
 
 		if ( CONTEXTLY_MODE == Urls::MODE_DEV ) {
