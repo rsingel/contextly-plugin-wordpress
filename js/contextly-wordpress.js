@@ -58,7 +58,7 @@ Contextly.Settings = Contextly.createClass({
             };
         },
         getKitVersion: function() {
-            return Contextly.kit;
+            return Contextly.data.versions.kit;
         }
 
     }
