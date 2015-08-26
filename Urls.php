@@ -17,10 +17,6 @@ class Urls {
 		return ContextlyWpKit::getInstance()->getServerUrl('cp');
 	}
 
-	static public function getApiServerUrl() {
-		return ContextlyWpKit::getInstance()->getServerUrl('api');
-	}
-
 	static public function getPluginCdnUrl( $file, $type = 'js' ) {
 		if ( CONTEXTLY_HTTPS ) {
 			$prefix = 'https://c714015.ssl.cf2.rackcdn.com/';

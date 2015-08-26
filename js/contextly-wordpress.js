@@ -7,12 +7,6 @@ Contextly.Settings = Contextly.createClass({
     extend: Contextly.BaseSettings,
 
     statics: {
-        getAPIServerUrl: function () {
-            return Contextly.api_server;
-        },
-        getMainServerUrl: function () {
-            return Contextly.main_server;
-        },
         getEditorUrl: function () {
             return Contextly.editor_url;
         },

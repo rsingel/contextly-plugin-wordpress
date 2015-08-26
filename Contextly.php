@@ -422,8 +422,6 @@ class Contextly
 		$api_options = self::getAPIClientOptions();
 		$options = array(
 			'ajax_url'      => self::getAjaxUrl(),
-			'api_server'    => Urls::getApiServerUrl(),
-			'main_server'   => Urls::getMainServerUrl(),
 			'editor_url'    => self::getOverlayEditorUrl(),
 			'app_id'        => $api_options[ 'appID' ],
 			'settings'      => ContextlySettings::getPluginOptions(),
