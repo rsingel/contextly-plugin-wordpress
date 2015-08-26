@@ -56,9 +56,6 @@ Contextly.Settings = Contextly.createClass({
                 client: 'wp',
                 version: Contextly.version
             };
-        },
-        getKitVersion: function() {
-            return Contextly.data.versions.kit;
         }
 
     }
