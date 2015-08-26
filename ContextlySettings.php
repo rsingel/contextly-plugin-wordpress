@@ -134,8 +134,15 @@ class ContextlySettings {
 			'blog_url'          => site_url(),
 			'blog_title'        => get_bloginfo("name"),
 			'cms_settings_page' => $this->getWPPluginSettingsUrl(),
-			'kit_version'       => CONTEXTLY_KIT_VERSION
 		);
+
+		// Get MAJOR.MINOR version for the Control Panel.
+		$version = ContextlyWpKit::getInstance()
+			->version();
+		$verison_parsed = ContextlyWpKit::parseVersion( $version );
+		if ( $verison_parsed ) {
+			$url_params['kit_version'] = $verison_parsed[0] . '.' . $verison_parsed[1];
+		}
 
 		return Urls::getMainServerUrl() . 'cms-redirect/?' . http_build_query($url_params, NULL, '&');
 	}

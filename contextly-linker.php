@@ -16,7 +16,6 @@ define ( "CONTEXTLY_MODE", 'live' );
 define ( "CONTEXTLY_HTTPS", $is_https );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
 define ( "CONTEXTLY_PLUGIN_VERSION", '3.1' );
-define ( "CONTEXTLY_KIT_VERSION", '3.1' );
 define ( "CONTEXTLY_CDN_VERSION", 'branch' );
 
 require_once ( "kit/server/Kit.php" );
