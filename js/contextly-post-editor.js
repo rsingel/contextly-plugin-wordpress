@@ -108,13 +108,23 @@
 
 			removeSidebar: function (id) {
 				var removedSidebar = null;
-				if (this.data.sidebars[id]) {
+				if (typeof this.data.sidebars[id] !== 'undefined') {
 					removedSidebar = this.data.sidebars[id];
+					delete this.data.sidebars[id];
 				}
 
-				delete this.data.sidebars[id];
-
 				this.fireEvent('contextlyWidgetRemoved', 'sidebar', id, removedSidebar);
+			},
+
+			setAutoSidebar: function (savedAutoSidebar, removedId) {
+				this.data.auto_sidebar = savedAutoSidebar;
+				this.fireEvent('contextlyWidgetUpdated', 'auto-sidebar', savedAutoSidebar.id || removedId, savedAutoSidebar);
+			},
+
+			removeAutoSidebar: function(defaultAutoSidebar) {
+				var removedAutoSidebar = this.data.auto_sidebar;
+				this.data.auto_sidebar = defaultAutoSidebar;
+				this.fireEvent('contextlyWidgetRemoved', 'auto-sidebar', removedAutoSidebar.id || null, removedAutoSidebar);
 			},
 
 			fireEvent: function (type) {
@@ -153,10 +163,13 @@
 				this.openEditor('snippet');
 			},
 
-			sidebarPopup: function (snippet_id, callback, context) {
+			sidebarPopup: function (snippet_id, snippet_type, callback, context) {
 				this.openEditor('sidebar', {
-					getSidebarId: function () {
-						return snippet_id;
+					getSidebarInfo: function () {
+						return {
+							id: snippet_id,
+							type: snippet_type
+						};
 					},
 					callback: this.proxy(function(savedSidebar) {
 						if (callback) {
@@ -200,6 +213,8 @@
 					buildAjaxConfig: this.proxy(this.buildAjaxConfig),
 					setSidebar: this.proxy(this.setSidebar),
 					removeSidebar: this.proxy(this.removeSidebar),
+					setAutoSidebar: this.proxy(this.setAutoSidebar),
+					removeAutoSidebar: this.proxy(this.removeAutoSidebar),
 					setSnippet: this.proxy(this.setSnippet),
 					removeSnippet: this.proxy(this.removeSnippet),
 					setOverlayCloseButtonHandler: function (callback) {
@@ -251,6 +266,9 @@
 							var widgets = $.extend({
 								'0': this.data.snippet
 							}, this.data.sidebars);
+							if (this.data.auto_sidebar && this.data.auto_sidebar.id) {
+								widgets[this.data.auto_sidebar.id] = this.data.auto_sidebar;
+							}
 
 							var linkExists = false;
 							for (var key in widgets) {
@@ -359,6 +377,56 @@
 					.removeAttr('disabled')
 					.unbind('.contextlySnippetEditor')
 					.bind('click.contextlySnippetEditor', this.proxy(callback));
+			},
+
+			buildSidebarRegexp: function (id, type, modifiers) {
+				var pattern = '\\[contextly';
+				switch (type) {
+					case Contextly.widget.types.AUTO_SIDEBAR:
+						pattern += '(_auto)';
+						break;
+
+					case Contextly.widget.types.SIDEBAR:
+						break;
+
+					default:
+						pattern += '(_auto)?';
+						break;
+				}
+				pattern += '_sidebar(?:\\s+id="';
+				if (id) {
+					pattern += id;
+				}
+				else {
+					pattern += '([^"\\]]+)';
+				}
+				pattern += '"\\s*)?\\]';
+				modifiers = modifiers || 'i';
+				return new RegExp(pattern, modifiers);
+			},
+
+			buildSidebarToken: function (sidebar) {
+				// Build the token code.
+				var token = '[contextly';
+				if (sidebar.type == Contextly.widget.types.AUTO_SIDEBAR) {
+					token += '_auto';
+				}
+				token += '_sidebar';
+				if (typeof sidebar.id !== 'undefined') {
+					token += ' id="' + sidebar.id + '"';
+				}
+				token += ']';
+				return token;
+			},
+
+			isWysiwygActive: function() {
+				var instance;
+				if ( !tinymce || !( instance = tinymce.get('content') ) )
+				{
+					return false;
+				}
+
+				return ( typeof instance.isHidden === 'function' ) && !instance.isHidden();
 			}
 		}
 

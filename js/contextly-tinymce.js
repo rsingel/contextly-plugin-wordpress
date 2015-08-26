@@ -55,66 +55,71 @@
 				title: 'Add Contextly Sidebar into post',
 				image: url + '/img/contextly-sidebar.png',
 				onclick: function () {
-					var sidebar_id = null;
+					var sidebar_id = null, sidebar_type = Contextly.widget.types.SIDEBAR;
 
 					// Try to extract existing sidebar ID from the editor.
 					var selection = editor.selection;
 					if (!selection.isCollapsed()) {
 						var content = selection.getContent({format: 'text'});
-						var matches = content.match(buildSidebarRegexp());
+						var matches = content.match(Contextly.PostEditor.buildSidebarRegexp());
 						if (matches) {
-							sidebar_id = matches[1];
+							sidebar_id = matches[2];
+							if (matches[1]) {
+								sidebar_type = Contextly.widget.types.AUTO_SIDEBAR;
+							}
 						}
 						else {
 							selection.collapse();
 						}
 					}
 
-					Contextly.PostEditor.sidebarPopup(sidebar_id, function (sidebar) {
-						var token = buildSidebarToken(sidebar);
+					Contextly.PostEditor.sidebarPopup(sidebar_id, sidebar_type, function (sidebar) {
+						var token = Contextly.PostEditor.buildSidebarToken(sidebar);
 						editor.execCommand('mceInsertContent', false, token);
 					});
 				}
 			});
 
-			var buildSidebarRegexp = function (id, modifiers) {
-				var pattern = '\\[contextly(?:_auto)?_sidebar\\s+id="';
-				if (id) {
-					pattern += id;
-				}
-				else {
-					pattern += '([^"\\]]+)';
-				}
-				pattern += '"\\s*\\]';
-				modifiers = modifiers || 'i';
-				return new RegExp(pattern, modifiers);
-			};
+			var updateEditorContent = function(callback) {
+				editor.selection.collapse();
+				var bookmark = editor.selection.getBookmark();
 
-			var buildSidebarToken = function (sidebar) {
-				// Build the token code.
-				var token = '[contextly';
-				if (sidebar.type == Contextly.widget.types.AUTO_SIDEBAR) {
-					token += '_auto';
+				var content = editor.getContent({format: 'raw'});
+				var originalLength = content.length;
+				content = callback(content);
+				if (content.length !== originalLength) {
+					editor.setContent(content);
+					editor.selection.moveToBookmark(bookmark);
 				}
-				token += '_sidebar id="' + sidebar.id + '"]';
-				return token;
 			};
 
 			// The widget removal handler.
 			var onWidgetRemoved = function (e, widgetType, id, widget) {
 				switch (widgetType) {
-					case 'sidebar':
-						// Collapse selection and save bookmark to keep caret position.
-						editor.selection.collapse();
-						var bookmark = editor.selection.getBookmark();
+					case Contextly.widget.types.AUTO_SIDEBAR:
+						// Remove the auto-sidebar shortcode ignoring the ID.
+						id = null;
+						// no break;
 
-						var content = editor.getContent({format: 'raw'});
-						var originalLength = content.length;
-						content = content.replace(buildSidebarRegexp(id, 'ig'), '');
-						if (content.length !== originalLength) {
-							editor.setContent(content);
-							editor.selection.moveToBookmark(bookmark);
-						}
+					case Contextly.widget.types.SIDEBAR:
+						updateEditorContent(function(content) {
+							var regexp = Contextly.PostEditor.buildSidebarRegexp(id, widgetType, 'ig');
+							return content.replace(regexp, '')
+						});
+						break;
+				}
+			};
+
+			// The widget update handler.
+			var onWidgetUpdated = function (e, widgetType, id, widget) {
+				switch (widgetType) {
+					case Contextly.widget.types.AUTO_SIDEBAR:
+						updateEditorContent(function(content) {
+							var regexp = Contextly.PostEditor.buildSidebarRegexp(null, widgetType, 'ig');
+							var token = Contextly.PostEditor.buildSidebarToken(widget);
+							return content.replace(regexp, token);
+						});
+
 						break;
 				}
 			};
@@ -145,6 +150,7 @@
 				// loading events.
 				var eventHandlers = {
 					'contextlyWidgetRemoved': onWidgetRemoved,
+					'contextlyWidgetUpdated': onWidgetUpdated,
 					'contextlyDataLoaded': onDataLoaded
 				};
 				var $window = $(window);

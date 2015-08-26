@@ -17,8 +17,11 @@ class Contextly
     const WIDGET_SOCIALER_META_BOX_TITLE = 'Contextly Socialer';
 
     const WIDGET_SIDEBAR_CLASS = 'ctx-sidebar-container';
-    const WIDGET_SIDEBAR_PREFIX = 'contextly-';
-	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar id="%HASH%"]';
+    const WIDGET_SIDEBAR_PREFIX = 'ctx-sidebar-container--';
+
+	const WIDGET_AUTO_SIDEBAR_CLASS = 'ctx-autosidebar-container';
+	const WIDGET_AUTO_SIDEBAR_PREFIX = 'ctx-autosidebar-container--';
+	const WIDGET_AUTO_SIDEBAR_CODE = '[contextly_auto_sidebar]';
 
     const WIDGET_STORYLINE_ID = 'ctx-sl-subscribe';
     const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container ctx-clearfix';
@@ -268,7 +271,7 @@ class Contextly
 			global $post;
 			$contextly_settings = new ContextlySettings();
 			if ( !$contextly_settings->isPageDisplayDisabled( $post->ID ) ) {
-				wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly', null, true );
+				wp_enqueue_script( 'contextly-quicktags', $this->getPluginJs( 'contextly-quicktags.js' ), 'contextly-post-editor', null, true );
 			}
 		}
 	}
@@ -689,7 +692,7 @@ class Contextly
 	public function prepareSidebar( $attrs ) {
         // We will display sidebar only if we have id for this sidebar
         if ( isset( $attrs[ 'id' ] ) ) {
-            return "<div class='" . esc_attr( self::WIDGET_SIDEBAR_CLASS ) . "' id='" . esc_attr( self::WIDGET_SIDEBAR_PREFIX . $attrs[ 'id' ] ) ."'></div>";
+            return "<div class='" . esc_attr( self::WIDGET_SIDEBAR_CLASS ) . " " . esc_attr( self::WIDGET_SIDEBAR_PREFIX . $attrs[ 'id' ] ) ."'></div>";
         }
         else {
             return '';
@@ -728,10 +731,9 @@ class Contextly
 	 */
 	public function addAutosidebarCodeFilter( $content, $post ) {
 		if ( $this->checkWidgetDisplayType( $post ) ) {
-			$hash = $this->getNewAutoSidebarHashForPost( $post->ID );
-
-			if ( null !== $hash ) {
-				$content = $this->getAutoSidebarCodeForPost( $hash ) . $content;
+			$contextly_settings = new ContextlySettings();
+			if ( $contextly_settings->getNewPostAutoSidebarValue() ) {
+				$content = self::WIDGET_AUTO_SIDEBAR_CODE . $content;
 			}
 		}
 
@@ -739,51 +741,16 @@ class Contextly
 	}
 
 	/**
-	 * @param $post_id
-	 * @return null|string
-	 */
-	private function getNewAutoSidebarHashForPost( $post_id ) {
-		try {
-			$response = $publish_post = $this->api()
-				->method( 'autosidebars', 'put' )
-				->extraParams(
-					array(
-						'custom_id' => $post_id,
-						'editor'    => true
-					)
-				)->get();
-
-			if ( isset( $response->success ) && isset( $response->id ) ) {
-				return $response->id;
-			}
-		} catch ( Exception $e ) {
-		}
-
-		return null;
-	}
-
-	/**
-	 * @param $hash
-	 * @return string
-	 */
-	private function getAutoSidebarCodeForPost( $hash ) {
-		$code = self::WIDGET_AUTO_SIDEBAR_CODE;
-		$code = str_replace( '%HASH%', $hash, $code );
-
-		return $code;
-	}
-
-	/**
 	 * @param $attrs
 	 * @return string
 	 */
 	public function prepareAutoSidebar( $attrs ) {
+		$classes = array( self::WIDGET_AUTO_SIDEBAR_CLASS );
 		if ( isset( $attrs[ 'id' ] ) ) {
-			return "<div class='" . self::WIDGET_SIDEBAR_CLASS . "' id='" . self::WIDGET_SIDEBAR_PREFIX . $attrs[ 'id' ] ."' sidebar-type='auto'></div>";
+			$classes[] = self::WIDGET_AUTO_SIDEBAR_PREFIX . $attrs[ 'id' ];
 		}
-		else {
-			return '';
-		}
+
+		return "<div class='" . esc_attr( implode( ' ', $classes ) ) . "'></div>";
 	}
 
 	/**

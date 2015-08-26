@@ -65,6 +65,7 @@ class ContextlySettings {
 	    add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settingsDisplayFor' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 	    //add_settings_field( 'kit_cdn', 'Load Kit resources from CDN:', array( $this, 'settingsDisplayKitCdn' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 	    add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settingsDisplayPublishConfirmation' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
+	    add_settings_field( 'new_post_auto_sidebar', 'Put auto-sidebar into new post:', array( $this, 'settingsDisplayNewPostAutoSidebar' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 
 	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
 	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API Key' );
@@ -384,21 +385,26 @@ class ContextlySettings {
     }
 
 	public function settingsDisplayKitCdn() {
-		$kit_cdn = $this->getKitCdnValue();
-		$control_name = self::ADVANCED_SETTINGS_KEY . "[kit_cdn]";
-
-		echo "
-		<input type='hidden' name='{$control_name}' value='0' />
-		<input name='{$control_name}' type='checkbox' value='1' " . ( $kit_cdn ? "checked='checked'" : "" ) . " style='margin-left: 3px;'/>";
+		$checked = $this->getKitCdnValue();
+		$this->settingsDisplayAdvancedCheckbox( 'kit_cdn', $checked );
 	}
 
 	public function settingsDisplayPublishConfirmation() {
-		$publish_confirmation = $this->getPublishConfirmationValue();
-		$control_name = self::ADVANCED_SETTINGS_KEY . "[publish_confirmation]";
+		$checked = $this->getPublishConfirmationValue();
+		$this->settingsDisplayAdvancedCheckbox( 'publish_confirmation', $checked );
+	}
+
+	public function settingsDisplayNewPostAutoSidebar() {
+		$checked = $this->getNewPostAutoSidebarValue();
+		$this->settingsDisplayAdvancedCheckbox( 'new_post_auto_sidebar', $checked );
+	}
+
+	protected function settingsDisplayAdvancedCheckbox( $id, $checked ) {
+		$control_name = self::ADVANCED_SETTINGS_KEY . "[" . $id . "]";
 
 		echo "
 <input type='hidden' name='{$control_name}' value='0' />
-<input name='{$control_name}' type='checkbox' value='1' " . ( $publish_confirmation ? "checked='checked'" : "" ) . " style='margin-left: 3px;'/>";
+<input name='{$control_name}' type='checkbox' value='1' " . ( $checked ? "checked='checked'" : "" ) . " style='margin-left: 3px;'/>";
 	}
 
     public static function getPluginOptions() {
@@ -439,6 +445,16 @@ class ContextlySettings {
 		}
 
 		return false;
+	}
+
+	public function getNewPostAutoSidebarValue() {
+		$options = get_option( self::ADVANCED_SETTINGS_KEY );
+
+		if ( isset( $options[ 'new_post_auto_sidebar' ] ) ) {
+			return (bool)$options[ 'new_post_auto_sidebar' ];
+		}
+
+		return true;
 	}
 
 	public function getKitCdnValue() {
