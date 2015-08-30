@@ -83,6 +83,43 @@
 				editor.execCommand('mceInsertContent', false, token);
 			});
 
+			var buttons = [];
+			editor.addButton('contextlylink', {
+				title: this.editor.getLang('advanced.link_desc'),
+				image: url + '/img/contextly-link.png',
+				cmd: 'WP_Contextly_Link',
+
+				// TinyMCE 4.
+				onPostRender: function() {
+					buttons.push(this);
+				}
+			});
+			editor.addButton('contextlysidebar', {
+				title: 'Create/edit Contextly Sidebar',
+				image: url + '/img/contextly-sidebar.png',
+				cmd: 'WP_Contextly_Sidebar',
+
+				// TinyMCE 4.
+				type: 'splitbutton',
+				menu: [
+					{
+						text: 'Create/edit Contextly Sidebar',
+						onclick: function() {
+							editor.execCommand('WP_Contextly_Sidebar');
+						}
+					},
+					{
+						text: 'Insert Contextly Auto-Sidebar',
+						onclick: function() {
+							editor.execCommand('WP_Contextly_AutoSidebar');
+						}
+					}
+				],
+				onPostRender: function() {
+					buttons.push(this);
+				}
+			});
+
 			var updateEditorContent = function(callback) {
 				editor.selection.collapse();
 				var bookmark = editor.selection.getBookmark();
@@ -129,8 +166,20 @@
 
 			var setButtonsState = function(enabled) {
 				var disabled = !enabled;
-				editor.controlManager.setDisabled('contextlylink', disabled);
-				editor.controlManager.setDisabled('contextlysidebar', disabled);
+
+				// TinyMCE 4.
+				if (buttons.length) {
+					$.each(buttons, function() {
+						if ($.isFunction(this.active)) {
+							this.disabled(disabled);
+						}
+					});
+				}
+				// TinyMCE 3.
+				else {
+					editor.controlManager.setDisabled('contextlylink', disabled);
+					editor.controlManager.setDisabled('contextlysidebar', disabled);
+				}
 			};
 
 			var onDataLoaded = function() {
@@ -146,9 +195,7 @@
 				return type + '.contextlyTinymce' + editor.id;
 			};
 
-			// Init buttons state right after the editor initialization has been
-			// finished.
-			editor.onInit.add( function () {
+			var onEditorInit = function () {
 				// Set up event handlers to enable/disable buttons on the settings
 				// loading events.
 				var eventHandlers = {
@@ -163,26 +210,35 @@
 
 				// Initialize button state depending on data loading state.
 				setButtonsState(Contextly.PostEditor.isLoaded);
-			});
+			};
 
-			// Unbind the events on editor removing.
-			editor.onRemove.add(function () {
+			var onEditorRemove = function() {
 				$(window).unbind(eventNamespace());
-			});
+			};
+
+			// Init buttons state right after the editor initialization has been
+			// finished. Unbind the events on editor removing.
+			// TinyMCE 4.
+			if ($.isFunction(editor.on)) {
+				editor.on('init', onEditorInit);
+				editor.on('remove', onEditorRemove);
+			}
+			// TinyMCE 3.
+			else {
+				if (editor.onInit && $.isFunction(editor.onInit.add)) {
+					editor.onInit.add(onEditorInit);
+				}
+				if (editor.onRemove && $.isFunction(editor.onRemove.add)) {
+					editor.onRemove.add(onEditorRemove);
+				}
+			}
 		},
 
+		// TinyMCE 3 compatibility.
 		createControl: function(name, controlManager) {
 			switch (name) {
-				case 'contextlylink':
-					var control = controlManager.createButton('contextlylink', {
-						title: this.editor.getLang('advanced.link_desc'),
-						image: this.url + '/img/contextly-link.png',
-						cmd: 'WP_Contextly_Link'
-					});
-					return control;
-
 				case 'contextlysidebar':
-					control = controlManager.createSplitButton('contextlysidebar', {
+					var control = controlManager.createSplitButton('contextlysidebar', {
 						title: 'Create/edit Contextly Sidebar',
 						image: this.url + '/img/contextly-sidebar.png',
 						cmd: 'WP_Contextly_Sidebar'
