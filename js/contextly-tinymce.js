@@ -3,6 +3,9 @@
 	// Sidebar plug-in.
 	tinymce.create('tinymce.plugins.Contextly', {
 		init: function (editor, url) {
+			this.url = url;
+			this.editor = editor;
+
 			// Register link command.
 			editor.addCommand('WP_Contextly_Link', function () {
 				var selection = editor.selection;
@@ -44,40 +47,40 @@
 				});
 			});
 
-			// Register an example button
-			editor.addButton('contextlylink', {
-				title: editor.getLang('advanced.link_desc'),
-				image: url + '/img/contextly-link.png',
-				cmd: 'WP_Contextly_Link'
-			});
+			editor.addCommand('WP_Contextly_Sidebar', function () {
+				var sidebar_id = null, sidebar_type = Contextly.widget.types.SIDEBAR;
 
-			editor.addButton('contextlysidebar', {
-				title: 'Add Contextly Sidebar into post',
-				image: url + '/img/contextly-sidebar.png',
-				onclick: function () {
-					var sidebar_id = null, sidebar_type = Contextly.widget.types.SIDEBAR;
-
-					// Try to extract existing sidebar ID from the editor.
-					var selection = editor.selection;
-					if (!selection.isCollapsed()) {
-						var content = selection.getContent({format: 'text'});
-						var matches = content.match(Contextly.PostEditor.buildSidebarRegexp());
-						if (matches) {
-							sidebar_id = matches[2];
-							if (matches[1]) {
-								sidebar_type = Contextly.widget.types.AUTO_SIDEBAR;
-							}
-						}
-						else {
-							selection.collapse();
+				// Try to extract existing sidebar ID from the editor.
+				var selection = editor.selection;
+				if (!selection.isCollapsed()) {
+					var content = selection.getContent({format: 'text'});
+					var matches = content.match(Contextly.PostEditor.buildSidebarRegexp());
+					if (matches) {
+						sidebar_id = matches[2];
+						if (matches[1]) {
+							sidebar_type = Contextly.widget.types.AUTO_SIDEBAR;
 						}
 					}
-
-					Contextly.PostEditor.sidebarPopup(sidebar_id, sidebar_type, function (sidebar) {
-						var token = Contextly.PostEditor.buildSidebarToken(sidebar);
-						editor.execCommand('mceInsertContent', false, token);
-					});
+					else {
+						selection.collapse();
+					}
 				}
+
+				Contextly.PostEditor.sidebarPopup(sidebar_id, sidebar_type, function (sidebar) {
+					var token = Contextly.PostEditor.buildSidebarToken(sidebar);
+					editor.execCommand('mceInsertContent', false, token);
+				});
+			});
+
+			editor.addCommand('WP_Contextly_AutoSidebar', function() {
+				var data = Contextly.PostEditor.getData();
+				if (!data.auto_sidebar) {
+					return;
+				}
+
+				editor.selection.collapse();
+				var token = Contextly.PostEditor.buildSidebarToken(data.auto_sidebar);
+				editor.execCommand('mceInsertContent', false, token);
 			});
 
 			var updateEditorContent = function(callback) {
@@ -166,6 +169,41 @@
 			editor.onRemove.add(function () {
 				$(window).unbind(eventNamespace());
 			});
+		},
+
+		createControl: function(name, controlManager) {
+			switch (name) {
+				case 'contextlylink':
+					var control = controlManager.createButton('contextlylink', {
+						title: this.editor.getLang('advanced.link_desc'),
+						image: this.url + '/img/contextly-link.png',
+						cmd: 'WP_Contextly_Link'
+					});
+					return control;
+
+				case 'contextlysidebar':
+					control = controlManager.createSplitButton('contextlysidebar', {
+						title: 'Create/edit Contextly Sidebar',
+						image: this.url + '/img/contextly-sidebar.png',
+						cmd: 'WP_Contextly_Sidebar'
+					});
+
+					control.onRenderMenu.add(function(control, menu) {
+						menu.add({
+							title: 'Create/edit Contextly Sidebar',
+							cmd: 'WP_Contextly_Sidebar'
+						});
+
+						menu.add({
+							title: 'Insert Contextly Auto-Sidebar',
+							cmd: 'WP_Contextly_AutoSidebar'
+						});
+					});
+
+					return control;
+			}
+
+			return null;
 		},
 
 		/**
