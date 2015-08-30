@@ -16,12 +16,46 @@
         }
     }
 
+	function findSelectedSidebar( canvas )
+	{
+		// Try to extract existing sidebar ID from the editor.
+		var selection_text = getSelectedText( canvas );
+		var matches = selection_text.match( Contextly.PostEditor.buildSidebarRegexp() );
+		if ( matches )
+		{
+			return {
+				id: matches[2],
+				type: matches[1] ? Contextly.widget.types.AUTO_SIDEBAR : Contextly.widget.types.SIDEBAR
+			};
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	function editSidebar( info )
+	{
+		var id = info.id || null;
+		var type = info.type || Contextly.widget.types.SIDEBAR;
+		Contextly.PostEditor.sidebarPopup( id, type, function ( sidebar ) {
+			insertSidebar( sidebar );
+		});
+	}
+
+	function insertSidebar( sidebar )
+	{
+		var token = Contextly.PostEditor.buildSidebarToken( sidebar );
+		QTags.insertContent( token );
+	}
+
     jQuery( document).ready(
         function () {
             if ( typeof QTags != "undefined" )
             {
                 registerContextlyQtLinkButton();
                 registerContextlyQtSidebarButton();
+				registerContextlyQtAutoSidebarButton();
 				registerContextlyQtEventHandlers();
             }
         }
@@ -56,29 +90,44 @@
     {
         QTags.addButton(
             'ctx_sidebar',
-            'Contextly Sidebar',
+            'Sidebar',
             function(e, c, ed) {
-                var sidebar_id = null, sidebar_type = Contextly.widget.types.SIDEBAR;
-
-                // Try to extract existing sidebar ID from the editor.
-                var selection_text = getSelectedText( c );
-                var matches = selection_text.match(Contextly.PostEditor.buildSidebarRegexp());
-                if (matches) {
-					sidebar_id = matches[2];
-					if (matches[1]) {
-						sidebar_type = Contextly.widget.types.AUTO_SIDEBAR;
-					}
-                }
-
-                Contextly.PostEditor.sidebarPopup(sidebar_id, sidebar_type, function (sidebar) {
-                    var token = Contextly.PostEditor.buildSidebarToken(sidebar);
-                    QTags.insertContent( token );
-                });
+                var info = findSelectedSidebar( c ) || {};
+				editSidebar(info);
             },
             null,
             null,
-            'Contextly Sidebar',
+            'Create/Edit Contextly Sidebar',
             500
+        );
+    }
+
+    function registerContextlyQtAutoSidebarButton()
+    {
+        QTags.addButton(
+            'ctx_autosidebar',
+            'Auto-Sidebar',
+            function(e, c, ed) {
+				var info = findSelectedSidebar( c );
+				if ( info == null )
+				{
+					var data = Contextly.PostEditor.getData();
+					if (!data.auto_sidebar) {
+						return;
+					}
+
+					insertSidebar( data.auto_sidebar );
+				}
+				else
+				{
+					// We found the sidebar under cursor. Open the editor.
+					editSidebar( info );
+				}
+            },
+            null,
+            null,
+            'Insert/edit Contextly Auto-Sidebar',
+            501
         );
     }
 
