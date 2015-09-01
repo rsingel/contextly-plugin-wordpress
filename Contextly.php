@@ -67,11 +67,11 @@ class Contextly
 					->newWpOverlayPage()
 					->addMenuAction();
         } else {
-            add_action( 'init', array( $this, 'initDefault' ), 1 );
             add_action( 'the_content', array( $this, 'addSnippetWidgetToContent' ) );
 			add_action( 'wp_head', array( $this, 'insertMetatags' ), 0 );
         }
 
+	    add_action( 'init', array( $this, 'initDefault' ), 1 );
         add_action( 'wp_enqueue_scripts', array( $this, 'loadScripts' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'loadScripts' ) );
 
