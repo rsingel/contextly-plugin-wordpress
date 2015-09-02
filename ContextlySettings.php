@@ -65,7 +65,6 @@ class ContextlySettings {
 	    add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settingsDisplayFor' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 	    //add_settings_field( 'kit_cdn', 'Load Kit resources from CDN:', array( $this, 'settingsDisplayKitCdn' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 	    add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settingsDisplayPublishConfirmation' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
-	    add_settings_field( 'new_post_auto_sidebar', 'Put auto-sidebar into new post:', array( $this, 'settingsDisplayNewPostAutoSidebar' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 
 	    $this->tabs[ self::GENERAL_SETTINGS_KEY ] = __( 'General' );
 	    $this->tabs[ self::API_SETTINGS_KEY ] = __( 'API Key' );
@@ -394,11 +393,6 @@ class ContextlySettings {
 		$this->settingsDisplayAdvancedCheckbox( 'publish_confirmation', $checked );
 	}
 
-	public function settingsDisplayNewPostAutoSidebar() {
-		$checked = $this->getNewPostAutoSidebarValue();
-		$this->settingsDisplayAdvancedCheckbox( 'new_post_auto_sidebar', $checked );
-	}
-
 	protected function settingsDisplayAdvancedCheckbox( $id, $checked ) {
 		$control_name = self::ADVANCED_SETTINGS_KEY . "[" . $id . "]";
 
@@ -445,16 +439,6 @@ class ContextlySettings {
 		}
 
 		return false;
-	}
-
-	public function getNewPostAutoSidebarValue() {
-		$options = get_option( self::ADVANCED_SETTINGS_KEY );
-
-		if ( isset( $options[ 'new_post_auto_sidebar' ] ) ) {
-			return (bool)$options[ 'new_post_auto_sidebar' ];
-		}
-
-		return true;
 	}
 
 	public function getKitCdnValue() {
