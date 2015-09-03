@@ -724,17 +724,32 @@ class Contextly
 		exit;
 	}
 
+	protected function isAutoSidebarInsertionEnabled() {
+		try {
+			$response = $this->api()
+				->method( 'sitesettings', 'get' )
+				->requireSuccess()
+			  ->returnProperty('entry')
+				->get();
+
+			if ( !empty( $response->enable_auto_sidebars ) ) {
+				return true;
+			}
+		} catch ( Exception $e ) {
+		}
+
+		return false;
+	}
+
 	/**
 	 * @param $content
 	 * @param $post
 	 * @return mixed
 	 */
 	public function addAutosidebarCodeFilter( $content, $post ) {
-		if ( $this->checkWidgetDisplayType( $post ) ) {
-			$contextly_settings = new ContextlySettings();
-			if ( $contextly_settings->getNewPostAutoSidebarValue() ) {
-				$content = self::WIDGET_AUTO_SIDEBAR_CODE . $content;
-			}
+		if ( $this->checkWidgetDisplayType( $post ) && $this->isAutoSidebarInsertionEnabled() )
+		{
+			$content = self::WIDGET_AUTO_SIDEBAR_CODE . $content;
 		}
 
 		return $content;
