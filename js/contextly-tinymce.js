@@ -117,7 +117,20 @@
 				],
 				onPostRender: function() {
 					buttons.push(this);
-				}
+
+					// TinyMCE 4 before 4.1.5 (WP 4.0.x).
+					// The "image" setting is supported by SplitButton since TinyMCE 4.1.5,
+					// so we have to add it here.
+					if (this.$el && this.$el[0]) {
+						var icon = $(this.$el[0]).find('.mce-ico');
+						if (icon.length) {
+							icon.css('background-image', 'url("' + url + '/img/contextly-sidebar.png")');
+						}
+					}
+				},
+
+				// TinyMCE 4 before 4.1.5 (WP 4.0.x), see above note.
+				icon: 'none'
 			});
 
 			var updateEditorContent = function(callback) {
