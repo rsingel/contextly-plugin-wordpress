@@ -128,6 +128,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 == Changelog ==
 
 
+= 3.2 =
+
+- Added easier way to add automatically chosen Related stories as an in-story sidebars. You can add these using the sidebar button on the editor or use the shortcode [contextly_auto_sidebar] in the body of the story. You can learn more about these [here](http://support.contextly.com/hc/en-us/articles/204274714-What-are-the-AutoSidebars-and-how-do-they-work-).
+
+
 = 3.1 =
 
 - Enables new Siderail display (for WordPress Sidebars)
