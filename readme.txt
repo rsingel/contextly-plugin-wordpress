@@ -128,6 +128,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 == Changelog ==
 
 
+= 3.2 =
+
+- Improved Auto-Sidebars to let writers insert them into any story from the editing interface, using the Sidebar button. The shortcode [contextly_auto_sidebar] can also be put in any post to show related content.
+
+
 = 3.1 =
 
 - Enables new Siderail display (for WordPress Sidebars)

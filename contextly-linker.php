@@ -12,7 +12,7 @@ if (!$is_https && strpos(home_url(), 'https://') !== false) {
     $is_https = true;
 }
 
-define ( "CONTEXTLY_MODE", 'dev' );
+define ( "CONTEXTLY_MODE", 'live' );
 define ( "CONTEXTLY_HTTPS", $is_https );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
 define ( "CONTEXTLY_PLUGIN_VERSION", '3.2' );
@@ -32,5 +32,7 @@ if ( is_admin() ) {
 }
 
 // Init Contextly
+global $contextly;
+
 $contextly = new Contextly();
 $contextly->init();
