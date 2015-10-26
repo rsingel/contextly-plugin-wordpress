@@ -38,6 +38,9 @@ class Contextly
 	const SIDERAIL_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
 	const SIDERAIL_MODULE_SHORT_CODE_ID = 'ctx_siderail_short_code';
 
+	const SOCIAL_MODULE_SHORT_CODE = 'contextly_social';
+	const SOCIAL_MODULE_CLASS = 'ctx-social-container ctx-clearfix';
+
 	/**
 	 * @var ContextlyKitApi
 	 */
@@ -212,6 +215,7 @@ class Contextly
         add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
         add_shortcode(self::SL_MODULE_SHORT_CODE, array( $this, 'prepareSLButtonShortCode' ) );
         add_shortcode(self::SIDERAIL_MODULE_SHORT_CODE, array( $this, 'prepareSiderailShortCode' ) );
+        add_shortcode(self::SOCIAL_MODULE_SHORT_CODE, array( $this, 'prepareSocialShortCode' ) );
     }
 
     private function addEditorButtons() {
@@ -790,6 +794,13 @@ class Contextly
 	}
 
 	/**
+	 * @return string
+	 */
+	public function prepareSocialShortCode() {
+		return sprintf( "<div class='%s'></div>", esc_attr( self::SOCIAL_MODULE_CLASS ) );
+	}
+
+	/**
 	 *
 	 */
 	public function insertMetatags()
@@ -874,7 +885,10 @@ class Contextly
 	public function registerWidgets()
 	{
 		require_once ( "ContextlySiderailWidget.php" );
+		require_once ( "ContextlySocialWidget.php" );
+
 		register_widget( 'ContextlyWpSiderailWidget' );
+		register_widget( 'ContextlyWpSocialWidget' );
 	}
 
 }
