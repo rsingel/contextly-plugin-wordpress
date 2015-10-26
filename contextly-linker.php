@@ -32,6 +32,7 @@ if ( is_admin() ) {
 }
 
 // Init Contextly
-global $contextly; 
+global $contextly;
+
 $contextly = new Contextly();
 $contextly->init();
