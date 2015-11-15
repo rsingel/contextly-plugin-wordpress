@@ -219,6 +219,10 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
         },
 
         shortCodeUpdates: function() {
+            // Modules of each type may be placed with multiple methods, e.g.
+            // shortcode, WP widget, default placement. And we should only display
+            // the most preferred one hiding the rest.
+
             var main_module_code_id = '#ctx_main_module_short_code';
             var main_module_id = '#ctx-module';
 
@@ -252,6 +256,20 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
                         .removeClass('ctx_widget_hidden');
                 }
             }
+
+            var $social_containers = jQuery('.ctx-social-container');
+            var social_placements = ['ctx_shortcode_placement', 'ctx_widget_placement'];
+            jQuery.each(social_placements, function() {
+                var selector = '.' + this;
+
+                var $preferred = $social_containers.filter(selector);
+                if ($preferred.length) {
+                    $social_containers
+                        .not(selector)
+                        .remove();
+                    return false;
+                }
+            });
         }
 
     }

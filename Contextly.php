@@ -11,8 +11,13 @@ class Contextly
     const API_SETTINGS_KEY = 'contextly_options_api';
     const ADVANCED_SETTINGS_KEY = 'contextly_options_advanced';
 
+	const DEFAULT_PLACEMENT_CLASS = 'ctx_default_placement';
+	const WIDGET_PLACEMENT_CLASS = 'ctx_widget_placement';
+	const SHORTCODE_PLACEMENT_CLASS = 'ctx_shortcode_placement';
+
     const WIDGET_SNIPPET_ID = 'ctx-module';
     const WIDGET_SNIPPET_CLASS = 'ctx-module-container ctx-clearfix';
+
     const WIDGET_SNIPPET_META_BOX_TITLE = 'Contextly Related Links';
     const WIDGET_SOCIALER_META_BOX_TITLE = 'Contextly Socialer';
 
@@ -25,6 +30,8 @@ class Contextly
 
     const WIDGET_STORYLINE_ID = 'ctx-sl-subscribe';
     const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container ctx-clearfix';
+
+	const WIDGET_SOCIAL_CLASS = 'ctx-social-container ctx-clearfix';
 
 	const MAIN_MODULE_SHORT_CODE = 'contextly_main_module';
 	const MAIN_MODULE_SHORT_CODE_CLASS = 'ctx_widget_hidden';
@@ -39,7 +46,6 @@ class Contextly
 	const SIDERAIL_MODULE_SHORT_CODE_ID = 'ctx_siderail_short_code';
 
 	const SOCIAL_MODULE_SHORT_CODE = 'contextly_social';
-	const SOCIAL_MODULE_CLASS = 'ctx-social-container ctx-clearfix';
 
 	/**
 	 * @var ContextlyKitApi
@@ -368,6 +374,7 @@ class Contextly
 		else
 		{
 			$prefix = "<div id='" . esc_attr( self::WIDGET_STORYLINE_ID ) . "' class='" . esc_attr( self::WIDGET_STORYLINE_CLASS ) . "'></div>";
+			$prefix .= "<div class='" . esc_attr( self::WIDGET_SOCIAL_CLASS . ' ' . self::DEFAULT_PLACEMENT_CLASS ) . "'></div>";
 		}
 
         return $prefix . "<div id='" . esc_attr( self::WIDGET_SNIPPET_ID ) . "' class='" . esc_attr( self::WIDGET_SNIPPET_CLASS ) . "'>" . $default_html_code . "</div>" . $additional_html_controls;
@@ -797,7 +804,8 @@ class Contextly
 	 * @return string
 	 */
 	public function prepareSocialShortCode() {
-		return sprintf( "<div class='%s'></div>", esc_attr( self::SOCIAL_MODULE_CLASS ) );
+		$classes = self::WIDGET_SOCIAL_CLASS . ' ' . self::SHORTCODE_PLACEMENT_CLASS;
+		return sprintf( "<div class='%s'></div>", esc_attr( $classes ) );
 	}
 
 	/**
