@@ -136,6 +136,11 @@ class ContextlySettings {
 			'cms_settings_page' => $this->getWPPluginSettingsUrl(),
 		);
 
+		$options = get_option( self::API_SETTINGS_KEY );
+		if ( isset( $options["api_key"] ) ) {
+			$url_params['api_key'] = $options["api_key"];
+		}
+
 		// Get MAJOR.MINOR version for the Control Panel.
 		$version = ContextlyWpKit::getInstance()
 			->version();
