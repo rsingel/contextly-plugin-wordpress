@@ -18,23 +18,7 @@ class Urls {
 	}
 
 	static public function getPluginCdnUrl( $file, $type = 'js' ) {
-		if ( CONTEXTLY_HTTPS ) {
-			$prefix = 'https://c714015.ssl.cf2.rackcdn.com/';
-		} else {
-			$prefix = 'http://contextlysitescripts.contextly.com/';
-		}
-
-		return $prefix . 'wp_plugin/' . CONTEXTLY_PLUGIN_VERSION . '/' . $type . '/' . $file;
-	}
-
-	static public function getMainJsCdnUrl( $js_file ) {
-		if ( CONTEXTLY_HTTPS ) {
-			$prefix = 'https://c714015.ssl.cf2.rackcdn.com/';
-		} else {
-			$prefix = 'http://contextlysitescripts.contextly.com/';
-		}
-
-		return $prefix . 'js/' . $js_file;
+		return 'https://rest.contextly.com/wp-plugin/' . CONTEXTLY_PLUGIN_VERSION . '/' . $type . '/' . $file;
 	}
 
 }
