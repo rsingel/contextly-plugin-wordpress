@@ -154,7 +154,7 @@ Contextly.WPPageView = Contextly.createClass( /** @lends Contextly.PageView.prot
             }
 
             if ( !Contextly.Settings.isAdmin() ) {
-                // Change Main module and SL button positoon for short codes
+                // Change Main module and SL button position for short codes
                 Contextly.WPPageView.shortCodeUpdates();
             }
 
