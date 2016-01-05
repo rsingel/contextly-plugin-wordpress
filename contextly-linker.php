@@ -7,7 +7,7 @@ Author: Contextly
 Version: 3.4
 */
 
-define ( "CONTEXTLY_MODE", 'dev' );
+define ( "CONTEXTLY_MODE", 'live' );
 
 // Force all live clients to use HTTPS connection
 $is_https = is_ssl();
