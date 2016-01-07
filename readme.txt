@@ -128,6 +128,12 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 == Changelog ==
 
 
+= 3.4 =
+
+- Updated plugin to run completely under HTTPS for better reader security HTTPS Everywhere compatibility
+- Minor changes to personalization methods
+
+
 = 3.3 =
 
 - Enables a carousel display of social content (Enterprise and Business customers)
