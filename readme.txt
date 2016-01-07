@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, related posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, optimization, most popular, sidebar, siderail,
 Requires at least: 2.0.2
-Tested up to: 4.3
+Tested up to: 4.4
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -126,6 +126,12 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+
+= 3.4 =
+
+- Updated plugin to run completely under HTTPS for better reader security HTTPS Everywhere compatibility
+- Minor changes to personalization methods
 
 
 = 3.3 =
