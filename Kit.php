@@ -6,7 +6,6 @@
  * @method ContextlyWpApiTransport newApiTransport()
  * @method ContextlyWpSharedSession newApiSession()
  * @method ContextlyWpWidgetsEditor newWidgetsEditor()
- * @method ContextlyWpAssetsRenderer newWpAssetsRenderer()
  * @method ContextlyWpOverlayPage newWpOverlayPage()
  */
 class ContextlyWpKit extends ContextlyKit {
@@ -51,7 +50,6 @@ class ContextlyWpKit extends ContextlyKit {
 		$map['ApiTransport'] = 'ContextlyWpApiTransport';
 		$map['ApiSession'] = 'ContextlyWpSharedSession';
 		$map['WidgetsEditor'] = 'ContextlyWpWidgetsEditor';
-		$map['WpAssetsRenderer'] = 'ContextlyWpAssetsRenderer';
 		$map['WpOverlayPage'] = 'ContextlyWpOverlayPage';
 
 		return $map;
@@ -153,59 +151,6 @@ class ContextlyWpSharedSession extends ContextlyKitBase implements ContextlyKitA
 
 }
 
-class ContextlyWpAssetsRenderer extends ContextlyKitAssetsRenderer {
-
-	public function resourceHandle($key) {
-		return 'contextly-kit-' . str_replace( '/', '-', $key );
-	}
-
-	/**
-	 * Returns "version" parameter suitable for wp_enqueue_style() and
-	 * wp_enqueue_script().
-	 */
-	protected function getAssetsVersion() {
-		if ($this->kit->isCdnEnabled()) {
-			return NULL;
-		}
-		else {
-			return $this->kit->version();
-		}
-	}
-
-	public function renderCss() {
-		$version = $this->getAssetsVersion();
-		foreach ($this->assets->buildCssUrls() as $key => $url) {
-			wp_enqueue_style($this->resourceHandle( $key ), $url, array(), $version);
-		}
-	}
-
-	public function renderJs() {
-		$version = $this->getAssetsVersion();
-		foreach ($this->assets->buildJsUrls() as $key => $url) {
-			wp_enqueue_script( $this->resourceHandle( $key ), $url, array(), $version, true );
-		}
-	}
-
-	public function renderAll() {
-		$this->renderCss();
-		$this->renderJs();
-		$this->renderTpl();
-		$this->renderInlineJs();
-	}
-
-	public function renderTpl() {
-		// TODO: Implement for widgets rendering later.
-	}
-
-	public function renderInlineJs() {
-	}
-
-	public function getInlineJs() {
-		return $this->assets->buildInlineJs(TRUE);
-	}
-
-}
-
 /**
  * Handles the page required for the overlay dialogs.
  */
@@ -223,13 +168,21 @@ class ContextlyWpOverlayPage extends ContextlyKitBase {
 	}
 
 	public function display() {
+		global $contextly;
+
 		$type = $_GET['editor-type'];
 		if (!in_array( $type, array( 'link', 'snippet', 'sidebar' ), TRUE )) {
-			$GLOBALS['contextly']->return404();
+			$contextly->return404();
 		}
 
+		$overrides = $this->kit->newOverridesManager( $contextly->getKitSettingsOverrides() )
+			->compile();
+
 		print $this->kit->newOverlayDialog($type)
-				->render();
+				->render( array(
+					'loader' => CONTEXTLY_LOADER,
+				  'code' => $overrides,
+				) );
 		exit;
 	}
 

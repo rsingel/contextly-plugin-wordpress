@@ -16,7 +16,7 @@
 			},
 
 			buildAjaxConfig: function (method, addon) {
-				var settings = Contextly.Settings;
+				var settings = Contextly.WPSettings;
 
 				var result = $.extend(true, {
 					url     : settings.getAjaxUrl(),
@@ -29,7 +29,7 @@
 				result.data = {
 					action: 'contextly_widgets_editor_request',
 					nonce: settings.getAjaxNonce(),
-					post_id: Contextly.Settings.getPageId(),
+					post_id: Contextly.MetadataManager.getPageId(),
 					method: method,
 					params: params
 				};
@@ -145,7 +145,7 @@
 			},
 
 			buildEditorUrl: function (type) {
-				var s = Contextly.Settings;
+				var s = Contextly.WPSettings;
 
 				var url = s.getEditorUrl();
 				if (url.indexOf('?') === -1) {
@@ -259,7 +259,7 @@
                 $('#publish')
 					.unbind('click.contextlyPublishConfirmation')
 					.bind('click.contextlyPublishConfirmation', this.proxy(function () {
-						var wp_settings = Contextly.Settings.getWPSettings();
+						var wp_settings = Contextly.WPSettings.getWPSettings();
 
 						if (wp_settings.publish_confirmation && wp_settings.publish_confirmation == "1" && this.data !== null) {
 							// Put snippet and sidebars together for a check.
@@ -431,7 +431,5 @@
 		}
 
 	});
-
-	Contextly.PostEditor.loadData();
 
 })( jQuery );
