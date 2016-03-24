@@ -93,140 +93,109 @@ Contextly.WPAdminMessages = Contextly.createClass({
     }
 });
 
-/**
- * @class
- * @extends Contextly.widget.PageView
- */
-Contextly.WPPageView = Contextly.createClass({
+$(window)
+    .bind('contextlyWidgetsLoading', function(e, $context) {
+        if (Contextly.Settings.isAdmin()) {
+            return;
+        }
 
-    extend: Contextly.widget.PageView,
-
-    statics: /** @lends Contextly.WPPageView */ {
-
-        loadWidgets: function() {
-            if ( !Contextly.MetadataManager.getPageId() ) {
+        // Modules of many types may be placed using multiple methods, e.g.
+        // shortcode, WP widget, default placement. And we should only display
+        // the most preferred ones hiding the rest.
+        var specs = {
+            'ctx-module-container': [
+                'ctx_shortcode_placement',
+                'ctx_default_placement'
+            ],
+            'ctx-subscribe-container': [
+                'ctx_shortcode_placement',
+                'ctx_default_placement'
+            ],
+            'ctx-siderail-container': [
+                'ctx_shortcode_placement',
+                'ctx_widget_placement'
+            ],
+            'ctx-social-container': [
+                'ctx_shortcode_placement',
+                'ctx_widget_placement',
+                'ctx_default_placement'
+            ]
+        };
+        $.each(specs, function(containerClass) {
+            var $containers = $context.find('.' + containerClass);
+            if (!$containers.length) {
                 return;
             }
 
-            if ( !Contextly.Settings.isAdmin() ) {
-                // Change Main module and SL button position for short codes
-                Contextly.WPPageView.shortCodeUpdates();
-            }
-
-            // Load page modules
-            Contextly.widget.PageView.loadWidgets.apply(this, arguments);
-        },
-
-        onWidgetsLoadingError: function(response) {
-            Contextly.widget.PageView.onWidgetsLoadingError.apply(this, arguments);
-            if ( !Contextly.Settings.isAdmin() ) {
-                return;
-            }
-
-            var message = '';
-            if ( response.error ) {
-                if ( response.error_code == Contextly.RESTClient.errors.FORBIDDEN ) {
-                    message = response.error + " Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
-                } else if ( response.error_code == Contextly.RESTClient.errors.SUSPENDED ) {
-                    message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
-                } else {
-                    message = "Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
-                }
-            } else {
-                message = "Sorry, something seems to be broken. Please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
-            }
-
-            // TODO Render error without creating base widget.
-            var widget = new Contextly.widget.TextSnippet();
-            widget.displayHTML( message );
-        },
-
-        updatePostAction: function (response) {
-            if (!response.entry.update) {
-                return;
-            }
-
-            var args = arguments;
-            var parentUpdate = this.proxy(function() {
-                Contextly.widget.PageView.updatePostAction.apply( this, args );
-            });
-
-            var data = {
-                action: 'contextly_publish_post',
-                page_id: Contextly.MetadataManager.getPageId(),
-                contextly_nonce: Contextly.WPSettings.getAjaxNonce()
-            };
-
-            jQuery.ajax({
-                url: Contextly.ajax_url,
-                type: 'post',
-                dataType: 'json',
-                data: data,
-                success: function(response) {
-                    if ( response != true ) {
-                        parentUpdate();
-                    }
-                },
-                error: function () {
-                    parentUpdate();
-                }
-            });
-        },
-
-        shortCodeUpdates: function() {
-            // Modules of many types may be placed using multiple methods, e.g.
-            // shortcode, WP widget, default placement. And we should only display
-            // the most preferred ones hiding the rest.
-            var specs = {
-                'ctx-module-container': [
-                    'ctx_shortcode_placement',
-                    'ctx_default_placement'
-                ],
-                'ctx-subscribe-container': [
-                    'ctx_shortcode_placement',
-                    'ctx_default_placement'
-                ],
-                'ctx-siderail-container': [
-                    'ctx_shortcode_placement',
-                    'ctx_widget_placement'
-                ],
-                'ctx-social-container': [
-                    'ctx_shortcode_placement',
-                    'ctx_widget_placement',
-                    'ctx_default_placement'
-                ]
-            };
-            $.each(specs, function(containerClass) {
-                var $containers = $('.' + containerClass);
-                if (!$containers.length) {
+            $.each(this, function() {
+                var preferred = '.' + this;
+                var $preferred = $containers.filter(preferred);
+                if (!$preferred.length) {
                     return;
                 }
 
-                $.each(this, function() {
-                    var preferred = '.' + this;
-                    var $preferred = $containers.filter(preferred);
-                    if (!$preferred.length) {
-                        return;
-                    }
-
-                    $containers
-                        .not(preferred)
-                        .remove();
-                    return false;
-                });
+                $containers
+                    .not(preferred)
+                    .remove();
+                return false;
             });
+        });
 
-            // Make sure that main module with default placement is last child.
-            $('.ctx-module-container.ctx_default_placement')
-                .not(':last-child')
-                .each(function() {
-                    $(this)
-                        .parent()
-                        .append(this);
-                });
+        // Make sure that main module with default placement is last child.
+        $context
+            .find('.ctx-module-container.ctx_default_placement')
+            .not(':last-child')
+            .each(function() {
+                $(this)
+                    .parent()
+                    .append(this);
+            });
+    })
+    .bind('contextlyWidgetsFailed', function(e, $context, response) {
+        Contextly.widget.PageView.onWidgetsLoadingError.apply(this, arguments);
+        if ( !Contextly.Settings.isAdmin() ) {
+            return;
         }
 
-    }
-});
+        var message = '';
+        if ( response.error ) {
+            if ( response.error_code == Contextly.client.Rest.errors.FORBIDDEN ) {
+                message = response.error + " Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+            } else if ( response.error_code == Contextly.client.Rest.errors.SUSPENDED ) {
+                message = "Your account has been suspended. If this is an error, please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+            } else {
+                message = "Please check your API settings on the Contextly plugin <a href='admin.php?page=contextly_options&tab=contextly_options_api'>Settings</a> page.";
+            }
+        } else {
+            message = "Sorry, something seems to be broken. Please contact us via <a href='http://contextly.com/contact-us/'>support@contextly.com</a>.";
+        }
+
+        $context
+            .find('.ctx-module-container')
+            .html(message);
+    })
+    .bind('contextlyPostUpdate', function(e, $context, pageId, gate) {
+        var data = {
+            action: 'contextly_publish_post',
+            page_id: pageId,
+            contextly_nonce: Contextly.WPSettings.getAjaxNonce()
+        };
+
+        var runUpdate = gate.addReason();
+        jQuery.ajax({
+            url: Contextly.WPSettings.getAjaxUrl(),
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function(response) {
+                if ( response != true ) {
+                    runUpdate();
+                }
+            },
+            error: function () {
+                runUpdate();
+            }
+        });
+    });
 
 })(jQuery);

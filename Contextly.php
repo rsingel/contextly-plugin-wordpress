@@ -555,7 +555,7 @@ class Contextly
 		}
 
 		$load = array(
-			'wp/widgets' => 'Contextly.WPPageView.loadWidgets();',
+			'wp/widgets' => 'Contextly.ready("widgets");',
 		);
 		if ($this->isAdminEditPage()) {
 			$load['wp/editor'] = 'Contextly.PostEditor.loadData();';
