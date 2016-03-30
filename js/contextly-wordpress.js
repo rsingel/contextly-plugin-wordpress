@@ -8,6 +8,10 @@ Contextly.WPSettings = Contextly.createClass({
             return Contextly.wpdata.editor_url;
         },
 
+        getEditorPostId: function() {
+            return Contextly.wpdata.editor_post_id;
+        },
+
         getWPSettings: function () {
             return Contextly.wpdata.settings;
         },

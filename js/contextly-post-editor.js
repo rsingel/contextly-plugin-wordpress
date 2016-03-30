@@ -29,7 +29,7 @@
 				result.data = {
 					action: 'contextly_widgets_editor_request',
 					nonce: settings.getAjaxNonce(),
-					post_id: Contextly.MetadataManager.getPageId(),
+					post_id: settings.getEditorPostId(),
 					method: method,
 					params: params
 				};
@@ -295,7 +295,7 @@
 
 				setTimeout(this.proxy(function() {
 					this.isUpdateQueued = false;
-					Contextly.WPPageView.loadWidgets();
+					Contextly.ready('widgets');
 				}), 1);
 			},
 

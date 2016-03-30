@@ -367,13 +367,21 @@ class Contextly
 
 		$options = array(
 			'ajax_url'      => self::getAjaxUrl(),
-			'editor_url'    => self::getOverlayEditorUrl(),
 			'settings'      => ContextlySettings::getPluginOptions(),
 		);
+		if ( is_admin() ) {
+			$options += array(
+				'editor_url'    => self::getOverlayEditorUrl(),
+			);
+		}
 
 		if ( isset( $post ) && isset( $post->ID ) ) {
 			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
 			$options[ 'render_link_widgets' ] = !ContextlySettings::isPageDisplayDisabled( $post->ID );
+
+			if ( is_admin() ) {
+				$options[ 'editor_post_id' ] = $post->ID;
+			}
 		}
 
 		if ( $additional_params !== null ) {
