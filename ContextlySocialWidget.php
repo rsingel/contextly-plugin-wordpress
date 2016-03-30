@@ -33,7 +33,7 @@ class ContextlyWpSocialWidget extends WP_Widget {
 		$classes = Contextly::WIDGET_SOCIAL_CLASS . ' ' . Contextly::WIDGET_PLACEMENT_CLASS;
 
 		print $args['before_widget'];
-		print '<div class="' . esc_attr( $classes ) . '"></div>';
+		printf( '<div class="%s"></div>', esc_attr( $classes ) );
 		print $args['after_widget'];
 	}
 

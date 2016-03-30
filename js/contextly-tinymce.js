@@ -222,7 +222,7 @@
 				}
 
 				// Initialize button state depending on data loading state.
-				setButtonsState(Contextly.PostEditor.isLoaded);
+				setButtonsState(Contextly.PostEditor && Contextly.PostEditor.isLoaded);
 			};
 
 			var onEditorRemove = function() {
