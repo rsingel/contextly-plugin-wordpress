@@ -174,10 +174,10 @@ $(window)
             .find('.ctx-module-container')
             .html(message);
     })
-    .bind('contextlyPostUpdate', function(e, $context, pageId, gate) {
+    .bind('contextlyPostUpdate', function(e, $context, metadataProvider, gate) {
         var data = {
             action: 'contextly_publish_post',
-            page_id: pageId,
+            page_id: metadataProvider.getPageId(),
             contextly_nonce: Contextly.WPSettings.getAjaxNonce()
         };
 
