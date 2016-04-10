@@ -17,6 +17,11 @@
 				// Open contextly window for select text/link.
 				var selectedText = selection.getContent({format: 'text'});
 				Contextly.PostEditor.linkPopup(selectedText, function(link_url, link_title) {
+                    // Editor looses selection in IE 8-11 in case user does some input in the
+                    // overlay. TinyMCE 4 introduced FocusManager to solve it, but we must
+                    // focus the editor prior to any link actions for magic to happen.
+                    editor.focus();
+
 					var attrs = {
 						href: link_url,
 						title: link_title
@@ -40,7 +45,6 @@
 						editor.dom.setAttribs(e, attrs);
 					}
 					if (e && (e.childNodes.length != 1 || e.firstChild.nodeName != 'IMG')) {
-						editor.focus();
 						editor.selection.select(e);
 						editor.selection.collapse(0);
 					}
