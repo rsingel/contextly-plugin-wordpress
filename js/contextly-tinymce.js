@@ -14,6 +14,12 @@
 					return;
 				}
 
+                // TinyMCE 3 requires us to save & restore bookmark, as IE 8-11 looses
+                // selection, see comment below.
+                if (!tinymce.FocusManager) {
+                    var bookmark = selection.getBookmark();
+                }
+
 				// Open contextly window for select text/link.
 				var selectedText = selection.getContent({format: 'text'});
 				Contextly.PostEditor.linkPopup(selectedText, function(link_url, link_title) {
@@ -21,6 +27,11 @@
                     // overlay. TinyMCE 4 introduced FocusManager to solve it, but we must
                     // focus the editor prior to any link actions for magic to happen.
                     editor.focus();
+
+                    // For TinyMCE 3 we have to handle it manually and restore the bookmark.
+                    if (!tinymce.FocusManager) {
+                        editor.selection.moveToBookmark(bookmark);
+                    }
 
 					var attrs = {
 						href: link_url,
