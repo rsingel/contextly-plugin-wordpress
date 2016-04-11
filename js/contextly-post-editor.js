@@ -77,7 +77,46 @@
 				return this.data;
 			},
 
-			setSnippet: function (savedSnippet) {
+            /**
+             * Makes a safe clone of a variable created in an iframe.
+             *
+             * IE 8-11 doesn't allow to run methods on objects that have been created
+             * in an iframe that doesn't exist anymore. To solve the problem, we clone
+             * the object making sure no methods are copied.
+             */
+            cloneFrameObject: function(obj) {
+                var copy;
+                if (Contextly.Utils.isString(obj)) {
+                    // Make sure we return a primitive.
+                    copy = '' + obj;
+                }
+                else if (Contextly.Utils.isArray(obj)) {
+                    copy = [];
+                    for (var i = 0; i < obj.length; i++) {
+                        copy[i] = this.cloneFrameObject(obj[i]);
+                    }
+                }
+                else if (Contextly.Utils.isObject(obj)) {
+                    copy = {};
+                    for (var key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            if (Contextly.Utils.isFunction(obj[key])) {
+                                Contextly.Utils.error('Unable to clone function created in iframe');
+                            }
+
+                            copy[key] = this.cloneFrameObject(obj[key]);
+                        }
+                    }
+                }
+                else {
+                    copy = obj;
+                }
+                return copy;
+            },
+
+			setSnippet: function (savedFrameSnippet) {
+                var savedSnippet = this.cloneFrameObject(savedFrameSnippet);
+
 				this.data.snippet = savedSnippet;
 				this.updateAdminControls();
 				this.updateWidgetsPreview();
@@ -101,7 +140,9 @@
 				this.fireEvent('contextlyWidgetRemoved', 'snippet', id, removedSnippet);
 			},
 
-			setSidebar: function (savedSidebar) {
+			setSidebar: function (savedFrameSidebar) {
+                var savedSidebar = this.cloneFrameObject(savedFrameSidebar);
+
 				this.data.sidebars[savedSidebar.id] = savedSidebar;
 				this.fireEvent('contextlyWidgetUpdated', 'sidebar', savedSidebar.id, savedSidebar);
 			},
@@ -116,7 +157,10 @@
 				this.fireEvent('contextlyWidgetRemoved', 'sidebar', id, removedSidebar);
 			},
 
-			setAutoSidebar: function (savedAutoSidebar, removedId) {
+			setAutoSidebar: function (savedFrameAutoSidebar, frameRemovedId) {
+                var savedAutoSidebar = this.cloneFrameObject(savedFrameAutoSidebar);
+                var removedId = this.cloneFrameObject(frameRemovedId);
+
 				this.data.auto_sidebar = savedAutoSidebar;
 				this.fireEvent('contextlyWidgetUpdated', 'auto-sidebar', savedAutoSidebar.id || removedId, savedAutoSidebar);
 			},
