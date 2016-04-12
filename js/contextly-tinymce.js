@@ -6,6 +6,32 @@
 			this.url = url;
 			this.editor = editor;
 
+            function saveSelection() {
+                // TinyMCE 3 requires us to save & restore bookmark, as IE 8-11 looses
+                // selection.
+                // TinyMCE 4 doesn't do its job well and looses cursor position, this is
+                // critical to sidebar insertion.
+                // We don't do it all the time, because there is a bug in TinyMCE 4 & IE:
+                // https://github.com/tinymce/tinymce/issues/2027
+                if (!tinymce.FocusManager || editor.selection.isCollapsed()) {
+                    return editor.selection.getBookmark();
+                }
+
+                return null;
+            }
+
+            function restoreSelection(bookmark) {
+                // Editor looses selection in IE 8-11 in case user does some input in the
+                // overlay. TinyMCE 4 introduced FocusManager to solve it, but we must
+                // focus the editor prior to any link actions for magic to happen.
+                editor.focus();
+
+                // Restore the bookmark for other cases, if it was created by saveSelection().
+                if (bookmark) {
+                    editor.selection.moveToBookmark(bookmark);
+                }
+            }
+
 			// Register link command.
 			editor.addCommand('WP_Contextly_Link', function () {
 				var selection = editor.selection;
@@ -14,24 +40,11 @@
 					return;
 				}
 
-                // TinyMCE 3 requires us to save & restore bookmark, as IE 8-11 looses
-                // selection, see comment below.
-                if (!tinymce.FocusManager) {
-                    var bookmark = selection.getBookmark();
-                }
-
 				// Open contextly window for select text/link.
 				var selectedText = selection.getContent({format: 'text'});
+                var bookmark = saveSelection();
 				Contextly.PostEditor.linkPopup(selectedText, function(link_url, link_title) {
-                    // Editor looses selection in IE 8-11 in case user does some input in the
-                    // overlay. TinyMCE 4 introduced FocusManager to solve it, but we must
-                    // focus the editor prior to any link actions for magic to happen.
-                    editor.focus();
-
-                    // For TinyMCE 3 we have to handle it manually and restore the bookmark.
-                    if (!tinymce.FocusManager) {
-                        editor.selection.moveToBookmark(bookmark);
-                    }
+                    restoreSelection(bookmark);
 
 					var attrs = {
 						href: link_url,
@@ -81,7 +94,10 @@
 					}
 				}
 
-				Contextly.PostEditor.sidebarPopup(sidebar_id, sidebar_type, function (sidebar) {
+                var bookmark = saveSelection();
+                Contextly.PostEditor.sidebarPopup(sidebar_id, sidebar_type, function (sidebar) {
+                    restoreSelection(bookmark);
+
 					var token = Contextly.PostEditor.buildSidebarToken(sidebar);
 					editor.execCommand('mceInsertContent', false, token);
 				});
