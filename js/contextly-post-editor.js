@@ -16,7 +16,7 @@
 			},
 
 			buildAjaxConfig: function (method, addon) {
-				var settings = Contextly.Settings;
+				var settings = Contextly.WPSettings;
 
 				var result = $.extend(true, {
 					url     : settings.getAjaxUrl(),
@@ -29,7 +29,7 @@
 				result.data = {
 					action: 'contextly_widgets_editor_request',
 					nonce: settings.getAjaxNonce(),
-					post_id: Contextly.Settings.getPageId(),
+					post_id: settings.getEditorPostId(),
 					method: method,
 					params: params
 				};
@@ -77,7 +77,46 @@
 				return this.data;
 			},
 
-			setSnippet: function (savedSnippet) {
+            /**
+             * Makes a safe clone of a variable created in an iframe.
+             *
+             * IE 8-11 doesn't allow to run methods on objects that have been created
+             * in an iframe that doesn't exist anymore. To solve the problem, we clone
+             * the object making sure no methods are copied.
+             */
+            cloneFrameObject: function(obj) {
+                var copy;
+                if (Contextly.Utils.isString(obj)) {
+                    // Make sure we return a primitive.
+                    copy = '' + obj;
+                }
+                else if (Contextly.Utils.isArray(obj)) {
+                    copy = [];
+                    for (var i = 0; i < obj.length; i++) {
+                        copy[i] = this.cloneFrameObject(obj[i]);
+                    }
+                }
+                else if (Contextly.Utils.isObject(obj)) {
+                    copy = {};
+                    for (var key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            if (Contextly.Utils.isFunction(obj[key])) {
+                                Contextly.Utils.error('Unable to clone function created in iframe');
+                            }
+
+                            copy[key] = this.cloneFrameObject(obj[key]);
+                        }
+                    }
+                }
+                else {
+                    copy = obj;
+                }
+                return copy;
+            },
+
+			setSnippet: function (savedFrameSnippet) {
+                var savedSnippet = this.cloneFrameObject(savedFrameSnippet);
+
 				this.data.snippet = savedSnippet;
 				this.updateAdminControls();
 				this.updateWidgetsPreview();
@@ -101,7 +140,9 @@
 				this.fireEvent('contextlyWidgetRemoved', 'snippet', id, removedSnippet);
 			},
 
-			setSidebar: function (savedSidebar) {
+			setSidebar: function (savedFrameSidebar) {
+                var savedSidebar = this.cloneFrameObject(savedFrameSidebar);
+
 				this.data.sidebars[savedSidebar.id] = savedSidebar;
 				this.fireEvent('contextlyWidgetUpdated', 'sidebar', savedSidebar.id, savedSidebar);
 			},
@@ -116,7 +157,10 @@
 				this.fireEvent('contextlyWidgetRemoved', 'sidebar', id, removedSidebar);
 			},
 
-			setAutoSidebar: function (savedAutoSidebar, removedId) {
+			setAutoSidebar: function (savedFrameAutoSidebar, frameRemovedId) {
+                var savedAutoSidebar = this.cloneFrameObject(savedFrameAutoSidebar);
+                var removedId = this.cloneFrameObject(frameRemovedId);
+
 				this.data.auto_sidebar = savedAutoSidebar;
 				this.fireEvent('contextlyWidgetUpdated', 'auto-sidebar', savedAutoSidebar.id || removedId, savedAutoSidebar);
 			},
@@ -145,7 +189,7 @@
 			},
 
 			buildEditorUrl: function (type) {
-				var s = Contextly.Settings;
+				var s = Contextly.WPSettings;
 
 				var url = s.getEditorUrl();
 				if (url.indexOf('?') === -1) {
@@ -259,7 +303,7 @@
                 $('#publish')
 					.unbind('click.contextlyPublishConfirmation')
 					.bind('click.contextlyPublishConfirmation', this.proxy(function () {
-						var wp_settings = Contextly.Settings.getWPSettings();
+						var wp_settings = Contextly.WPSettings.getWPSettings();
 
 						if (wp_settings.publish_confirmation && wp_settings.publish_confirmation == "1" && this.data !== null) {
 							// Put snippet and sidebars together for a check.
@@ -295,7 +339,7 @@
 
 				setTimeout(this.proxy(function() {
 					this.isUpdateQueued = false;
-					Contextly.WPPageView.loadWidgets();
+					Contextly.ready('widgets');
 				}), 1);
 			},
 
@@ -431,7 +475,5 @@
 		}
 
 	});
-
-	Contextly.PostEditor.loadData();
 
 })( jQuery );
