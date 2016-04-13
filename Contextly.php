@@ -893,6 +893,24 @@ class Contextly
 		return sprintf( "<div class='%s'></div>", esc_attr( $classes ) );
 	}
 
+	public function buildMetadata( $post )
+	{
+		return array(
+			'title'                    => $this->escape( $post->post_title ),
+			'url'                      => get_permalink( $post->ID ),
+			'pub_date'                 => $post->post_date,
+			'mod_date'                 => $post->post_modified,
+			'type'                     => $post->post_type,
+			'post_id'                  => $post->ID,
+			'author_id'                => $this->escape( $post->post_author ),
+			'author_name'              => $this->getAuthorFullName( $post ),
+			'author_display_name'      => $this->getAuthorDisplayName( $post ),
+			'tags'                     => $this->getPostTagsArray( $post->ID ),
+			'categories'               => $this->getPostCategoriesArray( $post->ID ),
+			'image'                    => $this->getPostFeaturedImage( $post->ID )
+		);
+	}
+
 	/**
 	 *
 	 */
@@ -903,20 +921,7 @@ class Contextly
 			$json_data = null;
 
 			if ( isset( $post ) ) {
-				$json_data = array(
-					'title'                    => $this->escape( $post->post_title ),
-					'url'                      => get_permalink( $post->ID ),
-					'pub_date'                 => $post->post_date,
-					'mod_date'                 => $post->post_modified,
-					'type'                     => $post->post_type,
-					'post_id'                  => $post->ID,
-					'author_id'                => $this->escape( $post->post_author ),
-					'author_name'              => $this->getAuthorFullName( $post ),
-					'author_display_name'      => $this->getAuthorDisplayName( $post ),
-					'tags'                     => $this->getPostTagsArray( $post->ID ),
-					'categories'               => $this->getPostCategoriesArray( $post->ID ),
-					'image'                    => $this->getPostFeaturedImage( $post->ID )
-				);
+				$json_data = $this->buildMetadata( $post );
 			}
 
 			if ( $json_data !== null ) {?>
