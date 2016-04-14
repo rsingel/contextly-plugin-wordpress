@@ -272,14 +272,22 @@ class ContextlySettings {
 		if ( is_admin() && isset( $options["api_key"] ) && $options["api_key"] )
 		{
 			$contextly_object = new Contextly();
-			$contextly_object->loadContextlyAjaxJSScripts();
+			$contextly_object->insertKitScripts( array(
+				'foreign' => array(
+					'wp/widgets' => true,
+				),
+				'preload' => 'wp/widgets',
+			) );
 			?>
 			<script>
-				jQuery( document ).ready(
-					function () {
-						Contextly.SettingsAutoLogin.doLogin( <?php echo json_encode( $button_id ) ?>, <?php echo json_encode( $disabled_flag ) ?> );
-					}
-				);
+				<?php print $contextly_object->getWpDataJS(); ?>
+				Contextly.ready('load', 'wp/widgets', function() {
+					jQuery( document ).ready(
+						function () {
+							Contextly.WPSettingsAutoLogin.doLogin( <?php echo json_encode( $button_id ) ?>, <?php echo json_encode( $disabled_flag ) ?> );
+						}
+					);
+				});
 			</script>
 		<?php
 		}

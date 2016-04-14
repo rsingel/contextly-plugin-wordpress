@@ -30,8 +30,10 @@ class ContextlyWpSiderailWidget extends WP_Widget {
 			return;
 		}
 
+		$classes = Contextly::WIDGET_SIDERAIL_CLASS . ' ' . Contextly::WIDGET_PLACEMENT_CLASS;
+
 		print $args['before_widget'];
-		print '<div class="ctx-siderail-container"></div>';
+		printf( '<div class="%s"></div>', esc_attr( $classes ) );
 		print $args['after_widget'];
 	}
 
