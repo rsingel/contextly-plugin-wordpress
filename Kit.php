@@ -49,10 +49,43 @@ class ContextlyWpKit extends ContextlyKit {
 
 		$map['ApiTransport'] = 'ContextlyWpApiTransport';
 		$map['ApiSession'] = 'ContextlyWpSharedSession';
+		$map['AssetsPackage'] = 'ContextlyWpAssetsPackage';
 		$map['WidgetsEditor'] = 'ContextlyWpWidgetsEditor';
 		$map['WpOverlayPage'] = 'ContextlyWpOverlayPage';
 
 		return $map;
+	}
+
+	public function getLoaderName() {
+		// We only override the loader name in dev mode.
+		// See ContextlyWpAssetsPackage::getJs() for live mode.
+		if ($this->isDevMode() && CONTEXTLY_MOD !== false) {
+			return 'mods/' . CONTEXTLY_MOD;
+		}
+		else {
+			return 'loader';
+		}
+	}
+
+}
+
+class ContextlyWpAssetsPackage extends ContextlyKitAssetsPackage {
+
+	function getJs() {
+		$js = parent::getJs();
+
+		// Since we don't ship aggregated mod configs and can't use the modified loader
+		// package, have to replace the asset itself.
+		if ($this->kit->isLiveMode() && CONTEXTLY_MOD !== false) {
+			foreach ($js as &$name) {
+				if ($name === 'loader') {
+					$name = 'mods--' . CONTEXTLY_MOD;
+				}
+			}
+			unset($name);
+		}
+
+		return $js;
 	}
 
 }
@@ -153,6 +186,8 @@ class ContextlyWpSharedSession extends ContextlyKitBase implements ContextlyKitA
 
 /**
  * Handles the page required for the overlay dialogs.
+ *
+ * @property ContextlyWpKit $kit
  */
 class ContextlyWpOverlayPage extends ContextlyKitBase {
 
@@ -180,7 +215,7 @@ class ContextlyWpOverlayPage extends ContextlyKitBase {
 
 		print $this->kit->newOverlayDialog($type)
 				->render( array(
-					'loader' => CONTEXTLY_LOADER,
+					'loader' => $this->kit->getLoaderName(),
 				  'code' => $overrides,
 				) );
 		exit;
