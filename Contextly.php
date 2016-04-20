@@ -452,14 +452,14 @@ class Contextly
 	}
 
 	public function insertKitScripts($params = array()) {
+		$kit = ContextlyWpKit::getInstance();
 		$params += array(
 			'preload' => '',
 			'libraries' => array(),
 			'foreign' => array(),
 			'overrides' => true,
-			'loader' => CONTEXTLY_LOADER,
+			'loader' => $kit->getLoaderName(),
 		);
-		$kit = ContextlyWpKit::getInstance();
 
 		static $known_packages = array(
 			'wp/widgets' => array(
@@ -512,7 +512,7 @@ class Contextly
 		}
 
 		$manager = $kit->newAssetsManager();
-		$packages = $manager->getPackageWithDependencies(CONTEXTLY_LOADER);
+		$packages = $manager->getPackageWithDependencies($params['loader']);
 		$exposedTree = $manager->buildExposedTree(array_keys($packages));
 		$overrides = $kit->newOverridesManager( Contextly::getKitSettingsOverrides() )
 			->compile(TRUE);

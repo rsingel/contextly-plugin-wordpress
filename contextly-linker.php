@@ -21,8 +21,8 @@ define ( "CONTEXTLY_HTTPS", $is_https );
 define ( "CONTEXTLY_PLUGIN_FILE", __FILE__ );
 define ( "CONTEXTLY_PLUGIN_VERSION", '4.0' );
 define ( "CONTEXTLY_CDN_VERSION", 'branch' );
-if ( ! defined( "CONTEXTLY_LOADER" ) ) {
-	define ( "CONTEXTLY_LOADER", 'loader' );
+if ( ! defined( "CONTEXTLY_MOD" ) ) {
+	define ( "CONTEXTLY_MOD", false );
 }
 
 require_once ( "kit/server/Kit.php" );
