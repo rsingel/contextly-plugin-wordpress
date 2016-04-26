@@ -18,7 +18,7 @@ class Urls {
 	}
 
 	static public function getPluginCdnUrl( $file, $type = 'js' ) {
-		return 'https://rest.contextly.com/wp-plugin/' . CONTEXTLY_PLUGIN_VERSION . '/' . $type . '/' . $file;
+		return 'https://assets.contextly.com/wp-plugin/' . CONTEXTLY_PLUGIN_VERSION . '/' . $type . '/' . $file;
 	}
 
 }

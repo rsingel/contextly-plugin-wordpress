@@ -6,7 +6,6 @@
  * @method ContextlyWpApiTransport newApiTransport()
  * @method ContextlyWpSharedSession newApiSession()
  * @method ContextlyWpWidgetsEditor newWidgetsEditor()
- * @method ContextlyWpAssetsRenderer newWpAssetsRenderer()
  * @method ContextlyWpOverlayPage newWpOverlayPage()
  */
 class ContextlyWpKit extends ContextlyKit {
@@ -50,11 +49,43 @@ class ContextlyWpKit extends ContextlyKit {
 
 		$map['ApiTransport'] = 'ContextlyWpApiTransport';
 		$map['ApiSession'] = 'ContextlyWpSharedSession';
+		$map['AssetsPackage'] = 'ContextlyWpAssetsPackage';
 		$map['WidgetsEditor'] = 'ContextlyWpWidgetsEditor';
-		$map['WpAssetsRenderer'] = 'ContextlyWpAssetsRenderer';
 		$map['WpOverlayPage'] = 'ContextlyWpOverlayPage';
 
 		return $map;
+	}
+
+	public function getLoaderName() {
+		// We only override the loader name in dev mode.
+		// See ContextlyWpAssetsPackage::getJs() for live mode.
+		if ($this->isDevMode() && CONTEXTLY_MOD !== false) {
+			return 'mods/' . CONTEXTLY_MOD;
+		}
+		else {
+			return 'loader';
+		}
+	}
+
+}
+
+class ContextlyWpAssetsPackage extends ContextlyKitAssetsPackage {
+
+	function getJs() {
+		$js = parent::getJs();
+
+		// Since we don't ship aggregated mod configs and can't use the modified loader
+		// package, have to replace the asset itself.
+		if ($this->kit->isLiveMode() && CONTEXTLY_MOD !== false) {
+			foreach ($js as &$name) {
+				if ($name === 'loader') {
+					$name = 'mods--' . CONTEXTLY_MOD;
+				}
+			}
+			unset($name);
+		}
+
+		return $js;
 	}
 
 }
@@ -153,61 +184,10 @@ class ContextlyWpSharedSession extends ContextlyKitBase implements ContextlyKitA
 
 }
 
-class ContextlyWpAssetsRenderer extends ContextlyKitAssetsRenderer {
-
-	public function resourceHandle($key) {
-		return 'contextly-kit-' . str_replace( '/', '-', $key );
-	}
-
-	/**
-	 * Returns "version" parameter suitable for wp_enqueue_style() and
-	 * wp_enqueue_script().
-	 */
-	protected function getAssetsVersion() {
-		if ($this->kit->isCdnEnabled()) {
-			return NULL;
-		}
-		else {
-			return $this->kit->version();
-		}
-	}
-
-	public function renderCss() {
-		$version = $this->getAssetsVersion();
-		foreach ($this->assets->buildCssUrls() as $key => $url) {
-			wp_enqueue_style($this->resourceHandle( $key ), $url, array(), $version);
-		}
-	}
-
-	public function renderJs() {
-		$version = $this->getAssetsVersion();
-		foreach ($this->assets->buildJsUrls() as $key => $url) {
-			wp_enqueue_script( $this->resourceHandle( $key ), $url, array(), $version, true );
-		}
-	}
-
-	public function renderAll() {
-		$this->renderCss();
-		$this->renderJs();
-		$this->renderTpl();
-		$this->renderInlineJs();
-	}
-
-	public function renderTpl() {
-		// TODO: Implement for widgets rendering later.
-	}
-
-	public function renderInlineJs() {
-	}
-
-	public function getInlineJs() {
-		return $this->assets->buildInlineJs(TRUE);
-	}
-
-}
-
 /**
  * Handles the page required for the overlay dialogs.
+ *
+ * @property ContextlyWpKit $kit
  */
 class ContextlyWpOverlayPage extends ContextlyKitBase {
 
@@ -223,13 +203,21 @@ class ContextlyWpOverlayPage extends ContextlyKitBase {
 	}
 
 	public function display() {
+		global $contextly;
+
 		$type = $_GET['editor-type'];
 		if (!in_array( $type, array( 'link', 'snippet', 'sidebar' ), TRUE )) {
-			$GLOBALS['contextly']->return404();
+			$contextly->return404();
 		}
 
+		$overrides = $this->kit->newOverridesManager( $contextly->getKitSettingsOverrides() )
+			->compile();
+
 		print $this->kit->newOverlayDialog($type)
-				->render();
+				->render( array(
+					'loader' => $this->kit->getLoaderName(),
+				  'code' => $overrides,
+				) );
 		exit;
 	}
 
