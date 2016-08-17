@@ -27,11 +27,14 @@ class Contextly
 
 	const WIDGET_SNIPPET_CLASS = 'ctx-module-container ctx-clearfix';
   const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container ctx-clearfix';
+  const WIDGET_PERSONALIZATION_CLASS = 'ctx-personalization-container ctx-clearfix';
 	const WIDGET_SIDERAIL_CLASS = 'ctx-siderail-container ctx-clearfix';
 	const WIDGET_SOCIAL_CLASS = 'ctx-social-container ctx-clearfix';
 
 	const MAIN_MODULE_SHORT_CODE = 'contextly_main_module';
 	const SL_MODULE_SHORT_CODE = 'contextly_sl_button';
+	const PERSONALIZATION_MODULE_SHORT_CODE = 'contextly_personalization_button';
+	const ALL_BUTTONS_SHORT_CODE = 'contextly_all_buttons';
 	const SIDERAIL_MODULE_SHORT_CODE = 'contextly_siderail';
 	const SOCIAL_MODULE_SHORT_CODE = 'contextly_social';
 
@@ -210,6 +213,8 @@ class Contextly
         add_shortcode('contextly_sidebar', array( $this, 'prepareSidebar' ) );
         add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
         add_shortcode(self::SL_MODULE_SHORT_CODE, array( $this, 'prepareSLButtonShortCode' ) );
+        add_shortcode(self::PERSONALIZATION_MODULE_SHORT_CODE, array( $this, 'preparePersonalizationButtonShortCode' ) );
+        add_shortcode(self::ALL_BUTTONS_SHORT_CODE, array( $this, 'prepareAllButtonsShortCode' ) );
         add_shortcode(self::SIDERAIL_MODULE_SHORT_CODE, array( $this, 'prepareSiderailShortCode' ) );
         add_shortcode(self::SOCIAL_MODULE_SHORT_CODE, array( $this, 'prepareSocialShortCode' ) );
     }
@@ -331,7 +336,7 @@ class Contextly
         }
 		else
 		{
-			$prefix = "<div class='" . esc_attr( self::WIDGET_STORYLINE_CLASS . ' ' . self::DEFAULT_PLACEMENT_CLASS ) . "'></div>";
+			$prefix = "<div class='" . esc_attr( self::WIDGET_STORYLINE_CLASS . ' ' . self::WIDGET_PERSONALIZATION_CLASS . ' ' . self::DEFAULT_PLACEMENT_CLASS ) . "'></div>";
 			$prefix .= "<div class='" . esc_attr( self::WIDGET_SOCIAL_CLASS . ' ' . self::DEFAULT_PLACEMENT_CLASS ) . "'></div>";
 		}
 
@@ -874,6 +879,22 @@ class Contextly
 	 */
 	public function prepareSLButtonShortCode() {
 		$classes = self::WIDGET_STORYLINE_CLASS . ' ' . self::SHORTCODE_PLACEMENT_CLASS;
+		return sprintf( "<div class='%s'></div>", esc_attr( $classes ) );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function preparePersonalizationButtonShortCode() {
+		$classes = self::WIDGET_PERSONALIZATION_CLASS . ' ' . self::SHORTCODE_PLACEMENT_CLASS;
+		return sprintf( "<div class='%s'></div>", esc_attr( $classes ) );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function prepareAllButtonsShortCode() {
+		$classes = self::WIDGET_PERSONALIZATION_CLASS . ' ' . self::WIDGET_STORYLINE_CLASS . ' ' . self::SHORTCODE_PLACEMENT_CLASS;
 		return sprintf( "<div class='%s'></div>", esc_attr( $classes ) );
 	}
 
