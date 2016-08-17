@@ -72,8 +72,8 @@ class Contextly
 			} else {
 				add_action( 'the_content', array( $this, 'addSnippetWidgetToContent' ) );
 				add_action( 'wp_head', array( $this, 'insertMetatags' ), 0 );
-				add_action( 'wp_head', array( $this, 'insertHeadScripts' ), 10 );
-				add_action( 'wp_footer', array( $this, 'insertFooterScripts' ), 0 );
+				add_action( CONTEXTLY_HEAD_SCRIPT_ACTION, array( $this, 'insertHeadScripts' ), CONTEXTLY_HEAD_SCRIPT_WEIGHT );
+				add_action( CONTEXTLY_FOOTER_SCRIPT_ACTION, array( $this, 'insertFooterScripts' ), CONTEXTLY_FOOTER_SCRIPT_WEIGHT );
 			}
 
 			add_action( 'init', array( $this, 'initDefault' ), 1 );

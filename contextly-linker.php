@@ -24,6 +24,18 @@ define ( "CONTEXTLY_CDN_VERSION", 'branch' );
 if ( ! defined( "CONTEXTLY_MOD" ) ) {
 	define ( "CONTEXTLY_MOD", false );
 }
+if ( ! defined( "CONTEXTLY_HEAD_SCRIPT_ACTION" ) ) {
+	define ( "CONTEXTLY_HEAD_SCRIPT_ACTION", 'wp_head' );
+}
+if ( ! defined( "CONTEXTLY_HEAD_SCRIPT_WEIGHT" ) ) {
+	define ( "CONTEXTLY_HEAD_SCRIPT_WEIGHT", 10 );
+}
+if ( ! defined( "CONTEXTLY_FOOTER_SCRIPT_ACTION" ) ) {
+	define ( "CONTEXTLY_FOOTER_SCRIPT_ACTION", 'wp_footer' );
+}
+if ( ! defined( "CONTEXTLY_FOOTER_SCRIPT_WEIGHT" ) ) {
+	define ( "CONTEXTLY_FOOTER_SCRIPT_WEIGHT", 0 );
+}
 
 require_once ( "kit/server/Kit.php" );
 ContextlyKit::registerAutoload();
