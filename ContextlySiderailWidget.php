@@ -30,10 +30,14 @@ class ContextlyWpSiderailWidget extends WP_Widget {
 			return;
 		}
 
-		$classes = Contextly::WIDGET_SIDERAIL_CLASS . ' ' . Contextly::WIDGET_PLACEMENT_CLASS;
+		$classes = array(
+			Contextly::WIDGET_SIDERAIL_CLASS,
+			Contextly::WIDGET_PLACEMENT_CLASS,
+			Contextly::CLEARFIX_CLASS,
+		);
 
 		print $args['before_widget'];
-		printf( '<div class="%s"></div>', esc_attr( $classes ) );
+		printf( '<div class="%s"></div>', Contextly::escapeClasses( $classes ) );
 		print $args['after_widget'];
 	}
 
