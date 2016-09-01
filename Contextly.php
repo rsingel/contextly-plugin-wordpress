@@ -542,7 +542,7 @@ class Contextly
 			$ready[] = array('libraries', $params['libraries']);
 		}
 		if (!empty($params['preload'])) {
-			$ready[] = array('load', $params['preload'], 'function() {}');
+			$ready[] = array('load', $params['preload']);
 		}
 
 		$manager = $kit->newAssetsManager();
