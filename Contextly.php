@@ -74,6 +74,10 @@ class Contextly
 				add_action( 'wp_head', array( $this, 'insertMetatags' ), 0 );
 				add_action( CONTEXTLY_HEAD_SCRIPT_ACTION, array( $this, 'insertHeadScripts' ), CONTEXTLY_HEAD_SCRIPT_WEIGHT );
 				add_action( CONTEXTLY_FOOTER_SCRIPT_ACTION, array( $this, 'insertFooterScripts' ), CONTEXTLY_FOOTER_SCRIPT_WEIGHT );
+
+				// Add auto-placement anchor with priority a bit higher than default 10 to run after
+				// wpautop() that causes the anchor to end up inside a P tag.
+				add_action( 'the_content', array( $this, 'addArticleRootAnchorToContent' ), 11 );
 			}
 
 			add_action( 'init', array( $this, 'initDefault' ), 1 );
@@ -249,6 +253,14 @@ class Contextly
     public function addSnippetWidgetToContent( $content ) {
         return $content . $this->getSnippetWidget();
     }
+
+	  public function addArticleRootAnchorToContent( $content ) {
+				return $content . $this->getArticleRootAnchor();
+		}
+
+	  public function getArticleRootAnchor() {
+				return '<span class="ctx-article-root"></span>';
+		}
 
     public function registerMceButtons( $buttons ) {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
