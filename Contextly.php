@@ -398,8 +398,7 @@ class Contextly
 		}
 
 		if ( isset( $post ) && isset( $post->ID ) ) {
-			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
-			$options[ 'render_link_widgets' ] = !ContextlySettings::isPageDisplayDisabled( $post->ID );
+			$options[ 'posts' ][ $post->ID ] = self::getPostJsData( $post );
 
 			if ( is_admin() ) {
 				$options[ 'editor_post_id' ] = $post->ID;
@@ -411,6 +410,13 @@ class Contextly
 		}
 
 		return $options;
+	}
+
+	public static function getPostJsData( $post )
+	{
+		$data = array();
+		$data[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
+		return $data;
 	}
 
 	public static function getKitSettingsOverrides()

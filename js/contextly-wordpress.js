@@ -20,11 +20,24 @@ Contextly.WPSettings = Contextly.createClass({
             return Contextly.wpdata.ajax_url;
         },
 
-        getAjaxNonce: function () {
-            if ( Contextly.wpdata.ajax_nonce ) {
-                return Contextly.wpdata.ajax_nonce;
+        getPostNonce: function ( postId ) {
+            if ( Contextly.wpdata.posts && Contextly.wpdata.posts[postId] ) {
+                return Contextly.wpdata.posts[postId].ajax_nonce;
             }
             return null;
+        },
+
+        /**
+         * Adds WP post related data to the storage.
+         *
+         * Must be called on new posts loaded through AJAX.
+         *
+         * @param postId
+         * @param data
+         */
+        setPostData: function( postId, data ) {
+            Contextly.wpdata.posts = Contextly.wpdata.posts || {};
+            Contextly.wpdata.posts[postId] = data;
         }
     }
 
@@ -209,10 +222,11 @@ $(window)
             .html(message);
     })
     .bind('contextlyPostUpdate', function(e, $context, metadataProvider, gate) {
+        var pageId = metadataProvider.getPageId();
         var data = {
             action: 'contextly_publish_post',
-            page_id: metadataProvider.getPageId(),
-            contextly_nonce: Contextly.WPSettings.getAjaxNonce()
+            page_id: pageId,
+            contextly_nonce: Contextly.WPSettings.getPostNonce(pageId)
         };
 
         var runUpdate = gate.addReason();
