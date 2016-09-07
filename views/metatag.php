@@ -1,0 +1,1 @@
+<meta name='contextly-page' id='contextly-page' content='<?php print $this->escape(json_encode($metadata)); ?>' />

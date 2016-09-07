@@ -26,10 +26,11 @@
 
 				var params = result.data || {};
 
+				var postId = settings.getEditorPostId();
 				result.data = {
 					action: 'contextly_widgets_editor_request',
-					nonce: settings.getAjaxNonce(),
-					post_id: settings.getEditorPostId(),
+					nonce: settings.getPostNonce(postId),
+					post_id: postId,
 					method: method,
 					params: params
 				};
