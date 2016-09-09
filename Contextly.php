@@ -190,7 +190,6 @@ class Contextly
 
     public function publishBoxControlSavePostHook( $post_id ) {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
-        if ( !current_user_can( 'edit_page', $post_id ) ) return false;
         if ( empty( $post_id ) ) return false;
 
 	    if ( isset( $_POST['contextly_display_widgets'] ) ) {
