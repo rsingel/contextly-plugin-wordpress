@@ -6,7 +6,7 @@ You don't need any custom code for the most simple use case, it's usually enough
 
 For simple customization, e.g. changing priority of the Contextly scripts or moving them from header to the footer, it may also worth checking the [Constants](constants.md) documentation page.
 
-[Reference of actions and filters](actions.md) provides you a more detailed information about all the hooks mentioned in this document.
+[Reference of actions and filters](hooks.md) provides you a more detailed information about all the hooks mentioned in this document.
 
 ## Basic requirements
 
@@ -19,7 +19,7 @@ It is required for 2 reasons:
  * Our indexing bot reads it.
  * In case the metadata is not explicitly provided to `Contextly.ready(..)` JS call, it is extracted from the page header also.
 
-Relevant [actions and filters](actions.md):
+Relevant [actions and filters](hooks.md):
 
  * `contextly_print_metatags`
  * `contextly_post_metatag_options`
@@ -29,7 +29,7 @@ Relevant [actions and filters](actions.md):
 
 The scripts sets up `Contextly` global and asynchronous `Contextly.ready()` function. It must be presented on the page only once before any launch scripts.
 
-Relevant [actions and filters](actions.md):
+Relevant [actions and filters](hooks.md):
 
  * `contextly_print_init_script`
  * `contextly_init_script_options`
@@ -38,7 +38,7 @@ Relevant [actions and filters](actions.md):
 
 The script starts a request to the Contextly servers to retrieve all the data and start displaying the modules as soon as the data arrives. By default the metadata is extracted from the page header and modules are rendered on the whole page. Any of launch scripts must be executed after jQuery has been loaded.
 
-Relevant [actions and filters](actions.md):
+Relevant [actions and filters](hooks.md):
 
  * `contextly_print_launch_script`
  * `contextly_launch_script_options`
@@ -59,7 +59,7 @@ $params = array(
 do_action( 'contextly_print_launch_script', $post, $params );
 ```
 
-Relevant [actions and filters](actions.md):
+Relevant [actions and filters](hooks.md):
 
  * `contextly_print_launch_script`
 
@@ -121,7 +121,7 @@ $removal_script = ob_get_clean();
 
 Then transfer `$removal_script` contents to the client side and execute it right before the visitor navigates from the post page.
 
-Relevant [actions and filters](actions.md):
+Relevant [actions and filters](hooks.md):
 
  * `contextly_print_init_script`
  * `contextly_init_script_options`
