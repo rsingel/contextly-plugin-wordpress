@@ -99,6 +99,7 @@ class Contextly
 			add_action( 'contextly_print_metatags', array( $this, 'printPostMetatags' ), 10, 2 );
 			add_action( 'contextly_print_init_script', array( $this, 'printInitScript' ) );
 			add_action( 'contextly_print_launch_script', array( $this, 'printLaunchScript' ), 10, 2 );
+			add_action( 'contextly_print_removal_script', array( $this, 'printRemovalScript' ), 10, 2 );
 
 			add_filter( 'contextly_post_metadata', array( $this, 'fillPostMetadata' ), 10, 2 );
 			add_filter( 'contextly_post_js_data', array( $this, 'fillPostJsData' ), 10, 2 );
@@ -696,6 +697,29 @@ class Contextly
 		}
 		$this->render( 'launch-script', array(
 			'load' => $load,
+		) );
+	}
+
+	public function printRemovalScript( $post, $params = array() )
+	{
+		$params += array(
+			'enabled' => TRUE,
+			'editor' => FALSE,
+			'context' => NULL,
+		);
+		$params = apply_filters( 'contextly_removal_script_options', $params, $post );
+		if ( empty( $params['enabled'] ) ) {
+			return;
+		}
+
+		$options = array();
+		if (isset($params['context'])) {
+			$options['context'] = $params['context'];
+		}
+
+		$this->render( 'removal-script', array(
+			'package_name' => 'wp/widgets',
+			'options' => $options,
 		) );
 	}
 
