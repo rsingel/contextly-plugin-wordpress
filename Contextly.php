@@ -82,6 +82,10 @@ class Contextly
 				if ( ! empty( $footer_action ) ) {
 					add_action( $footer_action, array( $this, 'insertFooterScripts' ), CONTEXTLY_FOOTER_SCRIPT_WEIGHT );
 				}
+
+				// Add auto-placement anchor with priority a bit higher than default 10 to run after
+				// wpautop() that causes the anchor to end up inside a P tag.
+				add_action( 'the_content', array( $this, 'addArticleRootAnchorToContent' ), 11 );
 			}
 
 			add_action( 'init', array( $this, 'initDefault' ), 1 );
@@ -205,7 +209,6 @@ class Contextly
 
     public function publishBoxControlSavePostHook( $post_id ) {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
-        if ( !current_user_can( 'edit_page', $post_id ) ) return false;
         if ( empty( $post_id ) ) return false;
 
 	    if ( isset( $_POST['contextly_display_widgets'] ) ) {
@@ -268,6 +271,14 @@ class Contextly
     public function addSnippetWidgetToContent( $content ) {
         return $content . $this->getSnippetWidget();
     }
+
+	  public function addArticleRootAnchorToContent( $content ) {
+				return $content . $this->getArticleRootAnchor();
+		}
+
+	  public function getArticleRootAnchor() {
+				return '<span class="ctx-article-root"></span>';
+		}
 
     public function registerMceButtons( $buttons ) {
         $options = get_option( self::ADVANCED_SETTINGS_KEY );
@@ -557,7 +568,7 @@ class Contextly
 			$ready[] = array('libraries', $params['libraries']);
 		}
 		if (!empty($params['preload'])) {
-			$ready[] = array('load', $params['preload'], 'function() {}');
+			$ready[] = array('load', $params['preload']);
 		}
 
 		$manager = $kit->newAssetsManager();
