@@ -72,8 +72,16 @@ class Contextly
 			} else {
 				add_action( 'the_content', array( $this, 'addSnippetWidgetToContent' ) );
 				add_action( 'wp_head', array( $this, 'insertMetatags' ), 0 );
-				add_action( CONTEXTLY_HEAD_SCRIPT_ACTION, array( $this, 'insertHeadScripts' ), CONTEXTLY_HEAD_SCRIPT_WEIGHT );
-				add_action( CONTEXTLY_FOOTER_SCRIPT_ACTION, array( $this, 'insertFooterScripts' ), CONTEXTLY_FOOTER_SCRIPT_WEIGHT );
+
+				$head_action = CONTEXTLY_HEAD_SCRIPT_ACTION;
+				if ( ! empty( $head_action ) ) {
+					add_action( $head_action, array( $this, 'insertHeadScripts' ), CONTEXTLY_HEAD_SCRIPT_WEIGHT );
+				}
+
+				$footer_action = CONTEXTLY_FOOTER_SCRIPT_ACTION;
+				if ( ! empty( $footer_action ) ) {
+					add_action( $footer_action, array( $this, 'insertFooterScripts' ), CONTEXTLY_FOOTER_SCRIPT_WEIGHT );
+				}
 
 				// Add auto-placement anchor with priority a bit higher than default 10 to run after
 				// wpautop() that causes the anchor to end up inside a P tag.
@@ -88,6 +96,17 @@ class Contextly
 			add_action( 'save_post', array( $this, 'publishPost' ), 10, 2 );
 
 			$this->attachAjaxActions();
+			$this->exposePublicActions();
+		}
+
+	  public function exposePublicActions() {
+			add_action( 'contextly_print_metatags', array( $this, 'printPostMetatags' ), 10, 2 );
+			add_action( 'contextly_print_init_script', array( $this, 'printInitScript' ) );
+			add_action( 'contextly_print_launch_script', array( $this, 'printLaunchScript' ), 10, 2 );
+			add_action( 'contextly_print_removal_script', array( $this, 'printRemovalScript' ), 10, 2 );
+
+			add_filter( 'contextly_post_metadata', array( $this, 'fillPostMetadata' ), 10, 2 );
+			add_filter( 'contextly_post_js_data', array( $this, 'fillPostJsData' ), 10, 2 );
 		}
 
 	private function attachAjaxActions() {
@@ -400,19 +419,15 @@ class Contextly
 
 		$options = array(
 			'ajax_url'      => self::getAjaxUrl(),
-			'settings'      => ContextlySettings::getPluginOptions(),
 		);
+
 		if ( is_admin() ) {
 			$options += array(
 				'editor_url'    => self::getOverlayEditorUrl(),
+				'settings'      => ContextlySettings::getPluginOptions(),
 			);
-		}
 
-		if ( isset( $post ) && isset( $post->ID ) ) {
-			$options[ 'ajax_nonce' ] = wp_create_nonce( "contextly-post-{$post->ID}" );
-			$options[ 'render_link_widgets' ] = !ContextlySettings::isPageDisplayDisabled( $post->ID );
-
-			if ( is_admin() ) {
+			if ( isset( $post->ID ) ) {
 				$options[ 'editor_post_id' ] = $post->ID;
 			}
 		}
@@ -422,6 +437,17 @@ class Contextly
 		}
 
 		return $options;
+	}
+
+	public static function fillPostJsData( $data, $post )
+	{
+		if (!empty($post->ID)) {
+			$data += array(
+				'ajax_nonce' => wp_create_nonce( "contextly-post-{$post->ID}" ),
+			);
+		}
+
+		return $data;
 	}
 
 	public static function getKitSettingsOverrides()
@@ -491,6 +517,7 @@ class Contextly
 			'libraries' => array(),
 			'foreign' => array(),
 			'overrides' => true,
+			'wpdata' => true,
 			'loader' => $kit->getLoaderName(),
 		);
 
@@ -547,42 +574,71 @@ class Contextly
 		$manager = $kit->newAssetsManager();
 		$packages = $manager->getPackageWithDependencies($params['loader']);
 		$exposedTree = $manager->buildExposedTree(array_keys($packages));
-		$overrides = $kit->newOverridesManager( Contextly::getKitSettingsOverrides() )
-			->compile(TRUE);
+		$code = '';
+		if (!empty($params['overrides'])) {
+			$code .= $kit->newOverridesManager( Contextly::getKitSettingsOverrides() )
+				->compile(TRUE);
+		}
+		if (!empty($params['wpdata'])) {
+			$code .= $kit->newJsExporter( $this->getContextlyJSObject() )
+				->export('wpdata', TRUE);
+		}
 		print $kit->newAssetsAsyncRenderer($packages, $exposedTree)
 			->renderAll( array(
 				'ready' => $ready,
-				'code' => $overrides,
+				'code' => $code,
 			) );
 	}
 
 	/**
 	 * Inserts async loader into the page head.
-	 *
-	 * Important! This function must be called AFTER jQuery and other scripts are
-	 * inserted into the page DOM, because otherwise the auto-detection may give
-	 * inconsistent results and either our or system library will be loaded depending
-	 * on the network delays. According to the tests, the only code always executed
-	 * before the loader is the synchronous JS inside the same <script> tag.
 	 */
 	public function insertHeadScripts()
 	{
-		if ( ! $this->isLoadWidget() ) {
+		$params = array(
+			// Give some context, to let filters know who initiated the call.
+			'source' => 'contextly-linker',
+
+			'enabled' => $this->isLoadWidget(),
+			'preload' => TRUE,
+			'editor' => $this->isAdminEditPage(),
+		);
+
+		do_action( 'contextly_print_init_script', $params );
+	}
+
+	/**
+	 * Prints initialization script.
+	 *
+	 * Important! This function must be called AFTER jQuery and other scripts are
+	 * inserted into the page DOM, because otherwise it causes race condition.
+	 * According to the tests, the only code always executed before the loader
+	 * is the synchronous JS inside the same <script> tag.
+	 */
+	public function printInitScript( $params = array() )
+	{
+		$params += array(
+			'preload' => TRUE,
+			'enabled' => TRUE,
+			'editor' => FALSE,
+		);
+		$params = apply_filters( 'contextly_init_script_options', $params );
+		if ( empty( $params['enabled'] ) ) {
 			return;
 		}
 
-		$preload = 'wp/widgets';
+		$package_name = 'wp/widgets';
 		$packages = array(
-			$preload => true,
+			$package_name => true,
 		);
-		if ( $this->isAdminEditPage() ) {
-			$preload = 'wp/editor';
-			$packages[$preload] = true;
+		if ( ! empty( $params['editor'] ) ) {
+			$package_name = 'wp/editor';
+			$packages[$package_name] = true;
 		}
 
 		$this->insertKitScripts( array(
 			'foreign' => $packages,
-			'preload' => $preload,
+			'preload' => !empty( $params['preload'] ) ? $package_name : NULL,
 			'overrides' => true,
 			'libraries' => array(
 				'jquery' => false,
@@ -591,24 +647,128 @@ class Contextly
 	}
 
 	public function insertFooterScripts() {
-		if ( ! $this->isLoadWidget() ) {
+		global $post;
+		$params = array(
+			// Give some context, to let filters know who initiated the call.
+			'source' => 'contextly-linker',
+
+			'enabled' => $this->isLoadWidget(),
+			'editor' => $this->isAdminEditPage(),
+			'metadata' => FALSE,
+			'context' => NULL,
+		);
+
+		do_action( 'contextly_print_launch_script', $post, $params );
+	}
+
+	public function printLaunchScript( $post, $params = array() ) {
+		$params += array(
+			'enabled' => TRUE,
+			'editor' => FALSE,
+			'context' => NULL,
+			'metadata' => FALSE,
+		);
+		$params = apply_filters( 'contextly_launch_script_options', $params, $post );
+		if ( empty( $params['enabled'] ) ) {
 			return;
 		}
 
+		$widgets_options = array();
+		if (!empty($params['metadata'])) {
+			$widgets_options['metadata'] = apply_filters( 'contextly_post_metadata', array(), $post );
+		}
+		if (isset($params['context'])) {
+			$widgets_options['context'] = $params['context'];
+		}
+
+		$widgets_args = array('widgets');
+		if ( ! empty( $widgets_options ) ) {
+			$widgets_args[] = $widgets_options;
+		}
+
+		$post_data_args = array();
+		if (!empty($post)) {
+			$post_data = apply_filters( 'contextly_post_js_data', array(), $post );
+			if (!empty($post_data)) {
+				$post_data_args = array($post->ID, $post_data);
+			}
+		}
+
+		$widgets_code = '';
+		if (!empty($post_data_args)) {
+			$widgets_code .= 'Contextly.WPSettings.setPostData(' . $this->encodeArgsForScript( $post_data_args ) . ');';
+		}
+		$widgets_code .= 'Contextly.ready(' . $this->encodeArgsForScript( $widgets_args ) . ');';
+
 		$load = array(
-			'wp/widgets' => 'Contextly.ready("widgets");',
+			'wp/widgets' => $widgets_code,
 		);
-		if ($this->isAdminEditPage()) {
+		if ( ! empty( $params['editor'] ) ) {
 			$load['wp/editor'] = 'Contextly.PostEditor.loadData();';
 		}
-		$this->render( 'footer-scripts', array(
-			'data' => $this->getWpDataJS(),
+		$this->render( 'launch-script', array(
 			'load' => $load,
 		) );
 	}
 
-	public function getWpDataJS() {
-		return 'Contextly.wpdata=' . json_encode( Contextly::getContextlyJSObject() ) . ';';
+	public function printRemovalScript( $post, $params = array() )
+	{
+		$params += array(
+			'enabled' => TRUE,
+			'editor' => FALSE,
+			'context' => NULL,
+		);
+		$params = apply_filters( 'contextly_removal_script_options', $params, $post );
+		if ( empty( $params['enabled'] ) ) {
+			return;
+		}
+
+		$options = array();
+		if (isset($params['context'])) {
+			$options['context'] = $params['context'];
+		}
+
+		$this->render( 'removal-script', array(
+			'package_name' => 'wp/widgets',
+			'options' => $options,
+		) );
+	}
+
+	/**
+	 * Encodes passed data as JSON safe for SCRIPT tag.
+	 *
+	 * PHP 5.3 is required.
+	 *
+	 * @param $data
+	 *
+	 * @return mixed|string|void
+	 *
+	 * @throws Exception
+	 */
+	public static function encodeJsonForScript( $data )
+	{
+		static $php_checked = FALSE;
+		if (!$php_checked) {
+			if ( ! version_compare( PHP_VERSION, "5.3", '>=' ) ) {
+				throw new Exception('PHP 5.3 is required to output inline metadata');
+			}
+			$php_checked = TRUE;
+		}
+
+		return json_encode( $data, JSON_HEX_TAG & JSON_HEX_AMP & JSON_HEX_APOS & JSON_HEX_QUOT );
+	}
+
+	/**
+	 * JSON-encodes passed array so that it may be printed as JS function arguments in SCRIPT tag.
+	 *
+	 * @param array $args
+	 *
+	 * @return string
+	 */
+	public static function encodeArgsForScript( $args )
+	{
+		$args = array_map( array('Contextly', 'encodeJsonForScript'), $args );
+		return implode(',', $args);
 	}
 
 	public function render( $view_name, $vars )
@@ -967,22 +1127,26 @@ class Contextly
 		return sprintf( "<div class='%s'></div>", $this->escapeClasses( $classes ) );
 	}
 
-	public function buildMetadata( $post )
+	public function fillPostMetadata( $metadata, $post )
 	{
-		return array(
-			'title'                    => $this->escape( $post->post_title ),
-			'url'                      => get_permalink( $post->ID ),
-			'pub_date'                 => $post->post_date,
-			'mod_date'                 => $post->post_modified,
-			'type'                     => $post->post_type,
-			'post_id'                  => $post->ID,
-			'author_id'                => $this->escape( $post->post_author ),
-			'author_name'              => $this->getAuthorFullName( $post ),
-			'author_display_name'      => $this->getAuthorDisplayName( $post ),
-			'tags'                     => $this->getPostTagsArray( $post->ID ),
-			'categories'               => $this->getPostCategoriesArray( $post->ID ),
-			'image'                    => $this->getPostFeaturedImage( $post->ID )
-		);
+		if (!empty($post->ID)) {
+			$metadata += array(
+				'title'                    => $this->escape( $post->post_title ),
+				'url'                      => get_permalink( $post->ID ),
+				'pub_date'                 => $post->post_date,
+				'mod_date'                 => $post->post_modified,
+				'type'                     => $post->post_type,
+				'post_id'                  => $post->ID,
+				'author_id'                => $this->escape( $post->post_author ),
+				'author_name'              => $this->getAuthorFullName( $post ),
+				'author_display_name'      => $this->getAuthorDisplayName( $post ),
+				'tags'                     => $this->getPostTagsArray( $post->ID ),
+				'categories'               => $this->getPostCategoriesArray( $post->ID ),
+				'image'                    => $this->getPostFeaturedImage( $post->ID )
+			);
+		}
+
+		return $metadata;
 	}
 
 	/**
@@ -990,19 +1154,37 @@ class Contextly
 	 */
 	public function insertMetatags()
 	{
-		if ( $this->isLoadWidget() ) {
-			global $post;
-			$json_data = null;
+		global $post;
+		$params = array(
+			// Give some context, to let filters know who initiated the call.
+			'source' => 'contextly-linker',
 
-			if ( isset( $post ) ) {
-				$json_data = $this->buildMetadata( $post );
-			}
+			'enabled' => $this->isLoadWidget(),
+			'editor' => $this->isAdminEditPage(),
+		);
 
-			if ( $json_data !== null ) {?>
-<meta name='contextly-page' id='contextly-page' content='<?php echo json_encode( $json_data ); ?>' />
-<?php
-			}
+		do_action( 'contextly_print_metatags', $post, $params );
+	}
+
+	public function printPostMetatags( $post, $params = array() )
+	{
+		$params += array(
+			'enabled' => TRUE,
+		);
+		$params = apply_filters( 'contextly_post_metatag_options', $params, $post );
+
+		if (empty($params['enabled'])) {
+			return;
 		}
+
+		$metadata = apply_filters( 'contextly_post_metadata', array(), $post );
+		if (empty($metadata)) {
+			return;
+		}
+
+		$this->render('metatag', array(
+			'metadata' => $metadata,
+		));
 	}
 
 	/**
