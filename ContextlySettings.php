@@ -280,7 +280,6 @@ class ContextlySettings {
 			) );
 			?>
 			<script>
-				<?php print $contextly_object->getWpDataJS(); ?>
 				Contextly.ready('load', 'wp/widgets', function() {
 					jQuery( document ).ready(
 						function () {

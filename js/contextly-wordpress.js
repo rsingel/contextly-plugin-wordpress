@@ -20,11 +20,24 @@ Contextly.WPSettings = Contextly.createClass({
             return Contextly.wpdata.ajax_url;
         },
 
-        getAjaxNonce: function () {
-            if ( Contextly.wpdata.ajax_nonce ) {
-                return Contextly.wpdata.ajax_nonce;
+        getPostNonce: function ( postId ) {
+            if ( Contextly.wpdata.posts && Contextly.wpdata.posts[postId] ) {
+                return Contextly.wpdata.posts[postId].ajax_nonce;
             }
             return null;
+        },
+
+        /**
+         * Adds WP post related data to the storage.
+         *
+         * Must be called on new posts loaded through AJAX.
+         *
+         * @param postId
+         * @param data
+         */
+        setPostData: function( postId, data ) {
+            Contextly.wpdata.posts = Contextly.wpdata.posts || {};
+            Contextly.wpdata.posts[postId] = data;
         }
     }
 
@@ -107,23 +120,43 @@ $(window)
         // shortcode, WP widget, default placement. And we should only display
         // the most preferred ones hiding the rest.
         var specs = {
-            'ctx-module-container': [
-                'ctx_shortcode_placement',
-                'ctx_default_placement'
-            ],
-            'ctx-subscribe-container': [
-                'ctx_shortcode_placement',
-                'ctx_default_placement'
-            ],
-            'ctx-siderail-container': [
-                'ctx_shortcode_placement',
-                'ctx_widget_placement'
-            ],
-            'ctx-social-container': [
-                'ctx_shortcode_placement',
-                'ctx_widget_placement',
-                'ctx_default_placement'
-            ]
+            'ctx-module-container': {
+                placements: [
+                    'ctx_shortcode_placement',
+                    'ctx_default_placement'
+                ]
+            },
+            'ctx-subscribe-container': {
+                placements: [
+                    'ctx_shortcode_placement',
+                    'ctx_default_placement'
+                ],
+                sharesWith: [
+                    'ctx-personalization-container'
+                ]
+            },
+            'ctx-personalization-container': {
+                placements: [
+                    'ctx_shortcode_placement',
+                    'ctx_default_placement'
+                ],
+                sharesWith: [
+                    'ctx-subscribe-container'
+                ]
+            },
+            'ctx-siderail-container': {
+                placements: [
+                    'ctx_shortcode_placement',
+                    'ctx_widget_placement'
+                ]
+            },
+            'ctx-social-container': {
+                placements: [
+                    'ctx_shortcode_placement',
+                    'ctx_widget_placement',
+                    'ctx_default_placement'
+                ]
+            }
         };
         $.each(specs, function(containerClass) {
             var $containers = $context.find('.' + containerClass);
@@ -131,16 +164,26 @@ $(window)
                 return;
             }
 
-            $.each(this, function() {
+            var spec = this;
+            $.each(spec.placements, function() {
                 var preferred = '.' + this;
                 var $preferred = $containers.filter(preferred);
                 if (!$preferred.length) {
                     return;
                 }
 
-                $containers
-                    .not(preferred)
-                    .remove();
+                // Some containers may be shared by different modules and every of
+                // these modules should go to the most preferred container. The less
+                // preferred containers should always loose the container class and,
+                // if they aren't shared, be removed from the page.
+                var $remove = $containers.not(preferred);
+                $remove.removeClass(containerClass);
+                if (spec.sharesWith) {
+                    $remove = $remove.not('.' + spec.sharesWith.join(', .'))
+                }
+                $remove.remove();
+
+                // Found the preferred one, stop iterating on the placements.
                 return false;
             });
         });
@@ -179,10 +222,11 @@ $(window)
             .html(message);
     })
     .bind('contextlyPostUpdate', function(e, $context, metadataProvider, gate) {
+        var pageId = metadataProvider.getPageId();
         var data = {
             action: 'contextly_publish_post',
-            page_id: metadataProvider.getPageId(),
-            contextly_nonce: Contextly.WPSettings.getAjaxNonce()
+            page_id: pageId,
+            contextly_nonce: Contextly.WPSettings.getPostNonce(pageId)
         };
 
         var runUpdate = gate.addReason();
