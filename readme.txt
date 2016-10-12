@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, related posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, optimization, most popular, sidebar, siderail,
 Requires at least: 2.0.2
-Tested up to: 4.5
+Tested up to: 4.6.1
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -126,6 +126,15 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+
+= 4.1 =
+
+- Support for new Personalization module
+- Allows auto-placement of Auto-Sidebars in every post
+- Support for Tweets rendered with web components in Social Reactions module
+- Support for sharing async WebFontLoader with the website
+- Minor fixes and UI improvements
 
 
 = 4.0 =
