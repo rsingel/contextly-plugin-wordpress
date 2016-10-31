@@ -373,7 +373,6 @@ class Contextly
 			$classes = array(
 				self::WIDGET_STORYLINE_CLASS,
 				self::WIDGET_PERSONALIZATION_CLASS,
-				self::WIDGET_CHANNEL_CLASS,
 				self::DEFAULT_PLACEMENT_CLASS,
 				self::CLEARFIX_CLASS,
 			);

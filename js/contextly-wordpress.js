@@ -148,8 +148,7 @@ $(window)
             },
             'ctx-channel-container': {
                 placements: [
-                    'ctx_shortcode_placement',
-                    'ctx_default_placement'
+                    'ctx_shortcode_placement'
                 ],
                 sharesWith: [
                     'ctx-subscribe-container',
