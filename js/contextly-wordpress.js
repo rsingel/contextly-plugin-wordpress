@@ -132,7 +132,8 @@ $(window)
                     'ctx_default_placement'
                 ],
                 sharesWith: [
-                    'ctx-personalization-container'
+                    'ctx-personalization-container',
+                    'ctx-channel-container'
                 ]
             },
             'ctx-personalization-container': {
@@ -141,7 +142,18 @@ $(window)
                     'ctx_default_placement'
                 ],
                 sharesWith: [
-                    'ctx-subscribe-container'
+                    'ctx-subscribe-container',
+                    'ctx-channel-container'
+                ]
+            },
+            'ctx-channel-container': {
+                placements: [
+                    'ctx_shortcode_placement',
+                    'ctx_default_placement'
+                ],
+                sharesWith: [
+                    'ctx-subscribe-container',
+                    'ctx-personalization-container'
                 ]
             },
             'ctx-siderail-container': {
