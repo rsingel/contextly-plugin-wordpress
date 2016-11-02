@@ -128,6 +128,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 == Changelog ==
 
 
+= 4.2 =
+
+- Added support for new Channel button
+
+
 = 4.1 =
 
 - Support for new Personalization module
