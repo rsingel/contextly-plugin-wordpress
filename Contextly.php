@@ -29,12 +29,14 @@ class Contextly
 	const WIDGET_SNIPPET_CLASS = 'ctx-module-container';
   const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container';
   const WIDGET_PERSONALIZATION_CLASS = 'ctx-personalization-container';
+  const WIDGET_CHANNEL_CLASS = 'ctx-channel-container';
 	const WIDGET_SIDERAIL_CLASS = 'ctx-siderail-container';
 	const WIDGET_SOCIAL_CLASS = 'ctx-social-container';
 
 	const MAIN_MODULE_SHORT_CODE = 'contextly_main_module';
 	const SL_MODULE_SHORT_CODE = 'contextly_sl_button';
 	const PERSONALIZATION_MODULE_SHORT_CODE = 'contextly_personalization_button';
+	const CHANNEL_MODULE_SHORT_CODE = 'contextly_channel_button';
 	const ALL_BUTTONS_SHORT_CODE = 'contextly_all_buttons';
 	const SIDERAIL_MODULE_SHORT_CODE = 'contextly_siderail';
 	const SOCIAL_MODULE_SHORT_CODE = 'contextly_social';
@@ -237,6 +239,7 @@ class Contextly
         add_shortcode('contextly_auto_sidebar', array( $this, 'prepareAutoSidebar' ) );
         add_shortcode(self::SL_MODULE_SHORT_CODE, array( $this, 'prepareSLButtonShortCode' ) );
         add_shortcode(self::PERSONALIZATION_MODULE_SHORT_CODE, array( $this, 'preparePersonalizationButtonShortCode' ) );
+        add_shortcode(self::CHANNEL_MODULE_SHORT_CODE, array( $this, 'prepareChannelButtonShortCode' ) );
         add_shortcode(self::ALL_BUTTONS_SHORT_CODE, array( $this, 'prepareAllButtonsShortCode' ) );
         add_shortcode(self::SIDERAIL_MODULE_SHORT_CODE, array( $this, 'prepareSiderailShortCode' ) );
         add_shortcode(self::SOCIAL_MODULE_SHORT_CODE, array( $this, 'prepareSocialShortCode' ) );
@@ -1093,10 +1096,23 @@ class Contextly
 	/**
 	 * @return string
 	 */
+	public function prepareChannelButtonShortCode() {
+		$classes = array(
+			self::WIDGET_CHANNEL_CLASS,
+			self::SHORTCODE_PLACEMENT_CLASS,
+			self::CLEARFIX_CLASS,
+		);
+		return sprintf( "<div class='%s'></div>", $this->escapeClasses( $classes ) );
+	}
+
+	/**
+	 * @return string
+	 */
 	public function prepareAllButtonsShortCode() {
 		$classes = array(
 			self::WIDGET_PERSONALIZATION_CLASS,
 			self::WIDGET_STORYLINE_CLASS,
+			self::WIDGET_CHANNEL_CLASS,
 			self::SHORTCODE_PLACEMENT_CLASS,
 			self::CLEARFIX_CLASS,
 		);
