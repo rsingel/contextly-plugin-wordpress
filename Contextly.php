@@ -280,7 +280,7 @@ class Contextly
 		}
 
 	  public function getArticleRootAnchor() {
-				return '<span class="ctx-article-root"></span>';
+				return '<span class="ctx-article-root"><!-- --></span>';
 		}
 
     public function registerMceButtons( $buttons ) {
@@ -461,7 +461,7 @@ class Contextly
 			'https' => CONTEXTLY_HTTPS,
 			'client' => array(
 				'client' => 'wp',
-        'version' => CONTEXTLY_PLUGIN_VERSION,
+				'version' => CONTEXTLY_PLUGIN_VERSION,
 			),
 		);
 
