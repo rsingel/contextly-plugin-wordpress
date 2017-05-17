@@ -27,9 +27,9 @@ class Contextly
 
 	const CLEARFIX_CLASS = 'ctx-clearfix';
 	const WIDGET_SNIPPET_CLASS = 'ctx-module-container';
-  const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container';
-  const WIDGET_PERSONALIZATION_CLASS = 'ctx-personalization-container';
-  const WIDGET_CHANNEL_CLASS = 'ctx-channel-container';
+    const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container';
+    const WIDGET_PERSONALIZATION_CLASS = 'ctx-personalization-container';
+    const WIDGET_CHANNEL_CLASS = 'ctx-channel-container';
 	const WIDGET_SIDERAIL_CLASS = 'ctx-siderail-container';
 	const WIDGET_SOCIAL_CLASS = 'ctx-social-container';
 

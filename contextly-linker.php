@@ -7,6 +7,10 @@ Author: Contextly
 Version: 4.2.1
 */
 
+if (!defined('ABSPATH')) {
+	die();
+}
+
 if ( ! defined( "CONTEXTLY_MODE" ) ) {
 	define ( "CONTEXTLY_MODE", 'live' );
 }
