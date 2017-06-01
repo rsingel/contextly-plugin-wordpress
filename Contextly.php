@@ -27,9 +27,9 @@ class Contextly
 
 	const CLEARFIX_CLASS = 'ctx-clearfix';
 	const WIDGET_SNIPPET_CLASS = 'ctx-module-container';
-  const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container';
-  const WIDGET_PERSONALIZATION_CLASS = 'ctx-personalization-container';
-  const WIDGET_CHANNEL_CLASS = 'ctx-channel-container';
+    const WIDGET_STORYLINE_CLASS = 'ctx-subscribe-container';
+    const WIDGET_PERSONALIZATION_CLASS = 'ctx-personalization-container';
+    const WIDGET_CHANNEL_CLASS = 'ctx-channel-container';
 	const WIDGET_SIDERAIL_CLASS = 'ctx-siderail-container';
 	const WIDGET_SOCIAL_CLASS = 'ctx-social-container';
 
@@ -928,7 +928,7 @@ class Contextly
 	private function getPostFeaturedImage( $post_id )
 	{
 		if (has_post_thumbnail( $post_id ) ) {
-			list($url) = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'single-post-thumbnail' );
+			list($url) = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'post-thumbnail' );
 
 			if ( $url )	{
 				return $url;
