@@ -1,17 +1,16 @@
 === Contextly Recommends ===
 Contributors: rsingel, andrewcgg
-Tags: related links, SEO, promotion, related, custom posts, related posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, optimization, most popular, sidebar, siderail,
+Tags: related links, SEO, promotion, related, custom posts, related posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, optimization, most popular, sidebar, siderail
 Requires at least: 2.0.2
-Tested up to: 4.8
+Tested up to: 4.8.2
 Stable tag: trunk
 License: GPLv2 or later
 
 Build your audience with content recommendations that are related, trending, evergreen and personalized. Editorial control and machine learning.
 
-
 == Description ==
 
-[Contextly](http://contextly.com "Contextly") helps you build a loyal audience through engagement tools that keep readers reading. Contextly does far more than just related post recommendations. We also get readers to explore your site by identifying your evergreen posts (think oldies, but goodies) and your most popular posts, as well as personalizing recommendations for return readers.
+[Contextly](http://contextly.com "Contextly") helps you build a loyal audience through engagement tools that keep readers reading. Contextly does far more than just related post recommendations. We also get readers to explore your site by identifying your evergreen posts (think oldies, but goodies) and your most popular posts. For larger sites, we can also personalize recommendations for return readers.
 
 We do this through a combination of powerful machine learning algorithms that run on *our* servers, so we never slow you down. Plus, Contextly has powerful curation tools, including in-story sidebars, ways to choose related links, and ways to drive readers to things that are important to your site or business.
 
@@ -27,14 +26,13 @@ We also boost your SEO by making it dead simple to add links in the body of your
 
 We can also recommend videos and products. Additionally, you can choose to highlight events, promotions, or an email list with promotional links.
 
-
 = Features =
 
-* Multiple Recommendation Modules - Contextly shows off recommendations in a number of modules: the Main Module at the end of a post; a Siderail that shows up next to posts (what WordPress calls the sidebar) and In-Story Sidebars that you can create and place in your posts.
+* Multiple Recommendation Modules - Contextly shows off recommendations in a number of modules: the Main Module at the end of a post; a Siderail that shows up next to posts (what WordPress calls the sidebar) and In-Story Sidebars that show up in the body of your posts (curated or fully automatic).
 
 * Related Content - Our related content is *actually* related, and we rely on much more than just tags and categories. Related content gives your readers an opportunity to dive deeply into a topic.
 
-* Personalized Content - Personalized content is tailored to the interests of an individual reader. As we learn more about a reader's interests, we show them more of the content they like.
+* Personalized Content - Personalized content is tailored to the interests of an individual reader. As we learn more about a reader's interests, we show them more of the content they like. This feature only works for larger sites. Contact us to learn more.
 
 * Popular Content - Readers are often interested in your most recent and best content. That is why we make this content available on every page, because every page is the new home page.
 
@@ -44,11 +42,11 @@ We can also recommend videos and products. Additionally, you can choose to highl
 
 * Product Recommendations - Do you sell products? We can integrate products as well. They will be displayed when they are most actionable and relevant. Contact us at info@contextly.com to learn more.
 
-* Editorial Control/Curation - We believe high-quality content is the result of a happy marriage between humans and smart algorithms. Our curation tools allow writers and editors to control what related posts show up on a story. We then use that info to make better recommendations for the entire site.
+* Editorial Control/Curation - We believe high-quality content is the result of a happy marriage between humans and smart algorithms. Our curation tools allow writers and editors to control what related posts show up on a story.
 
-* SEO - The best SEO comes from links in the body of stories linking to previous content. We make it super-easy for writers to add these links without having to leave the post to go search in Google.
+* SEO - The best SEO comes from links in the body of stories linking to previous content. We make it super-easy for writers to add these links without having to leave the WordPress editor to go search in Google.
 
-* Promotional Links - If you have a newsletter or an event you'd like to promote, Contextly makes it dead-simple to include that in the recommendation module. That puts promotions where users will actually see them.
+* Promotional Links - If you have a newsletter or an event you'd like to promote, Contextly makes it dead-simple to include that in a recommendation module. That puts promotions where users will actually see them.
 
 * Responsive Designs - We have 4 sets of designs to choose from, and they all look great on mobile and desktops. You can customize their look and feel with a few clicks, while advanced users can customize the CSS.
 
@@ -58,8 +56,9 @@ We can also recommend videos and products. Additionally, you can choose to highl
 
 * Custom Post Types - If you use custom post types, you can choose which ones to show Contextly recommendations on, and which to keep out.
 
+* Channel Notifications - This lets readers subscribe to 5 to 15 topics from your site, and be notified when you publish a new story in that topic. Topics don’t have to correspond to tags or categories. Readers are also given the opportunity to subscribe to your main email list. (Enterprise-only)
 
-
+* FollowUp Notifications - FollowUps helps readers who don’t want to miss an update to a story by notifying them when a closely related story has been published. This is done completely algorithmically and does not rely on tags or categories. (Enterprise-only)
 
 == Installation ==
 
@@ -82,7 +81,7 @@ Contextly offers a free, no credit-card-required 21-day trial. After the free tr
 
 = Why does Contextly charge? =
 
-Contextly is a premium service, using state-of-the-art technology and high-powered servers to provide the best recommendations possible. Unlike many related post plugins, we don't sell reader information, insert third-party tracking or show ads. Being supported by our users means we can continue to build the most powerful reader engagement service for WordPress.
+Contextly is a premium service, using state-of-the-art technology and high-powered servers to provide the best recommendations possible. Unlike many related post plugins, we don't sell reader information or show ads. Being supported by our users means we can continue to build the most powerful reader engagement service for WordPress.
 
 = Will Contextly slow down my site? =
 
@@ -114,7 +113,6 @@ You give us an RSS feed of content you want us to show off. This can be  a categ
 
 If you just want to choose some items, copy and paste your main RSS feed into the Custom box. Then go to Promo Links and add links you want us to show off and choose the Custom section. Be creative, but there's one limitation: you can't sell this spot to advertisers unless you arrange that with us first. That's because there are certain safeguards against fraud that need to be in place for online ads. Putting external ads in that section without permission is grounds for termination of service.
 
-
 == Screenshots ==
 
 1. Here's how the Contextly main module looks underneath a post.
@@ -126,6 +124,14 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+
+= 5.0.0 =
+
+- Significant performance update
+- Removes reliance on easyXDM
+- Consolidates CSS files
+- Reduces number of JavaScript calls to Contextly servers
 
 
 = 4.2.1 =
@@ -384,8 +390,6 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 - Added a setting in WP to allow sites to place the related links widget in spots other than at the very end of a post
 - Small technical changes to better work with Wordpress API
-
-
 
 
 == About Contextly ==
