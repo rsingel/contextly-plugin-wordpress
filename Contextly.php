@@ -822,7 +822,6 @@ class Contextly
 					'post_author_display_name'      => $this->getAuthorDisplayName( $post ),
 					'post_tags'                     => $this->getPostTagsArray( $post->ID ),
 					'post_categories'               => $this->getPostCategoriesArray( $post->ID ),
-					'post_images'                   => $this->getPostImagesArray( $post->ID )
 				);
 
 				// Lets publish this post in our DB
@@ -919,6 +918,12 @@ class Contextly
 		}
 
 		return $images_array;
+	}
+
+	private function getPostFeaturedImageAlt( $post_id )
+	{
+		$image_alt = get_post_meta( get_post_thumbnail_id( $post_id ), '_wp_attachment_image_alt', true);
+		return $image_alt;
 	}
 
 	/**
@@ -1158,8 +1163,13 @@ class Contextly
 				'author_display_name'      => $this->getAuthorDisplayName( $post ),
 				'tags'                     => $this->getPostTagsArray( $post->ID ),
 				'categories'               => $this->getPostCategoriesArray( $post->ID ),
-				'image'                    => $this->getPostFeaturedImage( $post->ID )
+				'image'                    => $this->getPostFeaturedImage( $post->ID ),
 			);
+
+			$image_alt = $this->getPostFeaturedImageAlt( $post->ID );
+			if ($image_alt) {
+				$metadata['image_alt'] = $image_alt;
+			}
 		}
 
 		return $metadata;
