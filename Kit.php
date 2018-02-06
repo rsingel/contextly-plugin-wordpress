@@ -32,7 +32,7 @@ class ContextlyWpKit extends ContextlyKit {
 			$config->mode = CONTEXTLY_MODE;
 		}
 
-		$options = Contextly::getAPIClientOptions();
+		$options = Contextly::get_api_client_options();
 		$config->appID = $options['appID'];
 		$config->appSecret = $options['appSecret'];
 		$config->cdn = CONTEXTLY_CDN_VERSION;
@@ -210,7 +210,7 @@ class ContextlyWpOverlayPage extends ContextlyKitBase {
 			$contextly->return404();
 		}
 
-		$overrides = $this->kit->newOverridesManager( $contextly->getKitSettingsOverrides() )
+		$overrides = $this->kit->newOverridesManager( $contextly->get_kit_settings_overrides() )
 			->compile();
 
 		print $this->kit->newOverlayDialog($type)
@@ -261,7 +261,7 @@ class ContextlyWpWidgetsEditor extends ContextlyKitWidgetsEditor {
 			}
 			$GLOBALS['contextly']->return500( $message );
 		} catch (Exception $e) {
-			Contextly::fireAPIEvent( 'handleAjaxAction', print_r( $e, true ) );
+			Contextly::fire_api_event( 'handleAjaxAction', print_r( $e, true ) );
 
 			if (CONTEXTLY_MODE !== Urls::MODE_LIVE) {
 				$message = (string) $e;
