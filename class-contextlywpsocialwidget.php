@@ -1,7 +1,6 @@
 <?php
 /**
- * Plugin Name: Contextly
- * Plugin URI: https://contextly.com
+ * Social widget.
  *
  * @package Contextly Related Links
  * @link https://contextly.com
@@ -32,7 +31,7 @@ class ContextlyWpSocialWidget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
-		if ( ! $GLOBALS['contextly']->isLoadWidget() ) {
+		if ( ! $GLOBALS['contextly']->is_load_widget() ) {
 			return;
 		}
 

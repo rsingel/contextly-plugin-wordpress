@@ -1,7 +1,6 @@
 <?php
 /**
- * Plugin Name: Contextly
- * Plugin URI: https://contextly.com
+ * Main class.
  *
  * @package Contextly Related Links
  * @link https://contextly.com
@@ -450,7 +449,7 @@ class Contextly {
 			$html .= '</span></div>';
 
 			// Wrap with div, so post editor could render button here.
-			$html = '<div class="ctx_preview_admin_controls">' . esc_html( $html ) . '</div>';
+			$html = '<div class="ctx_preview_admin_controls">' . $html . '</div>'; // WPCS: XSS ok.
 		}
 
 		return $html;
@@ -512,7 +511,7 @@ class Contextly {
 			self::CLEARFIX_CLASS,
 		);
 
-		return $prefix . "<div class='" . esc_attr( $this->join_classes( $classes ) ) . "'>" . esc_html( $default_html_code ) . '</div>' . esc_html( $additional_html_controls );
+		return $prefix . "<div class='" . esc_attr( $this->join_classes( $classes ) ) . "'>" . $default_html_code . '</div>' . $additional_html_controls; // WPCS: XSS ok.
 	}
 
 	/**

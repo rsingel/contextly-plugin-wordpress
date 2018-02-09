@@ -1,7 +1,6 @@
 <?php
 /**
- * Plugin Name: Contextly
- * Plugin URI: https://contextly.com
+ * Urls class.
  *
  * @package Contextly Related Links
  * @link https://contextly.com
