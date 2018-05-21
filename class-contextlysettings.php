@@ -293,10 +293,10 @@ class ContextlySettings {
 						<input type="button" value="The Big Settings Button" class="button button-hero button-primary" style="font-size: 18px;" id="contextly-settings-btn" onclick="open_contextly_settings();" />
 					</p><br />
 
-				<?php
+					<?php
 						$this->display_settings_autoload_stuff( 'contextly-settings-btn', true );
 }
-				?>
+?>
 
 				<form action="options.php" method="post">
 					<?php settings_fields( $tab ); ?>
@@ -345,11 +345,11 @@ class ContextlySettings {
 								?>
 							</span>
 						</div>
-					<?php
+						<?php
 							$this->display_settings_autoload_stuff( 'contextly-api-btn' );
 } elseif ( self::ADVANCED_SETTINGS_KEY === $tab ) {
-?>
-<?php submit_button( null, 'primary' ); ?>
+	?>
+	<?php submit_button( null, 'primary' ); ?>
 					<?php } ?>
 				</form>
 
@@ -386,7 +386,7 @@ class ContextlySettings {
 					);
 				});
 			</script>
-		<?php
+			<?php
 		}
 	}
 

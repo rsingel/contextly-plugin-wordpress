@@ -41,9 +41,9 @@ class ContextlyWpSiderailWidget extends WP_Widget {
 			Contextly::CLEARFIX_CLASS,
 		);
 
-		echo $args['before_widget'];
+		echo $args['before_widget']; // WPCS: XSS ok.
 		printf( '<div class="%s"></div>', esc_attr( Contextly::join_classes( $classes ) ) );
-		echo $args['after_widget'];
+		echo $args['after_widget']; // WPCS: XSS ok.
 	}
 
 	/**
