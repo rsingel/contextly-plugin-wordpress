@@ -33,7 +33,7 @@ class Urls {
 	 * @return string asset URL in Contextly CDN
 	 */
 	public static function get_plugin_cdn_url( $file, $type = 'js' ) {
-		return 'https://assets.contextly.com/wp-plugin/' . CONTEXTLY_PLUGIN_VERSION . '/' . $type . '/' . $file;
+		return 'https://assets.context.ly/wp-plugin/' . CONTEXTLY_PLUGIN_VERSION . '/' . $type . '/' . $file;
 	}
 
 }
