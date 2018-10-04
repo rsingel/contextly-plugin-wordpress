@@ -1035,7 +1035,7 @@ class Contextly {
 		$post_tags  = get_the_tags( $post_id );
 		if ( is_array( $post_tags ) && count( $post_tags ) > 0 ) {
 			foreach ( array_slice( $post_tags, 0, $tags_num_limit ) as $post_tag ) {
-				$tags_array[] = esc¡_html( $post_tag->name );
+				$tags_array[] = esc_html( $post_tag->name );
 			}
 		}
 
