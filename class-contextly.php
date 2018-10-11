@@ -1518,5 +1518,14 @@ class Contextly {
 		}
 	}
 
+	/**
+	 * Escape string properly for metadata JSON.
+	 *
+	 * @param $text string input text
+	 * @return string escaped tring
+	 */
+	private function escape($text) {
+		return htmlspecialchars($text, ENT_QUOTES & ~ENT_COMPAT, 'utf-8');
+	}
 
 }

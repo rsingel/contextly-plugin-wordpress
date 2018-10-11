@@ -125,6 +125,10 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 5.0.3 =
+
+- Minor bug fixes
+
 
 = 5.0.2 =
 
