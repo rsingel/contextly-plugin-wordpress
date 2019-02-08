@@ -104,15 +104,15 @@ class Contextly {
 			add_action( 'the_content', array( $this, 'add_article_root_anchor_to_content' ), 11 );
 		}
 
-			add_action( 'init', array( $this, 'init_default' ), 1 );
-			add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'load_scripts' ) );
-			add_action( 'widgets_init', array( $this, 'register_widgets' ) );
-			add_action( 'publish_post', array( $this, 'publish_post' ), 10, 2 );
-			add_action( 'save_post', array( $this, 'publish_post' ), 10, 2 );
+		add_action( 'init', array( $this, 'init_default' ), 1 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'load_scripts' ) );
+		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
+		add_action( 'publish_post', array( $this, 'publish_post' ), 10, 2 );
+		add_action( 'save_post', array( $this, 'publish_post' ), 10, 2 );
 
-			$this->attach_ajax_actions();
-			$this->expose_public_actions();
+		$this->attach_ajax_actions();
+		$this->expose_public_actions();
 	}
 
 	/**
@@ -312,6 +312,41 @@ class Contextly {
 		add_shortcode( self::ALL_BUTTONS_SHORT_CODE, array( $this, 'prepare_all_buttons_short_code' ) );
 		add_shortcode( self::SIDERAIL_MODULE_SHORT_CODE, array( $this, 'prepare_siderail_short_code' ) );
 		add_shortcode( self::SOCIAL_MODULE_SHORT_CODE, array( $this, 'prepare_social_short_code' ) );
+
+		if ( function_exists( 'register_block_type' ) ) {
+			$this->register_sidebar_block();
+			$this->register_auto_sidebar_block();
+		}
+	}
+
+	public function register_sidebar_block() {
+		$block_js = 'js/contextly-sidebar-block.js';
+
+		wp_enqueue_script(
+			'contextly-sidebar-block',
+			plugins_url( $block_js, __FILE__ ),
+			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'underscore', 'wp-edit-post' )
+		);
+
+		register_block_type( 'contextly-related-links-block/contextly-sidebar', array(
+			'editor_script' => 'contextly-sidebar-block',
+			'render_callback' => array( $this, 'prepare_sidebar' ),
+		) );
+	}
+
+	public function register_auto_sidebar_block() {
+		$block_js = 'js/contextly-auto-sidebar-block.js';
+
+		wp_enqueue_script(
+			'contextly-auto-sidebar-block',
+			plugins_url( $block_js, __FILE__ ),
+			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'underscore', 'wp-edit-post' )
+		);
+
+		register_block_type( 'contextly-related-links-block/contextly-auto-sidebar', array(
+			'editor_script' => 'contextly-auto-sidebar-block',
+			'render_callback' => array( $this, 'prepare_auto_sidebar' ),
+		) );
 	}
 
 	/**
@@ -994,7 +1029,7 @@ class Contextly {
 					'post_modified'            => $post->post_modified,
 					'post_status'              => $post->post_status,
 					'post_type'                => $post->post_type,
-					'post_content'             => $post->post_content,
+					'post_content'             => wp_strip_all_tags($post->post_content),
 					'url'                      => get_permalink( $post->ID ),
 					'author_id'                => $post->post_author,
 					'post_author'              => $this->get_author_full_name( $post ),

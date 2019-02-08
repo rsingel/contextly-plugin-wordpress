@@ -13,6 +13,8 @@
 				this.isUpdateQueued = false;
 				this.data = null;
 				this.error = false;
+
+				this.loadingMessage = 'Loading...';
 			},
 
 			buildAjaxConfig: function (method, addon) {
@@ -472,9 +474,43 @@
 				}
 
 				return ( typeof instance.isHidden === 'function' ) && !instance.isHidden();
-			}
+			},
+
+			contextlyPluginPostStatusInfo: function () {
+                var PluginPostStatusInfo = window.wp.editPost.PluginPostStatusInfo;
+
+                return wp.element.createElement(
+                    PluginPostStatusInfo,
+                    {
+                        className: 'contextly-plugin-post-status-info',
+                    },
+                    wp.element.createElement('label', null, 'Contextly:'),
+                    wp.element.createElement('div',
+                        {
+                            className: 'button action button-primary ctx_snippets_editor_btn alignright',
+                        },
+                        Contextly.PostEditor.loadingMessage
+                    )
+                )
+            },
+
 		}
 
+
 	});
+
+	////////////////////////////////////////////////////////////////
+    var registerPlugin = wp.plugins.registerPlugin;
+    registerPlugin( 'contextly-related-links', {
+        render: Contextly.PostEditor.contextlyPluginPostStatusInfo
+    } );
+
+    // watch for status update
+    $("body").on('DOMSubtreeModified', ".edit-post-sidebar", function() {
+        var contextly_button = $(this).find('.ctx_snippets_editor_btn');
+		if (contextly_button.text() == Contextly.PostEditor.loadingMessage) {
+            Contextly.PostEditor.loadData();
+		}
+    });
 
 })( jQuery );

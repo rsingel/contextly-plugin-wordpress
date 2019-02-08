@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, related posts, sidebars, similar, recommendations, see also, related stories, evergreen, personalization, popular, trending, video recommendations, product recommendations, curation, optimization, most popular, sidebar, siderail
 Requires at least: 2.0.2
-Tested up to: 4.9.8
+Tested up to: 5.0.3
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -124,6 +124,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+= 5.0.4 =
+
+- Adapted the Contextly Sidebars to the new Gutenberg editor. This allows writers to add Auto-Sidebars and manually curated sidebars to posts as a content block. You can find these under Widgets
+
 
 = 5.0.3 =
 
