@@ -1,4 +1,4 @@
-( function( blocks, editor, i18n, element, components ) {
+( function( blocks, element, components ) {
     var el = element.createElement;
     var RawHTML = components.RawHTML;
 
@@ -68,8 +68,6 @@
 
 } )(
     window.wp.blocks,
-    window.wp.editor,
-    window.wp.i18n,
     window.wp.element,
     window.wp.components
 );
