@@ -125,6 +125,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 5.0.5 =
+
+- Small update to fix compatibility issue with the Yoast SEO plugin for sites using the Classic Editor
+
+
 = 5.0.4 =
 
 - Adapted the Contextly Sidebars to the new Gutenberg editor. This allows writers to add Auto-Sidebars and manually curated sidebars to posts as a content block. You can find these under Widgets
