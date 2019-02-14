@@ -59,7 +59,9 @@
 				this.isLoaded = true;
 				this.data = data;
 
-				this.updateAdminControls();
+                this.attachPluginPostStatusInfo();
+
+                this.updateAdminControls();
 				this.attachPublishConfirmation();
 				this.fireEvent('contextlyDataLoaded');
 			},
@@ -494,25 +496,26 @@
                 )
             },
 
+            attachPluginPostStatusInfo: function () {
+                if (wp.plugins && typeof wp.plugins.registerPlugin !== "undefined") {
+                    var registerPlugin = wp.plugins.registerPlugin;
+                    registerPlugin( 'contextly-related-links', {
+                        render: Contextly.PostEditor.contextlyPluginPostStatusInfo
+                    } );
+
+                    // watch for status update
+                    $("body").on('DOMSubtreeModified', ".edit-post-sidebar", function() {
+                        var contextly_button = $(this).find('.ctx_snippets_editor_btn');
+                        if (contextly_button.length && contextly_button.text() == Contextly.PostEditor.loadingMessage) {
+                            Contextly.PostEditor.loadData();
+                        }
+                    });
+                }
+			}
+
 		}
 
 
 	});
-
-	////////////////////////////////////////////////////////////////
-	if (wp.plugins && typeof wp.plugins.registerPlugin !== "undefined") {
-        var registerPlugin = wp.plugins.registerPlugin;
-        registerPlugin( 'contextly-related-links', {
-            render: Contextly.PostEditor.contextlyPluginPostStatusInfo
-        } );
-
-        // watch for status update
-        $("body").on('DOMSubtreeModified', ".edit-post-sidebar", function() {
-            var contextly_button = $(this).find('.ctx_snippets_editor_btn');
-            if (contextly_button.length && contextly_button.text() == Contextly.PostEditor.loadingMessage) {
-                Contextly.PostEditor.loadData();
-            }
-        });
-	}
 
 })( jQuery );
