@@ -312,11 +312,6 @@ class Contextly {
 		add_shortcode( self::ALL_BUTTONS_SHORT_CODE, array( $this, 'prepare_all_buttons_short_code' ) );
 		add_shortcode( self::SIDERAIL_MODULE_SHORT_CODE, array( $this, 'prepare_siderail_short_code' ) );
 		add_shortcode( self::SOCIAL_MODULE_SHORT_CODE, array( $this, 'prepare_social_short_code' ) );
-
-		if ( function_exists( 'register_block_type' ) ) {
-			$this->register_sidebar_block();
-			$this->register_auto_sidebar_block();
-		}
 	}
 
 	public function register_sidebar_block() {
@@ -833,6 +828,11 @@ class Contextly {
 				),
 			)
 		);
+
+		if ( function_exists( 'register_block_type' ) ) {
+			$this->register_sidebar_block();
+			$this->register_auto_sidebar_block();
+		}
 	}
 
 	/**

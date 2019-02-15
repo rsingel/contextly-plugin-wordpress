@@ -125,6 +125,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 5.0.6 =
+
+- Small update to fix compatibility issue with Classic Editor plugin
+
+
 = 5.0.5 =
 
 - Small update to fix compatibility issue with the Yoast SEO plugin for sites using the Classic Editor
