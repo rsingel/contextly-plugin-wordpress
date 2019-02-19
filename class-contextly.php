@@ -320,7 +320,7 @@ class Contextly {
 		wp_enqueue_script(
 			'contextly-sidebar-block',
 			plugins_url( $block_js, __FILE__ ),
-			array('wp-blocks', 'wp-element', 'wp-components')
+			array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor')
 		);
 
 		register_block_type( 'contextly-related-links-block/contextly-sidebar', array(
@@ -335,7 +335,7 @@ class Contextly {
 		wp_enqueue_script(
 			'contextly-auto-sidebar-block',
 			plugins_url( $block_js, __FILE__ ),
-			array('wp-blocks', 'wp-element', 'wp-components')
+			array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor')
 		);
 
 		register_block_type( 'contextly-related-links-block/contextly-auto-sidebar', array(
