@@ -127,7 +127,7 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 = 5.0.6 =
 
-- Small update to fix compatibility issue with Classic Editor plugin
+- Fixes for compatibility issues with Toast and Advanced Custom Fields (ACF)
 
 
 = 5.0.5 =
