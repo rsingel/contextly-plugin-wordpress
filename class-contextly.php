@@ -111,8 +111,21 @@ class Contextly {
 		add_action( 'publish_post', array( $this, 'publish_post' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'publish_post' ), 10, 2 );
 
+		add_action('enqueue_block_editor_assets', array( $this, 'register_block_assets' ) );
+		add_action('enqueue_block_assets', array( $this, 'register_block_assets' ) );
+
 		$this->attach_ajax_actions();
 		$this->expose_public_actions();
+	}
+
+	/**
+	 * Register blocks.
+	 */
+	public function register_block_assets() {
+		if ( $this->is_load_widget() && function_exists( 'register_block_type' ) ) {
+			$this->register_sidebar_block();
+			$this->register_auto_sidebar_block();
+		}
 	}
 
 	/**
@@ -828,11 +841,6 @@ class Contextly {
 				),
 			)
 		);
-
-		if ( function_exists( 'register_block_type' ) ) {
-			$this->register_sidebar_block();
-			$this->register_auto_sidebar_block();
-		}
 	}
 
 	/**
