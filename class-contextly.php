@@ -328,13 +328,14 @@ class Contextly {
 	}
 
 	public function register_sidebar_block() {
-		$block_js = 'js/contextly-sidebar-block.js';
-
-		wp_enqueue_script(
-			'contextly-sidebar-block',
-			plugins_url( $block_js, __FILE__ ),
-			array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor')
-		);
+		if (is_admin()) {
+			$block_js = 'js/contextly-sidebar-block.js';
+			wp_enqueue_script(
+				'contextly-sidebar-block',
+				plugins_url($block_js, __FILE__),
+				array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor')
+			);
+		}
 
 		register_block_type( 'contextly-related-links-block/contextly-sidebar', array(
 			'editor_script' => 'contextly-sidebar-block',
@@ -343,13 +344,14 @@ class Contextly {
 	}
 
 	public function register_auto_sidebar_block() {
-		$block_js = 'js/contextly-auto-sidebar-block.js';
-
-		wp_enqueue_script(
-			'contextly-auto-sidebar-block',
-			plugins_url( $block_js, __FILE__ ),
-			array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor')
-		);
+		if (is_admin()) {
+			$block_js = 'js/contextly-auto-sidebar-block.js';
+			wp_enqueue_script(
+				'contextly-auto-sidebar-block',
+				plugins_url($block_js, __FILE__),
+				array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor')
+			);
+		}
 
 		register_block_type( 'contextly-related-links-block/contextly-auto-sidebar', array(
 			'editor_script' => 'contextly-auto-sidebar-block',
