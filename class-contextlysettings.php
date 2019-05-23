@@ -569,4 +569,13 @@ class ContextlySettings {
 		update_post_meta( $post_id, '_contextly_display_widgets', $param, get_post_meta( $post_id, '_contextly_display_widgets', true ) );
 	}
 
+	/**
+	 * Publish confirmation.
+	 */
+	public function settings_display_publish_confirmation() {
+		$options = get_option( self::ADVANCED_SETTINGS_KEY );
+		echo '<label>';
+		echo "<input name='" . esc_attr( self::ADVANCED_SETTINGS_KEY ) . "[publish_confirmation]' type='checkbox' value='1' " . checked( 1, $options['publish_confirmation'], false ) . '/>';
+		echo '</label>';
+	}
 }
