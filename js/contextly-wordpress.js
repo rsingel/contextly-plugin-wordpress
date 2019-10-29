@@ -48,10 +48,10 @@ Contextly.WPSettingsAutoLogin = Contextly.createClass({
         doLogin: function ( settings_button_id, disabled_flag ) {
             if ( disabled_flag )
             {
-                jQuery( '#' + settings_button_id ).attr( 'disabled', 'disabled' );
+                $( '#' + settings_button_id ).attr( 'disabled', 'disabled' );
             }
 
-            jQuery.ajax({
+            $.ajax({
                 url: Contextly.WPSettings.getAjaxUrl(),
                 type: 'post',
                 dataType: 'json',
@@ -67,11 +67,11 @@ Contextly.WPSettingsAutoLogin = Contextly.createClass({
                             );
                         }
 
-                        jQuery( '#' + settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
+                        $( '#' + settings_button_id ).attr( 'contextly_access_token', response.contextly_access_token );
 
                         if ( disabled_flag )
                         {
-                            jQuery( '#' + settings_button_id ).removeAttr( 'disabled' );
+                            $( '#' + settings_button_id ).removeAttr( 'disabled' );
                         }
                     } else {
                         if ( response.message ) {
@@ -80,7 +80,7 @@ Contextly.WPSettingsAutoLogin = Contextly.createClass({
                     }
                 },
                 error: function () {
-                    jQuery( '#' + settings_button_id ).removeAttr( 'disabled' );
+                    $( '#' + settings_button_id ).removeAttr( 'disabled' );
                 }
             });
         }
@@ -103,7 +103,7 @@ Contextly.WPAdminMessages = Contextly.createClass({
         },
 
         render: function ( message_class, message_text ) {
-            jQuery( '#contextly_warnings').html(
+            $( '#contextly_warnings').html(
                 "<div class='fade " + message_class + "'><p>" + message_text + "</p></div>"
             );
         }
@@ -111,7 +111,7 @@ Contextly.WPAdminMessages = Contextly.createClass({
 });
 
 $(window)
-    .bind('contextlyWidgetsLoading', function(e, $context) {
+    .on('contextlyWidgetsLoading', function(e, $context) {
         if (Contextly.Settings.isAdmin()) {
             return;
         }
@@ -169,6 +169,7 @@ $(window)
                 ]
             }
         };
+
         $.each(specs, function(containerClass) {
             var $containers = $context.find('.' + containerClass);
             if (!$containers.length) {
@@ -209,7 +210,7 @@ $(window)
                     .append(this);
             });
     })
-    .bind('contextlyWidgetsFailed', function(e, $context, response) {
+    .on('contextlyWidgetsFailed', function(e, $context, response) {
         Contextly.widget.PageView.onWidgetsLoadingError.apply(this, arguments);
         if ( !Contextly.Settings.isAdmin() ) {
             return;
@@ -232,7 +233,7 @@ $(window)
             .find('.ctx-module-container')
             .html(message);
     })
-    .bind('contextlyPostUpdate', function(e, $context, metadataProvider, gate) {
+    .on('contextlyPostUpdate', function(e, $context, metadataProvider, gate) {
         var pageId = metadataProvider.getPageId();
         var data = {
             action: 'contextly_publish_post',
@@ -241,7 +242,7 @@ $(window)
         };
 
         var runUpdate = gate.addReason();
-        jQuery.ajax({
+        $.ajax({
             url: Contextly.WPSettings.getAjaxUrl(),
             type: 'post',
             dataType: 'json',
@@ -257,4 +258,4 @@ $(window)
         });
     });
 
-})(jQuery);
+})(Contextly.DOM);
