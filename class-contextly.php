@@ -696,7 +696,9 @@ class Contextly {
 			return;
 		}
 
-		wp_enqueue_script( 'jquery' );
+		if ($this->is_admin_edit_page()) {
+			wp_enqueue_script( 'jquery' );
+		}
 	}
 
 	/**
@@ -806,7 +808,7 @@ class Contextly {
 	/**
 	 * Prints initialization script.
 	 *
-	 * Important! This function must be called AFTER jQuery and other scripts are
+	 * Important! This function must be called AFTER other scripts are
 	 * inserted into the page DOM, because otherwise it causes race condition.
 	 * According to the tests, the only code always executed before the loader
 	 * is the synchronous JS inside the same <script> tag.
