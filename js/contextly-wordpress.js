@@ -170,13 +170,15 @@ $(window)
             }
         };
 
-        $.each(specs, function(containerClass) {
+        for (var containerClass in specs) {
+            if (!specs.hasOwnProperty(containerClass)) continue;
+
             var $containers = $context.find('.' + containerClass);
             if (!$containers.length) {
                 return;
             }
 
-            var spec = this;
+            var spec = specs[containerClass];
             $.each(spec.placements, function() {
                 var preferred = '.' + this;
                 var $preferred = $containers.filter(preferred);
@@ -198,7 +200,7 @@ $(window)
                 // Found the preferred one, stop iterating on the placements.
                 return false;
             });
-        });
+        };
 
         // Make sure that main module with default placement is last child.
         $context
