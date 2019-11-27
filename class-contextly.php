@@ -1542,10 +1542,7 @@ class Contextly {
 	 */
 	public function register_widgets() {
 		require_once 'class-contextlywpsiderailwidget.php';
-		require_once 'class-contextlywpsocialwidget.php';
-
 		register_widget( 'ContextlyWpSiderailWidget' );
-		register_widget( 'ContextlyWpSocialWidget' );
 	}
 
 	/**
