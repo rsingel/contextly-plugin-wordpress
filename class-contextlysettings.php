@@ -187,7 +187,7 @@ class ContextlySettings {
 			$class = 'updated';
 		}
 
-		echo '<div ' . ( $error ? 'id="contextly_warning" ' : '' ) . 'class="' . esc_attr( $class ) . ' fade"><p>' . esc_html( $message ) . '</p></div>';
+		echo '<div ' . ( $error ? 'id="contextly_warning" ' : '' ) . 'class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
 	}
 
 	/**
@@ -577,5 +577,46 @@ class ContextlySettings {
 		echo '<label>';
 		echo "<input name='" . esc_attr( self::ADVANCED_SETTINGS_KEY ) . "[publish_confirmation]' type='checkbox' value='1' " . checked( 1, $options['publish_confirmation'], false ) . '/>';
 		echo '</label>';
+	}
+
+	/**
+     * Get current page type.
+     *
+	 * @return string
+	 */
+	public function get_wp_page_type() {
+		global $wp_query;
+
+		$loop = null;
+
+		if ( $wp_query->is_page ) {
+			$loop = is_front_page() ? 'front' : 'page';
+		} elseif ( $wp_query->is_home ) {
+			$loop = 'home';
+		} elseif ( $wp_query->is_single ) {
+			$loop = ( $wp_query->is_attachment ) ? 'attachment' : 'post';
+		} elseif ( $wp_query->is_category ) {
+			$loop = 'category';
+		} elseif ( $wp_query->is_tag ) {
+			$loop = 'tag';
+		} elseif ( $wp_query->is_tax ) {
+			$loop = 'tax';
+		} elseif ( $wp_query->is_archive ) {
+			if ( $wp_query->is_day ) {
+				$loop = 'day';
+			} elseif ( $wp_query->is_month ) {
+				$loop = 'month';
+			} elseif ( $wp_query->is_year ) {
+				$loop = 'year';
+			} elseif ( $wp_query->is_author ) {
+				$loop = 'author';
+			} else {
+				$loop = 'archive';
+			}
+		} elseif ( $wp_query->is_search ) {
+			$loop = 'search';
+		}
+
+		return $loop;
 	}
 }
