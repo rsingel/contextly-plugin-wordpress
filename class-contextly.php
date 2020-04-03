@@ -185,15 +185,25 @@ class Contextly {
 		}
 
 		if ( null !== $post_object && isset( $post_object->post_type ) ) {
-			$contextly_settings = new ContextlySettings();
-			$display_types      = $contextly_settings->get_widget_display_type();
-
-			if ( in_array( $post_object->post_type, array_values( $display_types ), true ) ) {
+			if ( $this->is_post_type_display_allowed( $post_object->post_type ) ) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if some post type allowed for display modules.
+	 *
+	 * @param $post_type
+	 * @return bool
+	 */
+	public function is_post_type_display_allowed( $post_type ) {
+		$contextly_settings = new ContextlySettings();
+		$display_types      = $contextly_settings->get_widget_display_type();
+
+		return in_array( $post_type, array_values( $display_types ), true );
 	}
 
 	/**
@@ -1408,7 +1418,7 @@ class Contextly {
 		$wp_page_type = $contextly_settings->get_wp_page_type();
 
 		// metadata for post or any other page type
-		if ( ! empty( $post->ID ) && $this->check_widget_display_type( $wp_page_type ) ) {
+		if ( ! empty( $post->ID ) && $this->is_post_type_display_allowed( $wp_page_type ) ) {
 			$metadata += array(
 				'title'               => esc_html( $post->post_title ),
 				'url'                 => get_permalink( $post->ID ),
