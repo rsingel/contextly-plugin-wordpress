@@ -26,7 +26,7 @@ if ( CONTEXTLY_MODE === 'live' ) {
 
 define( 'CONTEXTLY_HTTPS', $is_https );
 define( 'CONTEXTLY_PLUGIN_FILE', __FILE__ );
-define( 'CONTEXTLY_PLUGIN_VERSION', '6.0.1' );
+define( 'CONTEXTLY_PLUGIN_VERSION', '6.0.2' );
 define( 'CONTEXTLY_CDN_VERSION', 'branch' );
 if ( ! defined( 'CONTEXTLY_MOD' ) ) {
 	define( 'CONTEXTLY_MOD', false );
