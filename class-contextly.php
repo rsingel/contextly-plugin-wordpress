@@ -1417,8 +1417,10 @@ class Contextly {
 		$contextly_settings = new ContextlySettings();
 		$wp_page_type = $contextly_settings->get_wp_page_type();
 
+		$is_wp_regular_page = in_array($wp_page_type, ['post', 'page']);
+
 		// metadata for post or any other page type
-		if ( ! empty( $post->ID ) && $this->is_post_type_display_allowed( $wp_page_type ) ) {
+		if ( ( ! empty( $post->ID ) && $this->is_post_type_display_allowed( $wp_page_type ) ) || $is_wp_regular_page ) {
 			$metadata += array(
 				'title'               => esc_html( $post->post_title ),
 				'url'                 => get_permalink( $post->ID ),
