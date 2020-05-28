@@ -203,9 +203,6 @@ class Contextly {
 		$contextly_settings = new ContextlySettings();
 		$display_types      = $contextly_settings->get_widget_display_type();
 
-		// add default WP pages, in some cases this can break things fro some clients
-		$display_types = array_merge($display_types, ['post', 'page']);
-
 		return in_array( $post_type, array_values( $display_types ) );
 	}
 
