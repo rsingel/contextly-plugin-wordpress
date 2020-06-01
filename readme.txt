@@ -125,6 +125,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 6.0.3 =
+
+- Minor bug fixes
+
+
 = 6.0.2 =
 
 - Updated to allow analytics about the home page, as well as category and tag pages
