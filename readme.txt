@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, related posts, sidebars, similar, recommendations, see also, related stories, evergreen, popular, trending, video recommendations, product recommendations, curation, optimization, most popular, sidebar, siderail,
 Requires at least: 2.0.2
-Tested up to: 5.4.1
+Tested up to: 5.4.2
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -124,6 +124,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+= 6.0.4 =
+
+- Enables sites to turn off Contextly Analytics on non-article pages
+
 
 = 6.0.3 =
 

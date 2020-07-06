@@ -94,6 +94,7 @@ class ContextlySettings {
 
 		add_settings_section( 'display_section', 'Main Settings', array(), self::ADVANCED_SETTINGS_KEY );
 		add_settings_field( 'display_control', 'Display Contextly Widgets For Post Types:', array( $this, 'settings_display_for' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
+		add_settings_field( 'enable_non_article_pages', 'Allow Contextly to Collect Analytics on Non-Article Pages:', array( $this, 'settings_display_enable_non_article_pages' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 		add_settings_field( 'publish_confirmation', 'Prompt to Choose Related Posts before publishing:', array( $this, 'settings_display_publish_confirmation' ), self::ADVANCED_SETTINGS_KEY, 'display_section' );
 
 		$this->tabs[ self::GENERAL_SETTINGS_KEY ]  = __( 'General' );
@@ -619,4 +620,46 @@ class ContextlySettings {
 
 		return $loop;
 	}
+
+	/**
+	 * Display settings for enable or disable Contextly on non post pages.
+	 */
+	public function settings_display_enable_non_article_pages() {
+		$values     = $this->get_enable_non_article_page_display();
+		$non_article_pages = array(
+		    'home' => 'Homepage',
+		    'tag' => 'Tags',
+		    'category' => 'Categories',
+        );
+
+		echo "<table cellpadding='0' cellspacing='0'>";
+		foreach ( $non_article_pages as $page_type => $label ) {
+            echo "<tr><td style='padding: 3px;'>";
+            echo "<input type='hidden' name='" . esc_attr( self::ADVANCED_SETTINGS_KEY ) . "[enable_non_article_pages][]' type='checkbox' value='0' />";
+            echo "<input id='non-article-" . esc_attr( $page_type ) . "' name='" . esc_attr( self::ADVANCED_SETTINGS_KEY ) . "[enable_non_article_pages][]' type='checkbox' value='" . esc_attr( $page_type ) . "' " . checked( in_array( $page_type, array_values( $values ), true ), true, false ) . ' />';
+            echo "</td><td style='padding: 3px;'><label for='non-article-" . esc_attr( $page_type ) . "'>";
+            echo esc_html( $label );
+            echo '</label></td></tr>';
+		}
+		echo '</table>';
+	}
+
+	/**
+	 * Get array of all available non post pages with enable Contextly display.
+	 *
+	 * @return array
+	 */
+	public function get_enable_non_article_page_display() {
+		$options = get_option( self::ADVANCED_SETTINGS_KEY );
+
+		// Hack for previous plugin versions and selected values.
+		$values = isset( $options['enable_non_article_pages'] ) ? $options['enable_non_article_pages'] : false;
+
+		if ( $values === false ) {
+			$values = array( 'home', 'tag', 'category' );
+		}
+
+		return $values;
+	}
+
 }

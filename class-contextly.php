@@ -693,11 +693,19 @@ class Contextly {
 		$contextly_settings = new ContextlySettings();
 		$page_type = $contextly_settings->get_wp_page_type();
 
+		$enabled_regular_pages = $contextly_settings->get_widget_display_type();
+		$enabled_non_article_pages = $contextly_settings->get_enable_non_article_page_display();
+
 		if ( $this->check_widget_display_type() && ! $contextly_settings->is_page_display_disabled( $post->ID ) ) {
-			return $page_type || $this->is_admin_edit_page();
-		} else {
-			return false;
+			if ( $this->is_admin_edit_page() ) {
+				return true;
+			}
+			if ( in_array( $page_type, array_merge($enabled_regular_pages, $enabled_non_article_pages) ) ) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	/**
