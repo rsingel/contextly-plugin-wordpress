@@ -1425,6 +1425,11 @@ class Contextly {
 		$contextly_settings = new ContextlySettings();
 		$wp_page_type = $contextly_settings->get_wp_page_type();
 
+		// in some cases we need to allow admin edit pos page
+		if (!$wp_page_type && ! empty( $post->ID ) && is_admin() ) {
+			$wp_page_type = $post->post_type;
+		}
+
 		$is_wp_regular_page = in_array($wp_page_type, ['post', 'page']);
 
 		// metadata for post or any other page type

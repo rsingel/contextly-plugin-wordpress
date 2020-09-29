@@ -125,6 +125,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 6.0.5 =
+
+- Minor bug fixes
+
+
 = 6.0.4 =
 
 - Enables sites to turn off Contextly Analytics on non-article pages
