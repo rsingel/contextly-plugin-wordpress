@@ -125,6 +125,11 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
+= 6.0.7 =
+
+- Enables new reader notifications
+
+
 = 6.0.6 =
 
 - Fixed bug affecting display on some sites with custom page types

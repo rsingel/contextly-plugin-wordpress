@@ -31,7 +31,7 @@ class Contextly {
 	const WIDGET_PERSONALIZATION_CLASS = 'ctx-personalization-container';
 	const WIDGET_CHANNEL_CLASS         = 'ctx-channel-container';
 	const WIDGET_SIDERAIL_CLASS        = 'ctx-siderail-container';
-	const WIDGET_SOCIAL_CLASS          = 'ctx-social-container';
+	const WIDGET_AUTHOR_CLASS          = 'ctx-author-container';
 
 	const MAIN_MODULE_SHORT_CODE            = 'contextly_main_module';
 	const SL_MODULE_SHORT_CODE              = 'contextly_sl_button';
@@ -39,7 +39,7 @@ class Contextly {
 	const CHANNEL_MODULE_SHORT_CODE         = 'contextly_channel_button';
 	const ALL_BUTTONS_SHORT_CODE            = 'contextly_all_buttons';
 	const SIDERAIL_MODULE_SHORT_CODE        = 'contextly_siderail';
-	const SOCIAL_MODULE_SHORT_CODE          = 'contextly_social';
+	const AUTHOR_MODULE_SHORT_CODE          = 'contextly_author';
 
 	/**
 	 * APi instance.
@@ -334,7 +334,7 @@ class Contextly {
 		add_shortcode( self::CHANNEL_MODULE_SHORT_CODE, array( $this, 'prepare_channel_button_short_code' ) );
 		add_shortcode( self::ALL_BUTTONS_SHORT_CODE, array( $this, 'prepare_all_buttons_short_code' ) );
 		add_shortcode( self::SIDERAIL_MODULE_SHORT_CODE, array( $this, 'prepare_siderail_short_code' ) );
-		add_shortcode( self::SOCIAL_MODULE_SHORT_CODE, array( $this, 'prepare_social_short_code' ) );
+		add_shortcode( self::AUTHOR_MODULE_SHORT_CODE, array( $this, 'prepare_author_short_code' ) );
 	}
 
 	public function register_sidebar_block() {
@@ -543,21 +543,6 @@ class Contextly {
 			if ( $display_global_settings ) {
 				$additional_html_controls = $this->get_additional_show_hide_control();
 			}
-		} else {
-			$classes = array(
-				self::WIDGET_STORYLINE_CLASS,
-				self::WIDGET_PERSONALIZATION_CLASS,
-				self::DEFAULT_PLACEMENT_CLASS,
-				self::CLEARFIX_CLASS,
-			);
-			$prefix  = "<div class='" . esc_attr( $this->join_classes( $classes ) ) . "'></div>";
-
-			$classes = array(
-				self::WIDGET_SOCIAL_CLASS,
-				self::DEFAULT_PLACEMENT_CLASS,
-				self::CLEARFIX_CLASS,
-			);
-			$prefix .= "<div class='" . esc_attr( $this->join_classes( $classes ) ) . "'></div>";
 		}
 
 		$classes = array(
@@ -692,12 +677,14 @@ class Contextly {
 
 		$contextly_settings = new ContextlySettings();
 
+		// check regular WP pages
 		if ( $this->check_widget_display_type() && ! $contextly_settings->is_page_display_disabled( $post->ID ) ) {
 			if (is_page() || is_single() || $this->is_admin_edit_page()) {
 				return true;
 			}
 		}
 
+		// check non posts pages
 		$page_type = $contextly_settings->get_wp_page_type();
 		$enabled_non_article_pages = $contextly_settings->get_enable_non_article_page_display();
 
@@ -1159,6 +1146,7 @@ class Contextly {
 	 */
 	private function get_post_featured_image_alt( $post_id ) {
 		$image_alt = get_post_meta( get_post_thumbnail_id( $post_id ), '_wp_attachment_image_alt', true );
+
 		return $image_alt;
 	}
 
@@ -1401,13 +1389,13 @@ class Contextly {
 	}
 
 	/**
-	 * Creates social module HTML shortcode.
+	 * Creates author module HTML shortcode.
 	 *
 	 * @return string HTML shortcode.
 	 */
-	public function prepare_social_short_code() {
+	public function prepare_author_short_code() {
 		$classes = array(
-			self::WIDGET_SOCIAL_CLASS,
+			self::WIDGET_AUTHOR_CLASS,
 			self::SHORTCODE_PLACEMENT_CLASS,
 			self::CLEARFIX_CLASS,
 		);
@@ -1426,7 +1414,7 @@ class Contextly {
 		$wp_page_type = $contextly_settings->get_wp_page_type();
 
 		// in some cases we need to allow admin edit pos page
-		if (!$wp_page_type && ! empty( $post->ID ) && is_admin() ) {
+		if ( !$wp_page_type && ! empty( $post->ID ) && is_admin() ) {
 			$wp_page_type = $post->post_type;
 		}
 
@@ -1456,10 +1444,20 @@ class Contextly {
 		} else {
 			global $wp;
 
+			// if author page, we need to get author name
+			if ($wp_page_type == 'author') {
+				$author_full_name = $this->get_author_full_name( $post );
+				$author_display_name = $this->get_author_display_name( $post );
+
+				$type_term = strlen($author_display_name) > strlen($author_full_name) ? $author_display_name : $author_full_name;
+			} else {
+				$type_term = single_term_title('', false);
+			}
+
 			$metadata += array(
 				'url'                 => home_url( $wp->request ),
 				'type'           	  => esc_html( $wp_page_type ),
-				'type_term'           => esc_html( single_term_title('', false) ),
+				'type_term'           => esc_html( $type_term ),
 			);
 		}
 
