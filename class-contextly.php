@@ -31,7 +31,7 @@ class Contextly {
 	const WIDGET_PERSONALIZATION_CLASS = 'ctx-personalization-container';
 	const WIDGET_CHANNEL_CLASS         = 'ctx-channel-container';
 	const WIDGET_SIDERAIL_CLASS        = 'ctx-siderail-container';
-	const WIDGET_SOCIAL_CLASS          = 'ctx-social-container';
+	const WIDGET_AUTHOR_CLASS          = 'ctx-author-container';
 
 	const MAIN_MODULE_SHORT_CODE            = 'contextly_main_module';
 	const SL_MODULE_SHORT_CODE              = 'contextly_sl_button';
@@ -39,7 +39,7 @@ class Contextly {
 	const CHANNEL_MODULE_SHORT_CODE         = 'contextly_channel_button';
 	const ALL_BUTTONS_SHORT_CODE            = 'contextly_all_buttons';
 	const SIDERAIL_MODULE_SHORT_CODE        = 'contextly_siderail';
-	const SOCIAL_MODULE_SHORT_CODE          = 'contextly_social';
+	const AUTHOR_MODULE_SHORT_CODE          = 'contextly_author';
 
 	/**
 	 * APi instance.
@@ -185,15 +185,25 @@ class Contextly {
 		}
 
 		if ( null !== $post_object && isset( $post_object->post_type ) ) {
-			$contextly_settings = new ContextlySettings();
-			$display_types      = $contextly_settings->get_widget_display_type();
-
-			if ( in_array( $post_object->post_type, array_values( $display_types ), true ) ) {
+			if ( $this->is_post_type_display_allowed( $post_object->post_type ) ) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if some post type allowed for display modules.
+	 *
+	 * @param $post_type
+	 * @return bool
+	 */
+	public function is_post_type_display_allowed( $post_type ) {
+		$contextly_settings = new ContextlySettings();
+		$display_types      = $contextly_settings->get_widget_display_type();
+
+		return in_array( $post_type, array_values( $display_types ) );
 	}
 
 	/**
@@ -324,7 +334,7 @@ class Contextly {
 		add_shortcode( self::CHANNEL_MODULE_SHORT_CODE, array( $this, 'prepare_channel_button_short_code' ) );
 		add_shortcode( self::ALL_BUTTONS_SHORT_CODE, array( $this, 'prepare_all_buttons_short_code' ) );
 		add_shortcode( self::SIDERAIL_MODULE_SHORT_CODE, array( $this, 'prepare_siderail_short_code' ) );
-		add_shortcode( self::SOCIAL_MODULE_SHORT_CODE, array( $this, 'prepare_social_short_code' ) );
+		add_shortcode( self::AUTHOR_MODULE_SHORT_CODE, array( $this, 'prepare_author_short_code' ) );
 	}
 
 	public function register_sidebar_block() {
@@ -533,21 +543,6 @@ class Contextly {
 			if ( $display_global_settings ) {
 				$additional_html_controls = $this->get_additional_show_hide_control();
 			}
-		} else {
-			$classes = array(
-				self::WIDGET_STORYLINE_CLASS,
-				self::WIDGET_PERSONALIZATION_CLASS,
-				self::DEFAULT_PLACEMENT_CLASS,
-				self::CLEARFIX_CLASS,
-			);
-			$prefix  = "<div class='" . esc_attr( $this->join_classes( $classes ) ) . "'></div>";
-
-			$classes = array(
-				self::WIDGET_SOCIAL_CLASS,
-				self::DEFAULT_PLACEMENT_CLASS,
-				self::CLEARFIX_CLASS,
-			);
-			$prefix .= "<div class='" . esc_attr( $this->join_classes( $classes ) ) . "'></div>";
 		}
 
 		$classes = array(
@@ -679,13 +674,25 @@ class Contextly {
 	 */
 	public function is_load_widget() {
 		global $post;
+
 		$contextly_settings = new ContextlySettings();
 
+		// check regular WP pages
 		if ( $this->check_widget_display_type() && ! $contextly_settings->is_page_display_disabled( $post->ID ) ) {
-			return is_page() || is_single() || $this->is_admin_edit_page();
-		} else {
-			return false;
+			if (is_page() || is_single() || $this->is_admin_edit_page()) {
+				return true;
+			}
 		}
+
+		// check non posts pages
+		$page_type = $contextly_settings->get_wp_page_type();
+		$enabled_non_article_pages = $contextly_settings->get_enable_non_article_page_display();
+
+		if ( in_array( $page_type, $enabled_non_article_pages) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -852,6 +859,7 @@ class Contextly {
 	 */
 	public function insert_footer_scripts() {
 		global $post;
+
 		$params = array(
 			// Give some context, to let filters know who initiated the call.
 			'source'   => 'contextly-linker',
@@ -1138,6 +1146,7 @@ class Contextly {
 	 */
 	private function get_post_featured_image_alt( $post_id ) {
 		$image_alt = get_post_meta( get_post_thumbnail_id( $post_id ), '_wp_attachment_image_alt', true );
+
 		return $image_alt;
 	}
 
@@ -1380,13 +1389,13 @@ class Contextly {
 	}
 
 	/**
-	 * Creates social module HTML shortcode.
+	 * Creates author module HTML shortcode.
 	 *
 	 * @return string HTML shortcode.
 	 */
-	public function prepare_social_short_code() {
+	public function prepare_author_short_code() {
 		$classes = array(
-			self::WIDGET_SOCIAL_CLASS,
+			self::WIDGET_AUTHOR_CLASS,
 			self::SHORTCODE_PLACEMENT_CLASS,
 			self::CLEARFIX_CLASS,
 		);
@@ -1401,13 +1410,24 @@ class Contextly {
 	 * @return array updated metadata array.
 	 */
 	public function fill_post_metadata( $metadata, $post ) {
-		if ( ! empty( $post->ID ) ) {
+		$contextly_settings = new ContextlySettings();
+		$wp_page_type = $contextly_settings->get_wp_page_type();
+
+		// in some cases we need to allow admin edit pos page
+		if ( !$wp_page_type && ! empty( $post->ID ) && is_admin() ) {
+			$wp_page_type = $post->post_type;
+		}
+
+		$is_wp_regular_page = in_array($wp_page_type, ['post', 'page']);
+
+		// metadata for post or any other page type
+		if ( ( ! empty( $post->ID ) && $this->is_post_type_display_allowed( $wp_page_type ) ) || $is_wp_regular_page ) {
 			$metadata += array(
 				'title'               => esc_html( $post->post_title ),
 				'url'                 => get_permalink( $post->ID ),
 				'pub_date'            => esc_html( $post->post_date ),
 				'mod_date'            => esc_html( $post->post_modified ),
-				'type'                => esc_html( $post->post_type ),
+				'type'           	  => esc_html( $post->post_type ),
 				'post_id'             => esc_html( $post->ID ),
 				'author_id'           => esc_html( $post->post_author ),
 				'author_name'         => esc_html( $this->get_author_full_name( $post ) ),
@@ -1421,6 +1441,24 @@ class Contextly {
 			if ( $image_alt ) {
 				$metadata['image_alt'] = esc_html( $image_alt );
 			}
+		} else {
+			global $wp;
+
+			// if author page, we need to get author name
+			if ($wp_page_type == 'author') {
+				$author_full_name = $this->get_author_full_name( $post );
+				$author_display_name = $this->get_author_display_name( $post );
+
+				$type_term = strlen($author_display_name) > strlen($author_full_name) ? $author_display_name : $author_full_name;
+			} else {
+				$type_term = single_term_title('', false);
+			}
+
+			$metadata += array(
+				'url'                 => home_url( $wp->request ),
+				'type'           	  => esc_html( $wp_page_type ),
+				'type_term'           => esc_html( $type_term ),
+			);
 		}
 
 		return $metadata;
@@ -1431,6 +1469,7 @@ class Contextly {
 	 */
 	public function insert_metatags() {
 		global $post;
+
 		$params = array(
 			// Give some context, to let filters know who initiated the call.
 			'source'  => 'contextly-linker',
@@ -1542,10 +1581,7 @@ class Contextly {
 	 */
 	public function register_widgets() {
 		require_once 'class-contextlywpsiderailwidget.php';
-		require_once 'class-contextlywpsocialwidget.php';
-
 		register_widget( 'ContextlyWpSiderailWidget' );
-		register_widget( 'ContextlyWpSocialWidget' );
 	}
 
 	/**

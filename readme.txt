@@ -2,7 +2,7 @@
 Contributors: rsingel, andrewcgg
 Tags: related links, SEO, promotion, related, custom posts, related posts, sidebars, similar, recommendations, see also, related stories, evergreen, popular, trending, video recommendations, product recommendations, curation, optimization, most popular, sidebar, siderail,
 Requires at least: 2.0.2
-Tested up to: 5.2.4
+Tested up to: 6.0.2
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -11,58 +11,54 @@ Build your audience with great related and popular recommendations. Let readers 
 
 == Description ==
 
-[Contextly](http://contextly.com "Contextly") helps you build a loyal audience by getting readers to read more of your content and come back to your site.
+[Contextly](http://contextly.com "Contextly") is the most powerful and customizable related posts plugin for Wordpress.
+Contextly provides related, popular and evergreen post recommendations to help you build a loyal audience by getting readers to read more of your content and come back to your site.
 
-Contextly does this with smart recommendations to your other posts and with tools to let readers get notified of new stories. Recommendations include related, popular and evergreen (think oldies, but goodies) posts. Contextly can put recommnendation modules at the end of posts, in the WordPress sidebar and in the body of stories.
+Contextly's smart recommendations can be shown in modules at the end of posts, in the body of stories and in the WordPress sidebar.
 
-We do this through a combination of powerful machine learning algorithms that run on *our* servers, so we never slow your site down. Plus, Contextly has powerful curation tools, including in-story sidebars, so you can choose related links. Paired with fine-grained filters to exclude unwanted posts and to exclude older posts and the ability to let readers follow topics, Contextly is the most powerful recommendation and engagement tool for WordPress.
+Additionally, Contextly is the only related posts plugin that lets readers subscribe by emails to the topics on your site they care about so they can get notified by email when a new post is published - with no extra work by you.
 
-Contextly comes with a free trial, but operates on a paid subscription basis. You can see our pricing and learn more about what we do on the [Contextly](http://contextly.com "Contextly") website.
-
-***
-
-According to a study by Chartbeat, the most important factor in determining whether a reader will come back to your site is whether they read more than one post. If they do, they are likely to return. If they don't, they won't.
-
-Contextly gives readers avenues to more of your best content. Readers in research mode can dive deep; those just browsing can explore widely.
+Our algorithms run on our servers, not yours, so we never slow your site down. You can filter out older posts, non-relevant tags and categories and posts with keywords. You can even choose related links for each story.
 
 We also boost your SEO by making it dead simple to add links in the body of your post to previous stories, and Google crawls our links.
 
-Our system can also recommend videos and products. Additionally, you can choose to highlight events, promotions, or an email list with promotional links.
+We also send daily, weekly and monthly reports to you that let you and your team know how what's doing well on your site and how Contextly is performing.
 
+Plus we don't track your users, so we're GDPR- and CCPA-compliant.
+
+Contextly comes with a free trial (no credit card required), but operates on a paid subscription basis. You can see our pricing and learn more about what we do on the Contextly website.
 
 = Features =
 
-* Multiple Recommendation Modules - You can give readers multiple chances to go deeper, via the Main Module at the end of a post; a Siderail that shows up next to posts (what WordPress calls the Sidebar) and mid-story recommendation modules (automatic or curated).
+* Multiple Recommendation Modules – You can give readers multiple chances to go deeper, via the Main Module at the end of a post; a Siderail that shows up next to posts (what WordPress calls the Sidebar) and mid-story recommendation modules (automatic or curated).
 
-* Related Recommendations - Related content gives your readers an opportunity to dive deeply into a topic and is the most effective strategy to get readers to read more. Our related content is *actually* related, looking deeply at the content of posts, not just tags and categories. These are computed in our data center, not in your database, so you won't be slowed down and we are top webhost approved.
+* Related Recommendations – Related content gives your readers an opportunity to dive deeply into a topic and is the most effective strategy to get readers to read more. Our related content is actually related, looking deeply at the content of posts, not just tags and categories. These are computed in our data center, not in your database, so you won’t be slowed down. Top webhosts that ban most relate posts plugins recommend us.
 
-* Popular Recommendations - Readers are often interested in your most recent and best content. That is why we make this content available on every page, because every page is the new home page. We use a smart algorithm to identify 10 to 15 popular stories so we keep the popular section varied, no stale top 5 lists here.
+* Popular Recommendations – Readers are often interested in your most recent and best content. That is why we make this content available on every page, because every page is the new home page. We use a smart algorithm to identify 10 to 15 popular stories so we keep the popular section varied, no stale top 5 lists here.
 
-* Evergreen Recommendations - Good stories should be read well after they have been showcased on the home page. We identify "oldies but goodies" and let you choose to resurface them to users. This increases the lifetime value of every story you write.
+* Evergreen Recommendations – Good stories should be read well after they have been showcased on the home page. We identify “oldies but goodies” and let you choose to resurface them to users. This increases the lifetime value of every story you write.
 
-* Advanced Filters - You can exclude content from recommendations by tag, category or url. You can also set time limits on recommendations, either globally or by individual tags and categories.
+* Advanced Filters – You can exclude content from recommendations by tag, category or url. You can also set time limits on recommendations, either globally or by individual tags and categories.
 
-* Channels Subscriptions - You can let readers subscribe to be notified by email when new stories are published about the topics they care about. This requires no work on your end and you control what the email notifications look like.
+* Channels Subscriptions – You can let readers subscribe to be notified by email when new stories are published about the topics they care about. This requires no work on your end and you control what the email notifications look like.
 
-* Privacy - Contextly is GDPR and CCPA-compliant. We don't share your data with anyone and don't track your readers.
+* Privacy – Contextly is GDPR and CCPA-compliant. We don’t share your data with anyone and don’t track your readers.
 
-* Wicked fast Performance - Contextly does all the hard work on its servers, so we don't hit your database like most related post plugins do. We host all our files on a fast CDN. That means your site stays fast and if you get a lot of traffic, Contextly won't bring your site down. That's also why the top WordPress hosting services ban other plugins and recommend Contextly.
+* Wicked-Fast Performance – Contextly does all the hard work on its servers, so we don’t hit your database like most related post plugins do. We host all our files on a fast, global CDN so images load quickly. That means your site stays fast and if you get a lot of traffic, Contextly won’t bring your site down. That’s also why the top WordPress hosting services ban other plugins and recommend Contextly.
 
-* Editorial Control/Curation - We believe high-quality content is the result of a happy marriage between humans and smart algorithms. Our curation tools allow writers and editors to control what related posts show up on a story. We then use that info to make better recommendations for the entire site.
+* Editorial Control/Curation – We believe high-quality content is the result of a happy marriage between humans and smart algorithms. Our curation tools allow writers and editors to control what related posts show up on a story. We then use that info to make better recommendations for the entire site.
 
-* Responsive Designs - We have multiple designs and image sizes to choose from, and they all look great on mobile and desktops. You can customize their look and feel with a few clicks, while advanced users can customize the CSS.
+* Responsive Designs – We have multiple designs and image sizes to choose from, and they all look great on mobile and desktops. You can customize their look and feel with a few clicks, while advanced users can customize the CSS.
 
-* Analytics - We send daily, weekly and monthly analytics reports that let you easily see which of your posts are doing well and how engaging they are. You can have these sent to everyone on your team.
+* Analytics – We send daily, weekly and monthly analytics reports that let you easily see which of your posts are doing well and how engaging they are. You can have these sent to everyone on your team.
 
-* Custom Post Types - If you use custom post types, you can choose which ones to show Contextly recommendations on, and which to keep out.
+* Custom Post Types – If you use custom post types, you can choose which ones to show Contextly recommendations on, and which to keep out.
 
-* Video Recommendations - Our recommendations are not limited to blog posts. We can easily integrate your Youtube channel content. Videos will be displayed where they are most relevant.
+* Video Recommendations – Our recommendations are not limited to blog posts. We can easily integrate your Youtube channel content. Videos will be displayed where they are most relevant.
 
-* Product Recommendations - Do you sell products? We can integrate products as well. They will be displayed when they are most actionable and relevant. Contact us at info@contextly.com to learn more.
+* SEO – The best SEO comes from links in the body of stories linking to previous content. We make it super-easy for writers to add these links without having to leave the post to go search in Google.
 
-* SEO - The best SEO comes from links in the body of stories linking to previous content. We make it super-easy for writers to add these links without having to leave the post to go search in Google.
-
-* Internal Promotional Links - If you have a newsletter or an event you'd like to promote, Contextly makes it dead-simple to include that in the recommendation module. That puts promotions where users will actually see them.
+* Internal Promotional Links – If you have a newsletter or an event you’d like to promote, Contextly makes it dead-simple to include that in the recommendation module. That puts promotions where users will actually see them.
 
 == Installation ==
 
@@ -128,6 +124,53 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 
 == Changelog ==
+
+= 6.0.9 =
+
+- Bug fixes
+- Performance improvements
+
+
+= 6.0.8 =
+
+- Bug fixes
+
+
+= 6.0.7 =
+
+- Enables new reader notifications
+
+
+= 6.0.6 =
+
+- Fixed bug affecting display on some sites with custom page types
+
+
+= 6.0.5 =
+
+- Minor bug fixes
+
+
+= 6.0.4 =
+
+- Enables sites to turn off Contextly Analytics on non-article pages
+
+
+= 6.0.3 =
+
+- Minor bug fixes
+
+
+= 6.0.2 =
+
+- Updated to allow analytics about the home page, as well as category and tag pages
+- Added ability to have different display settings for mobile and desktop
+
+
+= 6.0.1 =
+
+- Minor bug fixes
+
 
 = 6.0.0 =
 

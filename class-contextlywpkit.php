@@ -157,6 +157,7 @@ class ContextlyWpApiTransport implements ContextlyKitApiTransportInterface {
 				'method'  => $method,
 				'body'    => $data,
 				'headers' => $headers,
+				'sslverify' => FALSE
 			)
 		);
 

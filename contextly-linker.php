@@ -4,7 +4,7 @@
  * Plugin URI: https://contextly.com
  * Description: Adds the Contextly content recommendation tool to your site. Contextly provides related, trending, evergreen and personalized recommendations to help your readers keep reading. Includes text, video and product recommendations to show off your best content.
  * Author: Contextly
- * Version: 6.0.0
+ * Version: 6.0.9
  *
  * @package Contextly Related Links
  * @link https://contextly.com
@@ -26,7 +26,7 @@ if ( CONTEXTLY_MODE === 'live' ) {
 
 define( 'CONTEXTLY_HTTPS', $is_https );
 define( 'CONTEXTLY_PLUGIN_FILE', __FILE__ );
-define( 'CONTEXTLY_PLUGIN_VERSION', '6.0.0' );
+define( 'CONTEXTLY_PLUGIN_VERSION', '6.0.7' );
 define( 'CONTEXTLY_CDN_VERSION', 'branch' );
 if ( ! defined( 'CONTEXTLY_MOD' ) ) {
 	define( 'CONTEXTLY_MOD', false );
