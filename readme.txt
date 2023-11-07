@@ -127,7 +127,9 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 = 6.1.0 =
 
-- Bug fixes
+- Better image loading performance
+- Small CSS updates for displays
+- Bug fix: Fixed a bug where for some users the Advanced WordPress settings choice to not include posts would revert to on
 
 
 = 6.0.9 =
