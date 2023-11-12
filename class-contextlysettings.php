@@ -537,6 +537,10 @@ class ContextlySettings {
 			}
 		}
 
+		if ( count( $values ) === 0 ) {
+			$values = array( 'post' );
+		}
+
 		return $values;
 	}
 
