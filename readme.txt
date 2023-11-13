@@ -125,7 +125,7 @@ If you just want to choose some items, copy and paste your main RSS feed into th
 
 == Changelog ==
 
-= 6.1.2 =
+= 6.1.3 =
 
 - Bug fix: Fixed a bug where for some users the Advanced WordPress settings choice to not include posts would revert to on
 

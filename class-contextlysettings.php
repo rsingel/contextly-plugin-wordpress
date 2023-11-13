@@ -529,6 +529,7 @@ class ContextlySettings {
 
         // check if we have no default value
         if ($options === false) {
+			$options = [];
 			$options['display_type'] = array('post');
 		}
 
