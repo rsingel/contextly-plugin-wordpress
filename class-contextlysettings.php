@@ -527,6 +527,11 @@ class ContextlySettings {
 	public function get_widget_display_type() {
 		$options = get_option( self::ADVANCED_SETTINGS_KEY );
 
+        // check if we have no default value
+        if ($options === false) {
+			$options['display_type'] = array('post');
+		}
+
 		// Hack for previous plugin versions and selected values.
 		$values = isset( $options['display_type'] ) ? $options['display_type'] : array();
 		if ( ! is_array( $values ) ) {
@@ -535,10 +540,6 @@ class ContextlySettings {
 			} else {
 				$values = array( $values );
 			}
-		}
-
-		if ( count( $values ) === 0 ) {
-			$values = array( 'post' );
 		}
 
 		return $values;
