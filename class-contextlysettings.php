@@ -529,8 +529,7 @@ class ContextlySettings {
 
         // check if we have no default value
         if ($options === false) {
-			$options = array();
-			$options['display_type'] = array('post');
+			$options = array('display_type' => array('post'));
 		}
 
 		// Hack for previous plugin versions and selected values.
