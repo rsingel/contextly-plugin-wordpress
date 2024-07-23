@@ -61,9 +61,11 @@
 
                 this.attachPluginPostStatusInfo();
 
-                this.updateAdminControls();
-				this.attachPublishConfirmation();
-				this.fireEvent('contextlyDataLoaded');
+				setTimeout(() => {
+					this.updateAdminControls();
+					this.attachPublishConfirmation();
+					this.fireEvent('contextlyDataLoaded');
+				}, 500);
 			},
 
 			onDataLoadingFailure: function(response) {
@@ -479,7 +481,7 @@
 			},
 
 			contextlyPluginPostStatusInfo: function () {
-                var PluginPostStatusInfo = window.wp.editPost.PluginPostStatusInfo;
+                var PluginPostStatusInfo = window.wp.editor.PluginPostStatusInfo;
 
                 return wp.element.createElement(
                     PluginPostStatusInfo,
